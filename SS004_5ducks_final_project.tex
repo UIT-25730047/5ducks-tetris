@@ -1,0 +1,672 @@
+\documentclass[14pt,a4paper]{extarticle}
+\usepackage[utf8]{vietnam} % For Vietnamese language support
+\usepackage{graphicx} % Required for inserting images
+\usepackage{fontspec}
+\usepackage{array} % For better array and tabular support
+\usepackage{tabularx} % For tabularx environment
+\usepackage{longtable} % For multi-page tables
+\usepackage{booktabs} % For better table formatting
+\usepackage{geometry} % For page margins
+\usepackage{enumitem} % For better control over itemize environments
+\usepackage{ragged2e} % For better text alignment
+\usepackage{xurl}          % Cho phép URL tự động xuống dòng ở mọi ký tự
+\usepackage{hyperref}      % Nên có thể đã có, để URL bấm được
+\usepackage{setspace}      % For line spacing control
+
+% Hyperref configuration - remove borders but keep links clickable
+\hypersetup{
+    colorlinks=true,       % Use colors instead of boxes
+    linkcolor=black,       % Internal links (table of contents, references) - black
+    citecolor=black,       % Citation links - black
+    urlcolor=blue,         % URL links - blue (you can change to black if preferred)
+    filecolor=black,       % File links - black
+    pdfborder={0 0 0},     % Remove border around links
+}
+
+% Page layout
+\geometry{
+    a4paper,
+    left=2cm,
+    right=2cm,
+    top=2.5cm,
+    bottom=2.5cm
+}
+
+% Font configuration
+\setmainfont{Times New Roman}
+
+% Line spacing - 1.5 lines (within paragraphs)
+\setstretch{1.5}
+
+% Paragraph formatting
+\setlength{\parindent}{12mm}        % First line indentation 12mm
+\setlength{\parskip}{0.8\baselineskip plus 2pt}  % Paragraph spacing >= line spacing
+
+% Reduce spacing after section/subsection titles
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{2ex}{1ex}
+\titlespacing*{\subsection}{0pt}{1.5ex}{0.5ex}
+
+% Custom column types for tabularx
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+\date{}          % ← xóa nội dung ngày
+\begin{document}
+
+% --- Trang bìa ---
+\thispagestyle{empty}
+\begin{center}
+    \includegraphics[width=5cm]{Logo_UIT_Web_Transparent.png} \\[1.5cm]
+    {\LARGE\bfseries KỸ NĂNG NGHỀ NGHIỆP}\\[1cm]
+    
+    {\Large \textbf{Đề tài:}}\\[0.2cm]
+    {\LARGE SS004 - Đồ Án Cuối Kỳ - Tetris Game}\\[1cm]
+    
+    % --- Thông tin lớp & giảng viên ---
+    {\Large 
+    \begin{tabular}{rl}
+        \textbf{Lớp học phần:}    & CN1.K2025.1.CNTT \\[6pt]
+        \textbf{Môn học:}         & Kỹ năng nghề nghiệp \\[6pt]
+        \textbf{Giảng viên hướng dẫn:} & ThS. Nguyễn Văn Toàn \\[12pt]
+    \end{tabular}
+    }\\[1cm]
+\end{center}
+
+
+\cleardoublepage
+\renewcommand{\contentsname}{\hfil\Huge\bfseries MỤC LỤC\hfil}
+\thispagestyle{empty}     % xóa header + số trang ở trang mục lục
+
+% Temporarily reduce paragraph spacing for table of contents
+{
+\setlength{\parskip}{0pt}
+\tableofcontents
+}
+
+\clearpage
+
+% Start page numbering from here
+\setcounter{page}{1}
+\pagestyle{plain}
+
+% Configure section numbering - Roman numerals for sections, Arabic for subsections
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+
+% --- 1. Hợp đồng nhóm  ---
+\section{Hợp đồng nhóm}
+
+\begin{center}
+    {\Large \textbf{HỢP ĐỒNG LÀM VIỆC NHÓM}}\\[6pt]
+\end{center}
+
+\vspace{0.3cm}
+
+\subsection*{1. Thời gian thành lập}
+Thứ 4, Ngày 3 tháng 12 năm 2025.
+
+\vspace{0.3cm}
+
+\subsection*{2. Thời hạn hợp đồng}
+Đến khi hoàn thành ĐỒ ÁN CUỐI KỲ -- Môn Kỹ Năng Nghề Nghiệp.
+
+\vspace{0.3cm}
+
+\subsection*{3. Tên nhóm}
+
+\textbf{5 ducks}
+
+\vspace{0.3cm}
+
+\subsection*{4. Thành viên}
+\vspace{0.3cm}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.5cm}|X|>{\centering\arraybackslash}p{3cm}|}
+\hline
+\textbf{STT} & \textbf{Họ và Tên} & \textbf{MSSV} \\
+\hline
+1 & Dương Hoà Long & 25730040 \\
+2 & Lê Quang Nhật & 25730047 \\
+3 & Lê Hữu Nhị & 25730048 \\
+4 & Nguyễn Duy Thanh & 25730068 \\
+5 & Kiều Quang Việt & 25730093 \\
+\hline
+\end{tabularx}
+
+\vspace{0.5cm}
+\subsection*{5. Mục đích thành lập}
+\vspace{0.3cm}
+\begin{itemize}
+    \item Nâng cao kỹ năng làm việc nhóm cũng như các kỹ năng mềm mà môn \textit{Kỹ năng Nghề nghiệp} yêu cầu.
+    \item Tạo môi trường để các thành viên rèn luyện kỹ năng giao tiếp, phân chia công việc, quản lý thời gian và giải quyết xung đột.
+    \item Hoàn thành bài tập nhóm đúng tiến độ, đúng yêu cầu của giảng viên và đảm bảo chất lượng tốt nhất có thể.
+    \item Toàn nhóm thống nhất phấn đấu đạt \textbf{điểm cao (9–10)} cho bài tập cuối kỳ, xem đây như một cơ hội để cải thiện tư duy làm việc nhóm chuyên nghiệp.
+    \item Cùng nhau xây dựng tinh thần học hỏi, chia sẻ kiến thức và nâng cao kỳ vọng bản thân trong môn học.
+\end{itemize}
+
+\subsection*{6. Vai trò của các thành viên trong nhóm}
+\vspace{0.3cm}
+\begin{tabularx}{\textwidth}{|Y|Y|Y|Y|Y|Y|Y|Y|}
+\hline
+\textbf{} &
+\textbf{Lãnh đạo giữ tiến độ} &
+\textbf{Xử lý đầu vào và di chuyển} &
+\textbf{Thao tác khối Tetris} &
+\textbf{Điểm và cấp độ} &
+\textbf{Hiệu ứng âm thanh} &
+\textbf{Kiểm thử game} &
+\textbf{Tổng hợp và báo cáo} \\
+\hline
+Dương Hoà Long & & \vfill X & \vfill X & & & \vfill X & \\ \hline
+Lê Quang Nhật & \vfill X & & & & \vfill X & \vfill X & \vfill X \\ \hline
+Lê Hữu Nhị & & \vfill X & \vfill X & & & \vfill X & \\ \hline
+Nguyễn Duy Thanh & & & & \vfill X & \vfill X & \vfill X & \\ \hline
+Kiều Quang Việt & & & \vfill X & \vfill X & & \vfill X & \\ \hline
+\end{tabularx}
+
+\vspace{0.3cm}
+
+\subsection*{7. Mô tả dự án Tetris}
+\vspace{0.3cm}
+
+Nhóm sẽ phát triển game Tetris cổ điển với các tính năng chính sau:
+
+\begin{itemize}
+    \item \textbf{Xử lý đầu vào và di chuyển}: Điều khiển các khối Tetris bằng bàn phím (mũi tên, phím quay, phím thả nhanh).
+    \item \textbf{Thao tác khối Tetris}: Tạo và quản lý các loại khối (I, O, T, S, Z, J, L), xoay khối, xử lý va chạm.
+    \item \textbf{Điểm và cấp độ}: Hệ thống tính điểm khi xóa hàng, tăng độ khó theo cấp độ.
+    \item \textbf{Hiệu ứng âm thanh}: Nhạc nền, âm thanh khi xóa hàng, game over.
+    \item \textbf{Giao diện người dùng}: Hiển thị bảng chơi, khối tiếp theo, điểm số, cấp độ.
+    \item \textbf{Kiểm thử}: Đảm bảo game hoạt động mượt mà, không có lỗi logic hay hiển thị.
+\end{itemize}
+
+\textbf{Công nghệ sử dụng}: Ngôn ngữ lập trình C++ với thư viện hệ thống POSIX (termios, fcntl) để xử lý terminal và đầu vào.
+
+\vspace{0.3cm}
+
+\subsection*{8. Hiệp định nhóm}
+\begin{itemize}
+\item Quyết định được đưa ra dựa trên sự đồng thuận của đa số thành viên, mọi thành viên đều được lắng nghe và có quyền nêu ý kiến. \\
+\textbf{* Trường hợp không đạt được sự thống nhất, quyết định của trưởng nhóm sẽ là quyết định cuối cùng.} 
+\item Tôn trọng lẫn nhau, kể cả trong trường hợp có sự khác biệt về quan điểm hoặc cách tiếp cận.
+\item Hỗ trợ kịp thời cho các thành viên khi gặp khó khăn về kỹ thuật, tiến độ hoặc ý tưởng.
+\item Đảm bảo mỗi thành viên đều có đóng góp rõ ràng, phù hợp với năng lực và công việc được phân công.
+\item Cam kết hoàn thành nhiệm vụ đúng thời hạn, chủ động báo cáo nếu có rủi ro hoặc chậm trễ.
+\item Giữ liên lạc thường xuyên, sử dụng các kênh trao đổi chính thức để cập nhật tiến độ và đưa ra quyết định.
+\item Sử dụng Git/GitHub để quản lý mã nguồn, commit code thường xuyên với commit message rõ ràng.
+\item Áp dụng quy trình phân nhánh (branching strategy):
+    \begin{itemize}[leftmargin=1.5cm]
+        \item Nhánh \textbf{main}: Nhánh production, chỉ team lead được phép push trực tiếp
+        \item Nhánh \textbf{develop}: Nhánh phát triển chính, tất cả thành viên thực hiện \\ implementation tại đây
+        \item Các nhánh feature: Tạo từ develop cho từng tính năng cụ thể, merge về develop sau khi hoàn thành
+    \end{itemize}
+\item Tổ chức buổi demo tính năng (feature demo) ít nhất 1 lần/tuần để theo dõi tiến độ, kiểm tra chất lượng và điều chỉnh kế hoạch kịp thời.
+\item Viết code sạch, có comment giải thích khi cần, tuân thủ chuẩn coding style mà nhóm thống nhất.
+\item Code review lẫn nhau trước khi merge vào nhánh chính để đảm bảo chất lượng.
+\end{itemize}
+
+\subsection*{9. Không gian sinh hoạt và trao đổi của nhóm}
+Để đảm bảo quá trình làm việc diễn ra hiệu quả và có tính hệ thống, nhóm đã thiết lập kênh Slack riêng mang tên \textbf{5ducks} làm nền tảng trao đổi chính thức. Kênh Slack được sử dụng thường xuyên với các mục đích:
+
+\begin{itemize}
+\item Phân công nhiệm vụ và theo dõi tiến độ công việc một cách trực quan.
+\item Thảo luận và phản hồi ý tưởng nhanh chóng, hỗ trợ đính kèm file, hình ảnh, hoặc đoạn mã nguồn.
+\item Lưu trữ tài liệu, liên kết tham khảo và toàn bộ lịch sử trao đổi, giúp tra cứu dễ dàng.
+\item Gửi thông báo nhắc nhở về deadline và lịch họp nhóm.
+\item Tiến hành biểu quyết đối với các quyết định quan trọng của nhóm.
+\end{itemize}
+\subsection*{10. Tiêu chí đánh giá các thành viên}
+
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{4pt}  % Reduce column padding
+\small  % Use smaller font for better fit
+\begin{longtable}{|p{2.7cm}|p{2.7cm}|p{2.7cm}|p{2.7cm}|p{2.7cm}|}
+\hline
+\textbf{Đặc điểm} & \textbf{Nổi bật} & \textbf{Tốt} & \textbf{Bình thường} & \textbf{Kém} \\
+\hline
+
+\textbf{Thái độ làm việc} &
+Sẵn sàng nhận nhiệm vụ và hoàn thành tốt. &
+Hoàn thành nhiệm vụ được giao. &
+Hoàn thành nhiệm vụ với sự nhắc nhở. &
+Không hoàn thành nhiệm vụ được giao. \\
+\hline
+
+\textbf{Quản lý thời gian} &
+Hoàn thành trước hạn, đúng giờ họp. &
+Đúng hạn, trễ dưới 5 phút. &
+Đúng hạn khi nhắc nhở, trễ 5--10 phút. &
+Trễ quá 10 phút, không hoàn thành. \\
+\hline
+
+\textbf{Giải quyết vấn đề phát sinh} &
+Tích cực tìm kiếm giải pháp để giải quyết các vấn đề phát sinh. &
+Nhờ người khác giải quyết vấn đề phát sinh. &
+Không giải quyết vấn đề nhưng có đưa ra ý kiến đóng góp. &
+Không tham gia vào vấn đề cần giải quyết. \\
+\hline
+
+\textbf{Nêu ý kiến} &
+Sẵn sàng nêu ý kiến. &
+Chỉ nêu ý kiến khi có việc cần. &
+Đưa ra ý kiến khi có sự nhắc nhở. &
+Không nêu ý kiến gì cho nhóm. \\
+\hline
+
+\textbf{Giữ liên lạc} &
+Luôn phản hồi tin nhắn nhóm trong vòng 30 phút. &
+Phản hồi tin nhắn nhóm trong vòng 1--2 giờ. &
+Phản hồi tin nhắn nhóm trong vòng 2--5 giờ. &
+Phản hồi tin nhắn nhóm sau hơn 5 giờ hoặc không phản hồi. \\
+\hline
+
+\textbf{Chất lượng code} &
+Code sạch, có comment, tuân thủ chuẩn, không bug. &
+Code hoạt động tốt, có một vài chỗ cần cải thiện nhỏ. &
+Code hoạt động nhưng khó đọc hoặc có bug nhỏ. &
+Code có nhiều bug hoặc không hoạt động đúng. \\
+\hline
+
+\end{longtable}
+\normalsize  % Reset font size
+
+\subsection*{11. Cam kết}
+
+Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã nêu ra, những thành viên trong nhóm cam kết sẽ thực hiện đúng những yêu cầu đã đặt ra.
+
+\vspace{0.5cm}
+
+\begin{center}
+    % First row with 3 signatures
+    \begin{tabular}{@{}ccc@{}}
+        \begin{tabular}[b]{c}
+            \includegraphics[height=1.2cm]{signature_long.png} \\[8pt]
+            \rule{5.5cm}{0.4pt} \\[4pt]
+            Dương Hoà Long
+        \end{tabular}
+        &
+        \begin{tabular}[b]{c}
+            \includegraphics[height=1.2cm]{signature_nhat.png} \\[8pt]
+            \rule{4cm}{0.4pt} \\[4pt]
+            Lê Quang Nhật
+        \end{tabular}
+        &
+        \begin{tabular}[b]{c}
+            \includegraphics[height=1.2cm]{signature_nhi.png} \\[8pt]
+            \rule{5.5cm}{0.4pt} \\[4pt]
+            Lê Hữu Nhị
+        \end{tabular}
+    \end{tabular}
+
+    \vspace{0.5cm}
+
+    % Second row with 2 centered signatures
+    \begin{tabular}{@{}cc@{}}
+        \begin{tabular}[b]{c}
+            \includegraphics[height=1.2cm]{signature_thanh.jpg} \\[8pt]
+            \rule{5.5cm}{0.4pt} \\[4pt]
+            Nguyễn Duy Thanh
+        \end{tabular}
+        &
+        \begin{tabular}[b]{c}
+            \includegraphics[height=1.2cm]{signature_viet.jpg} \\[8pt]
+            \rule{5.5cm}{0.4pt} \\[4pt]
+            Kiều Quang Việt
+        \end{tabular}
+    \end{tabular}
+\end{center}
+
+% --- 2. Công cụ hỗ trợ và quản lý dự án ---
+\section{Công cụ hỗ trợ và quản lý dự án}
+
+\subsection*{Quản lý công việc và tiến độ}
+\begin{itemize}
+    \item \textbf{Trello}: Quản lý task, phân công công việc, theo dõi tiến độ theo phương pháp Kanban
+    \begin{itemize}
+        \item Link: \url{https://trello.com/invite/b/693024cd112ba6767e45fd9a/ATTI060c7059b51bb4a69e34c070c2254ff40261BBCD/5ducks}
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Quản lý mã nguồn}
+\begin{itemize}
+    \item \textbf{GitHub}: Lưu trữ và quản lý version control của source code, áp dụng quy trình Git Flow với nhánh main và develop
+    \begin{itemize}
+        \item Repository: \url{https://github.com/lqnhat/5ducks-tetris}
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Giao tiếp và trao đổi nhóm}
+\begin{itemize}
+    \item \textbf{Slack}: Kênh trao đổi chính thức của nhóm, thảo luận kỹ thuật, báo cáo tiến độ, chia sẻ tài liệu.
+    \begin{itemize}
+        \item Workspace: \url{https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X}
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Soạn thảo báo cáo}
+\begin{itemize}
+    \item \textbf{Overleaf}: Công cụ soạn thảo LaTeX để viết báo cáo, tài liệu dự án.
+    \begin{itemize}
+        \item Project: \url{https://www.overleaf.com/read/jnjfgkqtvpsh#9f751d}
+    \end{itemize}
+\end{itemize}
+
+% --- 3. Phần giới thiệu và hướng dẫn chơi game  ---
+\section{Phần giới thiệu và hướng dẫn chơi game}
+
+\subsection{Giới thiệu về Tetris}
+
+Chào mừng bạn đến với \textbf{Tetris} - một trong những trò chơi điện tử kinh điển và được yêu thích nhất mọi thời đại!
+
+Tetris lần đầu được tạo ra vào năm 1985 bởi Alexey Pajitnov, một kỹ sư phần mềm người Nga. Từ đó đến nay, Tetris đã trở thành biểu tượng văn hóa đại chúng, xuất hiện trên hầu hết mọi nền tảng từ máy tính, điện thoại di động đến máy chơi game cầm tay. Sức hấp dẫn của Tetris nằm ở gameplay đơn giản nhưng cực kỳ gây nghiện - bất cứ ai cũng có thể chơi được sau vài phút làm quen, nhưng để trở thành cao thủ lại cần sự rèn luyện và chiến thuật.
+
+\subsection{Câu chuyện đằng sau dự án}
+\vspace{0.3cm}
+Phiên bản Tetris này được phát triển bởi nhóm \textbf{5 Ducks} với mục tiêu tái hiện lại trải nghiệm chơi game cổ điển trên terminal. Chúng tôi sử dụng ngôn ngữ lập trình C++ thuần túy kết hợp với các thư viện hệ thống POSIX để mang đến trải nghiệm chơi game mượt mà ngay trên terminal của bạn.
+
+Điểm đặc biệt của dự án là chúng tôi phát triển \textbf{hai phiên bản song song}:
+
+\begin{itemize}
+    \item \textbf{Phiên bản Struct} (Procedural Programming): Sử dụng struct và các hàm để tổ chức code theo phong cách lập trình thủ tục truyền thống
+    \item \textbf{Phiên bản Class} (Object-Oriented Programming): Áp dụng các nguyên lý lập trình hướng đối tượng với class, encapsulation và inheritance
+\end{itemize}
+
+Việc phát triển hai phiên bản giúp chúng tôi:
+\begin{itemize}
+    \item So sánh và hiểu sâu hơn về các paradigm lập trình khác nhau
+    \item Rèn luyện kỹ năng tổ chức code và thiết kế kiến trúc phần mềm
+    \item Cung cấp cho người dùng sự lựa chọn về phong cách code họ muốn nghiên cứu
+\end{itemize}
+
+Dự án này không chỉ là một trò chơi giải trí, mà còn là minh chứng cho kỹ năng lập trình, làm việc nhóm và quản lý dự án của chúng tôi trong môn học Kỹ Năng Nghề Nghiệp.
+
+\subsection{Luật chơi cơ bản}
+
+\subsubsection*{Mục tiêu}
+
+Mục tiêu của Tetris rất đơn giản: \textit{xếp các khối rơi xuống sao cho tạo thành hàng ngang hoàn chỉnh}. Khi một hàng được lấp đầy, nó sẽ biến mất và bạn sẽ nhận được điểm. Trò chơi kết thúc khi các khối chồng lên nhau đạt tới đỉnh màn hình.
+
+\subsubsection*{Các khối Tetris (Tetromino)}
+
+Có 7 loại khối cơ bản trong Tetris, mỗi loại có hình dạng và màu sắc riêng:
+
+\begin{itemize}[leftmargin=2cm]
+    \item \textbf{Khối I (I-Block)}: Hình thanh dài 4 ô - Màu xanh dương (Cyan)
+    \begin{itemize}
+        \item Khối này cực kỳ hữu ích để xóa 4 hàng cùng lúc (gọi là "Tetris")
+        \item Chiến thuật: Để dành một cột trống bên cạnh để chờ khối I
+    \end{itemize}
+
+    \item \textbf{Khối O (O-Block)}: Hình vuông 2×2 - Màu vàng (Yellow)
+    \begin{itemize}
+        \item Khối duy nhất không thể xoay
+        \item Dễ sử dụng để lấp đầy các khoảng trống lớn
+    \end{itemize}
+
+    \item \textbf{Khối T (T-Block)}: Hình chữ T - Màu tím (Purple)
+    \begin{itemize}
+        \item Linh hoạt và dễ sử dụng
+        \item Có thể tạo "T-Spin" - kỹ thuật nâng cao để ghi điểm cao
+    \end{itemize}
+
+    \item \textbf{Khối S (S-Block)}: Hình chữ S - Màu xanh lá (Green)
+    \begin{itemize}
+        \item Tạo các đường ziczac
+        \item Cần sử dụng cẩn thận để tránh tạo khoảng trống khó lấp
+    \end{itemize}
+
+    \item \textbf{Khối Z (Z-Block)}: Hình chữ Z ngược - Màu đỏ (Red)
+    \begin{itemize}
+        \item Giống khối S nhưng hướng ngược lại
+        \item Kết hợp với khối S để tạo bề mặt phẳng
+    \end{itemize}
+
+    \item \textbf{Khối J (J-Block)}: Hình chữ J - Màu xanh đậm (Blue)
+    \begin{itemize}
+        \item Hữu ích để lấp đầy các góc
+        \item Có thể tạo nhiều combo khi sử dụng khéo léo
+    \end{itemize}
+
+    \item \textbf{Khối L (L-Block)}: Hình chữ L - Màu cam (Orange)
+    \begin{itemize}
+        \item Đối xứng với khối J
+        \item Dễ kết hợp với nhiều loại khối khác
+    \end{itemize}
+\end{itemize}
+
+\subsection{Hướng dẫn điều khiển}
+
+Game được thiết kế với các phím điều khiển trực quan và dễ nhớ:
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Phím} & \textbf{Chức năng} \\
+\hline
+\textbf{A} hoặc \textbf{←} (Mũi tên trái) & Di chuyển khối sang trái \\
+\hline
+\textbf{D} hoặc \textbf{→} (Mũi tên phải) & Di chuyển khối sang phải \\
+\hline
+\textbf{S} hoặc \textbf{↓} (Mũi tên xuống) & Tăng tốc độ rơi (Soft Drop) \\
+\hline
+\textbf{W} hoặc \textbf{↑} (Mũi tên lên) & Xoay khối theo chiều kim đồng hồ \\
+\hline
+\textbf{Space} (Phím cách) & Thả khối xuống ngay lập tức (Hard Drop) \\
+\hline
+\textbf{P} & Tạm dừng/Tiếp tục game \\
+\hline
+\textbf{Q} hoặc \textbf{ESC} & Thoát game \\
+\hline
+\end{tabular}
+\end{center}
+
+\textit{Mẹo nhỏ:} Bạn có thể giữ phím di chuyển để khối tự động di chuyển liên tục theo hướng đó!
+
+\subsection{Hệ thống tính điểm}
+
+Điểm số trong Tetris được tính dựa trên số hàng bạn xóa được trong một lần:
+
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Hành động} & \textbf{Số hàng xóa} & \textbf{Điểm cơ bản} \\
+\hline
+Single (Đơn) & 1 hàng & 100 điểm \\
+\hline
+Double (Đôi) & 2 hàng & 300 điểm \\
+\hline
+Triple (Ba) & 3 hàng & 500 điểm \\
+\hline
+\textbf{Tetris} & \textbf{4 hàng} & \textbf{800 điểm} \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Bonus theo cấp độ:} Điểm số sẽ được nhân với level hiện tại của bạn. Ví dụ: Xóa 4 hàng ở level 5 sẽ cho bạn 800 × 5 = 4000 điểm!
+
+\textbf{Combo:} Nếu bạn xóa nhiều hàng liên tiếp trong các lượt liên tiếp nhau, bạn sẽ nhận được điểm thưởng combo. Combo càng dài, điểm thưởng càng cao!
+
+\subsection{Cấp độ và độ khó}
+
+Tetris của chúng tôi có hệ thống cấp độ động:
+
+\begin{itemize}
+    \item \textbf{Level 1-3}: Tốc độ rơi chậm, thích hợp cho người mới bắt đầu làm quen với game
+    \item \textbf{Level 4-6}: Tốc độ trung bình, đòi hỏi phản xạ tốt và chiến thuật hợp lý
+    \item \textbf{Level 7-9}: Tốc độ nhanh, chỉ dành cho người chơi có kinh nghiệm
+    \item \textbf{Level 10+}: Tốc độ cực nhanh, thử thách giới hạn của bạn!
+\end{itemize}
+
+Mỗi khi bạn xóa được \textbf{10 hàng}, level sẽ tăng lên 1 và tốc độ rơi của các khối sẽ nhanh hơn. Điều này tạo nên sự thử thách không ngừng và khiến mỗi ván chơi đều gay cấn!
+
+\subsection{Chiến thuật và mẹo chơi hay}
+
+\subsubsection*{1. Giữ bề mặt phẳng}
+
+Luôn cố gắng giữ các khối ở cùng một độ cao. Tránh tạo ra các cột cao vút hoặc "hố sâu" khó lấp đầy. Bề mặt phẳng giúp bạn linh hoạt hơn khi xếp các khối tiếp theo.
+
+\subsubsection*{2. Để dành cột cho khối I}
+
+Một chiến thuật kinh điển là để dành một cột dọc bên cạnh (thường là cột ngoài cùng bên phải hoặc trái) để chờ khối I xuất hiện. Khi có khối I, bạn có thể xóa 4 hàng cùng lúc và ghi điểm cao (Tetris)!
+
+\subsubsection*{3. Quan sát khối tiếp theo}
+
+Game luôn hiển thị khối tiếp theo sẽ xuất hiện. Hãy lợi dụng thông tin này để lên kế hoạch trước cho vị trí đặt khối hiện tại.
+
+\subsubsection*{4. Không vội vàng}
+
+Ở level thấp, bạn có nhiều thời gian để suy nghĩ. Đừng vội thả khối xuống nếu chưa chắc chắn. Hãy tận dụng thời gian để tìm vị trí tối ưu nhất.
+
+\subsubsection*{5. Tập trung vào việc tồn tại lâu hơn}
+
+Đôi khi, việc xóa nhiều hàng cùng lúc không phải là ưu tiên số 1. Nếu tình huống nguy cấp, hãy tập trung vào việc giảm độ cao của đống khối xuống, ngay cả khi bạn chỉ xóa được 1-2 hàng.
+
+\subsubsection*{6. Luyện tập xoay khối nhanh}
+
+Thành thạo việc xoay khối sẽ giúp bạn tiết kiệm thời gian quý báu, đặc biệt ở level cao. Hãy dành thời gian làm quen với cách các khối xoay.
+
+\subsection{Tính năng đặc biệt}
+
+\begin{itemize}
+    \item \textbf{Âm thanh sống động}: Nhạc nền Tetris kinh điển và hiệu ứng âm thanh khi xóa hàng, tạo không khí sôi động.
+    \item \textbf{Bảng xếp hạng}: Theo dõi điểm số cao nhất của bạn và thử thách bản thân phá kỷ lục.
+    \item \textbf{Tạm dừng game}: Cần nghỉ một chút? Nhấn P để tạm dừng bất cứ lúc nào.
+    \item \textbf{Hiển thị thống kê}: Xem số hàng đã xóa, level hiện tại và thời gian chơi.
+\end{itemize}
+
+\subsection{Cài đặt và khởi động game}
+
+\subsubsection*{Yêu cầu hệ thống}
+
+\begin{itemize}
+    \item \textbf{Hệ điều hành}: macOS 10.14+ hoặc Linux (Ubuntu 20.04+, Fedora 30+, Debian 10+)
+    \item \textbf{CPU}: Intel Core i3 hoặc tương đương
+    \item \textbf{RAM}: 2GB trở lên
+    \item \textbf{Dung lượng ổ cứng}: 50MB không gian trống
+    \item \textbf{Terminal}: Hỗ trợ ANSI escape codes
+    \item \textbf{Compiler}: GCC 7.0+ hoặc Clang 5.0+ với hỗ trợ C++11
+\end{itemize}
+
+\textit{Lưu ý quan trọng:} Phiên bản hiện tại chỉ hỗ trợ hệ điều hành Unix-based (macOS và Linux). Game chưa hỗ trợ Windows do sử dụng các thư viện hệ thống POSIX (\texttt{termios}, \texttt{fcntl}) cho xử lý terminal.
+
+\subsubsection*{Hướng dẫn cài đặt}
+
+Game có \textbf{hai phiên bản} để bạn lựa chọn: Struct (Procedural) và Class (OOP). Cả hai đều có gameplay giống nhau, chỉ khác về cách tổ chức code.
+
+\vspace{0.5cm}
+
+\textbf{Bước 1:} Tải xuống mã nguồn từ GitHub repository của chúng tôi:
+\url{https://github.com/lqnhat/5ducks-tetris}
+
+\vspace{0.5cm}
+
+\textbf{Bước 2:} Mở Terminal và di chuyển đến thư mục chứa mã nguồn:
+\begin{itemize}
+    \item Sử dụng lệnh: \texttt{cd /path/to/5ducks-tetris}
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Bước 3:} Chọn phiên bản bạn muốn chơi:
+\vspace{0.3cm}
+
+\textit{Option A - Phiên bản Struct (Procedural):}
+\begin{itemize}
+    \item Di chuyển vào thư mục: \texttt{cd tetris\_struct}
+    \item Biên dịch: \texttt{g++ -std=c++11 main.cpp -o tetris}
+    \item Chạy game: \texttt{./tetris}
+\end{itemize}
+
+\textit{Option B - Phiên bản Class (OOP):}
+\begin{itemize}
+    \item Di chuyển vào thư mục: \texttt{cd tetris\_class}
+    \item Biên dịch: \texttt{g++ -std=c++11 main.cpp -o tetris}
+    \item Chạy game: \texttt{./tetris}
+\end{itemize}
+
+\textit{Lưu ý:} Nếu thư mục có Makefile, bạn có thể sử dụng lệnh \texttt{make} thay vì lệnh g++ ở trên.
+
+\vspace{0.5cm}
+
+\textbf{Bước 4:} Đảm bảo terminal có kích thước đủ lớn (tối thiểu 80×24 characters)
+
+\vspace{0.5cm}
+
+\textbf{Bước 5:} Thưởng thức game!
+
+\subsection{Câu hỏi thường gặp (FAQ)}
+
+\subsubsection*{Q: Sự khác biệt giữa phiên bản Struct và Class là gì?}
+A: Cả hai phiên bản đều có gameplay và tính năng giống hệt nhau. Điểm khác biệt nằm ở cách tổ chức code:
+\begin{itemize}
+    \item \textbf{Phiên bản Struct}: Sử dụng lập trình thủ tục (Procedural Programming) với struct và các hàm độc lập. Phù hợp với người mới học C++ hoặc muốn hiểu cách tiếp cận lập trình truyền thống.
+    \item \textbf{Phiên bản Class}: Áp dụng lập trình hướng đối tượng (OOP) với class, encapsulation và các nguyên lý OOP. Phù hợp cho người muốn học về thiết kế phần mềm và OOP.
+\end{itemize}
+
+\subsubsection*{Q: Tôi nên chọn phiên bản nào?}
+A: Nếu bạn mới bắt đầu học C++, phiên bản Struct dễ hiểu hơn. Nếu bạn muốn học OOP hoặc đang nghiên cứu về kiến trúc phần mềm, chọn phiên bản Class. Bạn cũng có thể chơi cả hai để so sánh!
+
+\subsubsection*{Q: Game có chạy trên Windows không?}
+A: Hiện tại game chỉ hỗ trợ macOS và Linux. Phiên bản Windows đang được phát triển và sẽ ra mắt trong tương lai. Nếu bạn dùng Windows, bạn có thể sử dụng WSL (Windows Subsystem for Linux) để chạy game.
+
+\subsubsection*{Q: Game có chạy trên điện thoại không?}
+A: Phiên bản hiện tại chỉ hỗ trợ máy tính (macOS, Linux). Chúng tôi có kế hoạch phát triển phiên bản mobile trong tương lai.
+
+\subsubsection*{Q: Tôi gặp lỗi khi biên dịch, phải làm sao?}
+A: Đảm bảo bạn đã cài đặt compiler C++ (g++ hoặc clang) và hỗ trợ C++11. Trên Ubuntu/Debian, chạy: \texttt{sudo apt-get install build-essential}. Trên macOS, cài đặt Xcode Command Line Tools: \texttt{xcode-select --install}.
+
+\subsubsection*{Q: Terminal của tôi không hiển thị đúng màu sắc?}
+A: Đảm bảo terminal của bạn hỗ trợ ANSI escape codes. Hầu hết các terminal hiện đại (Terminal.app trên macOS, GNOME Terminal, iTerm2) đều hỗ trợ. Nếu vẫn gặp vấn đề, thử terminal khác.
+
+\subsubsection*{Q: Game bị giật hoặc phím bấm không phản hồi?}
+A: Thử các cách sau:
+\begin{itemize}
+    \item Đóng các ứng dụng terminal khác đang chạy
+    \item Tăng kích thước buffer của terminal
+    \item Đảm bảo terminal không bị lag do quá nhiều process
+    \item Khởi động lại terminal và chạy lại game
+\end{itemize}
+
+\subsection{Liên hệ và hỗ trợ}
+
+Nếu bạn gặp bất kỳ vấn đề nào khi chơi game hoặc có góp ý, đề xuất, đừng ngại liên hệ với chúng tôi:
+
+\begin{itemize}
+    \item \textbf{GitHub Issues}: \url{https://github.com/lqnhat/5ducks-tetris/issues}
+    \item \textbf{Slack Community}: \url{https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X}
+\end{itemize}
+
+Chúng tôi rất mong nhận được phản hồi từ bạn để cải thiện game ngày càng tốt hơn!
+
+\subsection{Tài liệu tham khảo}
+
+\begin{enumerate}
+    \item Pajitnov, A. (1985). \textit{Tetris - Game Design and Implementation}. Soviet Academy of Sciences, Moscow.
+
+    \item The Linux Programming Interface Documentation. (n.d.). \textit{termios - Terminal I/O}. Retrieved from \url{https://man7.org/linux/man-pages/man3/termios.3.html}
+
+    \item GitHub Documentation. (n.d.). \textit{GitHub Flow - Understanding the GitHub workflow}. Retrieved from \url{https://docs.github.com/en/get-started/quickstart/github-flow}
+
+    \item Stevens, W. R., \& Rago, S. A. (2013). \textit{Advanced Programming in the UNIX Environment} (3rd ed.). Addison-Wesley Professional.
+
+    \item Stroustrup, B. (2013). \textit{The C++ Programming Language} (4th ed.). Addison-Wesley Professional.
+
+    \item Gamma, E., Helm, R., Johnson, R., \& Vlissides, J. (1994). \textit{Design Patterns: Elements of Reusable Object-Oriented Software}. Addison-Wesley Professional.
+\end{enumerate}
+
+\subsection{Lời kết}
+Cảm ơn bạn đã chọn chơi Tetris phiên bản của \textbf{5 Ducks}! Chúng tôi hy vọng bạn sẽ có những giây phút giải trí thú vị và đầy thử thách. Hãy nhớ rằng, Tetris không chỉ là một trò chơi - nó còn rèn luyện khả năng tư duy logic, phản xạ nhanh nhạy và kỹ năng quản lý không gian. \\
+
+Trong Tetris cũng như trong cuộc sống, những thành tựu (achievements) biến mất, còn những sai lầm (mistakes) thì tích lũy lại." - Một triết lý thú vị mà nhiều người chơi Tetris nhận ra. \\
+
+Chúc bạn chơi game vui vẻ và đạt điểm cao!
+
+\vspace{0.5cm}
+
+\begin{center}
+\textit{--- Đội ngũ phát triển 5 Ducks ---}\\
+\textit{Dương Hoà Long • Lê Quang Nhật • Lê Hữu Nhị}\\
+\textit{Nguyễn Duy Thanh • Kiều Quang Việt}
+\end{center}
+
+\end{document}
