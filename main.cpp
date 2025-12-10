@@ -61,6 +61,12 @@ struct Board {
         }
         cout.flush();
     }
+    
+    void drawPause() const {
+        cout << "\033[2J\033[1;1H";
+        cout << "=== PAUSED ===\nPress P to Resume";
+        cout.flush();
+    }
 
     void clearLines() {
         int writeRow = BOARD_HEIGHT - 2;
@@ -358,10 +364,12 @@ struct TetrisGame {
 
         if (c == 'p') {
             state.paused = !state.paused;
-            return; 
+            if (state.paused) board.drawPause(); // Show the menu immediately
+            return;
         }
-        // BUG: I forgot to block movement! 
-        // Player can "ghost" move the piece while gravity is paused.
+    
+        // CRITICAL BUG: Still haven't blocked the inputs below.
+        // If I press 'A' here, the piece moves underneath the Pause menu.
 
         switch (c) {
             case 'a': // move left
@@ -436,18 +444,23 @@ struct TetrisGame {
        while (state.running) {
             handleInput();
     
-            // [VER 2] Logic check implemented
             if (state.paused) {
-                // Just skipping gravity for now.
-                // ISSUE: No visual feedback. User might think the app crashed.
-                // ISSUE: Loop is still spinning hot (wasting CPU).
+                // [VER 3] Gravity is stopped.
+                
+                // PERFORMANCE ISSUE: No sleep/delay here! 
+                // The CPU is running at 100% just to check this bool.
+                
+                // RENDER ISSUE: The code below this block still runs...
             } else {
-                handleGravity(); // Only drop pieces if game is active
+                handleGravity();
             }
-    
-            placePiece(currentPiece, true);
-            board.draw(state); // Weird UX: Draws the board as if nothing happened
-            placePiece(currentPiece, false);
+
+            // Added this check to prevent the board from overwriting the menu
+            if (!state.paused) { 
+                placePiece(currentPiece, true);
+                board.draw(state); // If I don't check !paused, this flickers over the menu
+                placePiece(currentPiece, false);
+            }
     
             usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
         }
