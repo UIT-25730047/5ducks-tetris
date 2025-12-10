@@ -25,6 +25,7 @@ struct Position {
 
 struct GameState {
     bool running{true};
+    bool paused{false}; // TODO: Flag added, need to implement logic later
 };
 
 struct Piece {
@@ -355,6 +356,13 @@ struct TetrisGame {
         char c = getInput();
         if (c == 0) return;
 
+        // [VER 1] Just testing if the key works. 
+        // Toggling this doesn't actually stop the game yet.
+        if (c == 'p') {
+            state.paused = !state.paused;
+            return; 
+        }
+
         switch (c) {
             case 'a': // move left
                 if (canMove(-1, 0, currentPiece.rotation)) {
@@ -368,8 +376,6 @@ struct TetrisGame {
                 break;
             case 'x': // soft drop one cell
                 softDrop();
-                break;
-            case ' ': // hard drop
                 hardDrop();
                 flushInput(); // flush repeated spaces
                 break;
@@ -379,6 +385,8 @@ struct TetrisGame {
                 for (int dx : kicks) {
                     if (canMove(dx, 0, newRot)) {
                         currentPiece.pos.x += dx;
+                break;
+            case ' ': // hard drop
                         currentPiece.rotation = newRot;
                         break;
                     }
