@@ -356,12 +356,12 @@ struct TetrisGame {
         char c = getInput();
         if (c == 0) return;
 
-        // [VER 1] Just testing if the key works. 
-        // Toggling this doesn't actually stop the game yet.
         if (c == 'p') {
             state.paused = !state.paused;
             return; 
         }
+        // BUG: I forgot to block movement! 
+        // Player can "ghost" move the piece while gravity is paused.
 
         switch (c) {
             case 'a': // move left
@@ -433,13 +433,22 @@ struct TetrisGame {
         cout << "Tetris Game - Starting...\n";
         usleep(500000);
 
-        while (state.running) {
+       while (state.running) {
             handleInput();
-            handleGravity();
+    
+            // [VER 2] Logic check implemented
+            if (state.paused) {
+                // Just skipping gravity for now.
+                // ISSUE: No visual feedback. User might think the app crashed.
+                // ISSUE: Loop is still spinning hot (wasting CPU).
+            } else {
+                handleGravity(); // Only drop pieces if game is active
+            }
+    
             placePiece(currentPiece, true);
-            board.draw(state);
+            board.draw(state); // Weird UX: Draws the board as if nothing happened
             placePiece(currentPiece, false);
-
+    
             usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
         }
 
