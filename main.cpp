@@ -6,6 +6,12 @@
 #include <fcntl.h>
 #include <random>
 
+#include <unistd.h>
+#include <limits.h>
+#if __APPLE__
+#include <mach-o/dyld.h>
+#endif
+
 using namespace std;
 
 constexpr int BOARD_HEIGHT     = 20;
@@ -31,6 +37,58 @@ struct Piece {
     int type{0};
     int rotation{0};
     Position pos{5, 0};
+};
+
+struct SoundManager {
+    // Get the execute file path
+    static std::string getExecutableDirectory() {
+        char buffer[PATH_MAX];
+
+    #if __APPLE__
+        uint32_t size = sizeof(buffer);
+        if (_NSGetExecutablePath(buffer, &size) == 0) {
+            std::string path(buffer);
+            return path.substr(0, path.find_last_of('/'));
+        }
+        return "";
+    #else
+        ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+        if (len != -1) {
+            buffer[len] = '\0';
+            std::string path(buffer);
+            return path.substr(0, path.find_last_of('/'));
+        }
+        return "";
+    #endif
+    }
+
+    // Helper
+    static std::string soundPath(const std::string& filename) {
+        return getExecutableDirectory() + "/sounds/" + filename;
+    }
+
+    // File names
+    static inline std::string backgroundSoundFile = "background_sound_01.mp3";
+
+    // Background sound
+    static void playBackgroundSound() {
+        std::string path = soundPath(backgroundSoundFile);
+
+    #if __APPLE__
+        std::string cmd =
+            "while true; do afplay \"" + path + "\"; done &";
+    #else
+        std::string cmd =
+            "while true; do aplay \"" + path + "\"; done &";
+    #endif
+
+        system(cmd.c_str());
+    }
+    
+    static void stopBackgroundSound() {
+        // Kills all "play" processes running in loop
+        system("pkill -f \"play .*background_sound_01.mp3\" >/dev/null 2>&1");
+    }
 };
 
 struct Board {
@@ -418,6 +476,9 @@ struct TetrisGame {
                 board.grid[y][x] = ' ';
             }
         }
+        
+        // Play background sound
+        SoundManager::playBackgroundSound();
 
         enableRawMode();
         spawnNewPiece();
@@ -436,6 +497,8 @@ struct TetrisGame {
         }
 
         disableRawMode();
+        // Stop background sound
+        SoundManager::stopBackgroundSound();
         cout << "Thanks for playing!\n";
         usleep(2000000);
     }
