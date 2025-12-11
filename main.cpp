@@ -113,6 +113,12 @@ struct SoundManager {
     static void playHardDropSound() {
         playSFX(hardDropSoundFile);
     }
+    
+    // Lock piece
+    static inline std::string lockPieceSoundFile = "lock_piece.wav";
+    static void playLockPieceSound() {
+        playSFX(lockPieceSoundFile);
+    }
 };
 
 struct Board {
@@ -489,6 +495,7 @@ struct TetrisGame {
             currentPiece.pos.y++;
         } else {
             state.running = lockPieceAndCheck();
+            SoundManager::playLockPieceSound();
         }
     }
 
