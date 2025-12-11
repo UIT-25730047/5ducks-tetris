@@ -107,6 +107,12 @@ struct SoundManager {
     static void playSoftDropSound() {
         playSFX(softDropSoundFile);
     }
+    
+    // Hard drop
+    static inline std::string hardDropSoundFile = "hard_drop.wav";
+    static void playHardDropSound() {
+        playSFX(hardDropSoundFile);
+    }
 };
 
 struct Board {
@@ -447,6 +453,7 @@ struct TetrisGame {
                 softDrop();
                 break;
             case ' ': // hard drop
+                SoundManager::playHardDropSound();
                 hardDrop();
                 flushInput(); // flush repeated spaces
                 break;
