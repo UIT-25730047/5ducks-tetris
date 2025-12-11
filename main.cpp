@@ -119,6 +119,12 @@ struct SoundManager {
     static void playLockPieceSound() {
         playSFX(lockPieceSoundFile);
     }
+    
+    // Line clear
+    static inline std::string lineClearSoundFile = "line_clear.wav";
+    static void playLineClearSound() {
+        playSFX(lineClearSoundFile);
+    }
 };
 
 struct Board {
@@ -149,7 +155,8 @@ struct Board {
         cout.flush();
     }
 
-    void clearLines() {
+    int clearLines() {
+        int linesCleared = 0;
         int writeRow = BOARD_HEIGHT - 2;
 
         // Scan from bottom to top
@@ -170,6 +177,8 @@ struct Board {
                     }
                 }
                 --writeRow;
+            } else {
+                linesCleared++;
             }
         }
 
@@ -180,6 +189,8 @@ struct Board {
             }
             --writeRow;
         }
+        
+        return linesCleared;
     }
 };
 
@@ -409,7 +420,10 @@ struct TetrisGame {
     bool lockPieceAndCheck() {
         // permanently place current piece
         placePiece(currentPiece, true);
-        board.clearLines();
+        int cleared = board.clearLines();
+        if (cleared > 0) {
+            SoundManager::playLineClearSound();
+        }
 
         spawnNewPiece();
         if (!state.running) {
