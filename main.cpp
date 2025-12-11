@@ -89,6 +89,24 @@ struct SoundManager {
         // Kills all "play" processes running in loop
         system("pkill -f \"play .*background_sound_01.mp3\" >/dev/null 2>&1");
     }
+    
+    // Sound effects
+    static void playSFX(const std::string& filename) {
+        std::string path = soundPath(filename);
+        
+    #if __APPLE__
+        std::string cmd = "afplay \"" + path + "\" &";
+    #else
+        std::string cmd = "aplay \"" + path + "\" &";
+    #endif
+        system(cmd.c_str());
+    }
+    
+    // Soft drop
+    static inline std::string softDropSoundFile = "soft_drop.mp3";
+    static void playSoftDropSound() {
+        playSFX(softDropSoundFile);
+    }
 };
 
 struct Board {
@@ -425,6 +443,7 @@ struct TetrisGame {
                 }
                 break;
             case 'x': // soft drop one cell
+                SoundManager::playSoftDropSound();
                 softDrop();
                 break;
             case ' ': // hard drop
