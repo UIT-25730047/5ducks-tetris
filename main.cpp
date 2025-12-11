@@ -125,6 +125,12 @@ struct SoundManager {
     static void playLineClearSound() {
         playSFX(lineClearSoundFile);
     }
+    
+    // Tetris (4 lines)
+    static inline std::string fourLinesClearSoundFile = "4lines_clear.mp3";
+    static void play4LinesClearSound() {
+        playSFX(fourLinesClearSoundFile);
+    }
 };
 
 struct Board {
@@ -422,7 +428,11 @@ struct TetrisGame {
         placePiece(currentPiece, true);
         int cleared = board.clearLines();
         if (cleared > 0) {
-            SoundManager::playLineClearSound();
+            if (cleared == 4) {
+                SoundManager::play4LinesClearSound();
+            } else {
+                SoundManager::playLineClearSound();
+            }
         }
 
         spawnNewPiece();
