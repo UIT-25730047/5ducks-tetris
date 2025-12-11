@@ -131,6 +131,12 @@ struct SoundManager {
     static void play4LinesClearSound() {
         playSFX(fourLinesClearSoundFile);
     }
+    
+    // Game over
+    static inline std::string gameOverSoundFile = "game_over.mp3";
+    static void playGameOverSound() {
+        playSFX(gameOverSoundFile);
+    }
 };
 
 struct Board {
@@ -438,6 +444,7 @@ struct TetrisGame {
         spawnNewPiece();
         if (!state.running) {
             board.draw(state);
+            SoundManager::playGameOverSound();
             cout << "\n*** GAME OVER ***\n";
             return false;
         }
