@@ -94,7 +94,7 @@ struct Board {
             // The console buffer updates, but the user doesn't see the frames.
             
             // FLAW: Sleep time might be too short or misplaced
-            usleep(2000); // Too fast to notice
+            usleep(1000); // Too fast to notice
         }
         // The board only draws once at the very end
         draw(state); 
