@@ -273,6 +273,17 @@ struct TetrisGame {
         return key;
     }
 
+    void getNextPiecePreview(string lines[4]) const {
+        // Render the next piece as 4 lines of 4 characters each
+        for (int row = 0; row < 4; ++row) {
+            lines[row] = "";
+            for (int col = 0; col < 4; ++col) {
+                char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
+                lines[row] += cell;
+            }
+        }
+    }
+
     bool isInsidePlayfield(int x, int y) const {
         return x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT;
     }
