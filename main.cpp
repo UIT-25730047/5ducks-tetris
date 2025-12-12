@@ -255,7 +255,12 @@ struct TetrisGame {
                y >= 0 && y < BOARD_HEIGHT - 1;
     }
 
-    // used only when spawning: ignore existing blocks, check only bounds
+    // [VERSION 1]
+    // ---------------------------------------------------------
+
+    // 1. In TetrisGame::canSpawn()
+    // Only checks if the piece is physically outside the wall boundaries.
+    // FLAW: It does not check if it overlaps with existing blocks (the "Roof" logic).
     bool canSpawn(const Piece& piece) const {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
             for (int j = 0; j < BLOCK_SIZE; ++j) {
@@ -478,7 +483,7 @@ struct TetrisGame {
         }
 
         disableRawMode();
-        cout << "Thanks for playing!\n";
+        cout << "Game Over.\n";
         usleep(2000000);
     }
 };
