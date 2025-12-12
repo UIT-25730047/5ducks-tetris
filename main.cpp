@@ -77,6 +77,29 @@ struct Board {
         cout.flush();
     }
 
+    // [VERSION 3]
+    // ---------------------------------------------------------
+
+    // 1. In Board struct
+    // Logic is correct (Bottom -> Top), but implementation is buggy.
+    void animateGameOver(const GameState& state) {
+        // Correct loop direction: Bottom to Top
+        for (int y = BOARD_HEIGHT - 2; y >= 1; --y) {
+            
+            for (int x = 1; x < BOARD_WIDTH - 1; ++x) {
+                grid[y][x] = '#'; 
+            }
+
+            // FLAW: Forgot to call draw(state) here!
+            // The console buffer updates, but the user doesn't see the frames.
+            
+            // FLAW: Sleep time might be too short or misplaced
+            usleep(2000); // Too fast to notice
+        }
+        // The board only draws once at the very end
+        draw(state); 
+    }
+
     void clearLines() {
         int writeRow = BOARD_HEIGHT - 2;
 
@@ -255,8 +278,6 @@ struct TetrisGame {
                y >= 0 && y < BOARD_HEIGHT - 1;
     }
 
-    // [VERSION 2]
-    // ---------------------------------------------------------
 
     // 1. In TetrisGame::canSpawn()
     // Added logic to check collision with existing grid blocks.
@@ -276,19 +297,6 @@ struct TetrisGame {
             }
         }
         return true;
-    }
-
-    // 2. In Board struct
-    // First attempt at animation.
-    // FLAW: Loops from 0 to BOARD_HEIGHT (Top -> Bottom).
-    void animateGameOver(const GameState& state) {
-        for (int y = 0; y < BOARD_HEIGHT - 1; ++y) { // Wrong direction!
-            for (int x = 1; x < BOARD_WIDTH - 1; ++x) {
-                grid[y][x] = '#'; 
-            }
-            draw(state);
-            usleep(50000); 
-        }
     }
 
     bool canMove(int dx, int dy, int newRotation) const {
