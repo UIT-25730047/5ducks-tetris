@@ -207,6 +207,8 @@ struct TetrisGame {
     Board board;
     GameState state;
     Piece currentPiece{};
+    int nextPieceType{0};  // next piece type storage
+
     termios origTermios{};
     long dropSpeedUs{500000};
     int dropCounter{0};
@@ -339,11 +341,14 @@ struct TetrisGame {
         std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
 
         // Create piece for this spawn
-        currentPiece.type = dist(rng);
+        currentPiece.type = nextPieceType;
         currentPiece.rotation = 0;
 
         int spawnX = (BOARD_WIDTH / 2) - (BLOCK_SIZE / 2);
         currentPiece.pos = Position(spawnX, -1);
+
+        // Generate next
+        nextPieceType = dist(rng);
     }
 
     bool lockPieceAndCheck() {
@@ -406,7 +411,10 @@ struct TetrisGame {
         BlockTemplate::initializeTemplates();
         board.init();
 
-        drawStartScreen();
+        std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
+        nextPieceType = dist(rng);
+
+        drawStartScreen()
         waitForKeyPress();
 
         spawnNewPiece();
@@ -420,7 +428,9 @@ struct TetrisGame {
 
             // Draw everything
             placePiece(currentPiece, true);
-            board.draw(state);
+            string preview[4];
+            getNextPiecePreview(preview);
+            board.draw(state, preview);
             placePiece(currentPiece, false);
 
             usleep(dropSpeedUs / 5);
