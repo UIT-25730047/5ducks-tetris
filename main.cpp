@@ -255,12 +255,11 @@ struct TetrisGame {
                y >= 0 && y < BOARD_HEIGHT - 1;
     }
 
-    // [VERSION 1]
+    // [VERSION 2]
     // ---------------------------------------------------------
 
     // 1. In TetrisGame::canSpawn()
-    // Only checks if the piece is physically outside the wall boundaries.
-    // FLAW: It does not check if it overlaps with existing blocks (the "Roof" logic).
+    // Added logic to check collision with existing grid blocks.
     bool canSpawn(const Piece& piece) const {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
             for (int j = 0; j < BLOCK_SIZE; ++j) {
@@ -277,6 +276,19 @@ struct TetrisGame {
             }
         }
         return true;
+    }
+
+    // 2. In Board struct
+    // First attempt at animation.
+    // FLAW: Loops from 0 to BOARD_HEIGHT (Top -> Bottom).
+    void animateGameOver(const GameState& state) {
+        for (int y = 0; y < BOARD_HEIGHT - 1; ++y) { // Wrong direction!
+            for (int x = 1; x < BOARD_WIDTH - 1; ++x) {
+                grid[y][x] = '#'; 
+            }
+            draw(state);
+            usleep(50000); 
+        }
     }
 
     bool canMove(int dx, int dy, int newRotation) const {
