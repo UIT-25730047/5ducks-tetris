@@ -14,6 +14,10 @@ constexpr int NEXT_PICE_WIDTH  = 14;
 constexpr int BLOCK_SIZE       = 4;
 constexpr int NUM_BLOCK_TYPES  = 7;
 
+// gameplay timing
+constexpr long BASE_DROP_SPEED_US   = 500000;
+constexpr int  DROP_INTERVAL_TICKS  = 5;
+
 struct Position {
     int x{}, y{};
     Position() = default;
@@ -48,7 +52,6 @@ struct Board {
         string frame;
         frame.reserve(3072);
 
-        // Clear screen + move cursor to top-left
         frame += "\033[2J\033[1;1H";
         const string title = "TETRIS GAME";
 
@@ -77,7 +80,7 @@ struct Board {
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
-        // Draw board rows with borders
+        // Board rows
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             frame += '|';
             for (int j = 0; j < BOARD_WIDTH; ++j) {
@@ -85,7 +88,7 @@ struct Board {
             }
             frame += '|';
 
-            // UI panel: next piece and stats
+            // Right panel
             if (i == 0) {
                 frame += "              |";
             } else if (i >= 1 && i <= 4) {
@@ -129,6 +132,41 @@ struct Board {
         cout << frame;
         cout.flush();
     }
+
+    int clearLines() {
+        int writeRow = BOARD_HEIGHT - 1;
+        int linesCleared = 0;
+
+        for (int readRow = BOARD_HEIGHT - 1; readRow >= 0; --readRow) {
+            bool full = true;
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                if (grid[readRow][j] == ' ') {
+                    full = false;
+                    break;
+                }
+            }
+
+            if (!full) {
+                if (writeRow != readRow) {
+                    for (int j = 0; j < BOARD_WIDTH; ++j) {
+                        grid[writeRow][j] = grid[readRow][j];
+                    }
+                }
+                --writeRow;
+            } else {
+                ++linesCleared;
+            }
+        }
+
+        while (writeRow >= 0) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                grid[writeRow][j] = ' ';
+            }
+            --writeRow;
+        }
+
+        return linesCleared;
+    }
 };
 
 struct BlockTemplate {
@@ -145,75 +183,72 @@ struct BlockTemplate {
     }
 
     static void initializeTemplates() {
-        static const int TETROMINOES[7][4][4] = {
-            // I
-            {
-                {0,1,0,0},
-                {0,1,0,0},
-                {0,1,0,0},
-                {0,1,0,0}
-            },
-            // O
-            {
-                {0,0,0,0},
-                {0,1,1,0},
-                {0,1,1,0},
-                {0,0,0,0}
-            },
-            // T
-            {
-                {0,0,0,0},
-                {0,1,0,0},
-                {1,1,1,0},
-                {0,0,0,0}
-            },
-            // S
-            {
-                {0,0,0,0},
-                {0,1,1,0},
-                {1,1,0,0},
-                {0,0,0,0}
-            },
-            // Z
-            {
-                {0,0,0,0},
-                {1,1,0,0},
-                {0,1,1,0},
-                {0,0,0,0}
-            },
-            // J
-            {
-                {0,0,0,0},
-                {1,0,0,0},
-                {1,1,1,0},
-                {0,0,0,0}
-            },
-            // L
-            {
-                {0,0,0,0},
-                {0,0,1,0},
-                {1,1,1,0},
-                {0,0,0,0}
+            static const int TETROMINOES[7][4][4] = {
+                // I
+                {
+                    {0,1,0,0},
+                    {0,1,0,0},
+                    {0,1,0,0},
+                    {0,1,0,0}
+                },
+                // O
+                {
+                    {0,0,0,0},
+                    {0,1,1,0},
+                    {0,1,1,0},
+                    {0,0,0,0}
+                },
+                // T
+                {
+                    {0,0,0,0},
+                    {0,1,0,0},
+                    {1,1,1,0},
+                    {0,0,0,0}
+                },
+                // S
+                {
+                    {0,0,0,0},
+                    {0,1,1,0},
+                    {1,1,0,0},
+                    {0,0,0,0}
+                },
+                // Z
+                {
+                    {0,0,0,0},
+                    {1,1,0,0},
+                    {0,1,1,0},
+                    {0,0,0,0}
+                },
+                // J
+                {
+                    {0,0,0,0},
+                    {1,0,0,0},
+                    {1,1,1,0},
+                    {0,0,0,0}
+                },
+                // L
+                {
+                    {0,0,0,0},
+                    {0,0,1,0},
+                    {1,1,1,0},
+                    {0,0,0,0}
+                }
+            };
+
+            static const char NAMES[7] = {'I','O','T','S','Z','J','L'};
+
+            for (int i = 0; i < 7; i++) {
+                setBlockTemplate(i, NAMES[i], TETROMINOES[i]);
             }
-        };
-
-        static const char NAMES[7] = {'I','O','T','S','Z','J','L'};
-
-        for (int i = 0; i < 7; i++) {
-            setBlockTemplate(i, NAMES[i], TETROMINOES[i]);
         }
-    }
 
     static char getCell(int type, int rotation, int row, int col) {
-        int r = row;
-        int c = col;
-
+        int r = row, c = col;
         for (int i = 0; i < rotation; ++i) {
             int temp = 3 - c;
             c = r;
             r = temp;
         }
-
         return templates[type][r][c];
     }
 };
@@ -224,10 +259,10 @@ struct TetrisGame {
     Board board;
     GameState state;
     Piece currentPiece{};
-    int nextPieceType{0};  // next piece type storage
+    int nextPieceType{0};
 
     termios origTermios{};
-    long dropSpeedUs{500000};
+    long dropSpeedUs{BASE_DROP_SPEED_US};
     int dropCounter{0};
 
     std::mt19937 rng;
@@ -237,6 +272,7 @@ struct TetrisGame {
         rng.seed(rd());
     }
 
+    // POSIX terminal helpers
     void enableRawMode() {
         tcgetattr(STDIN_FILENO, &origTermios);
         termios raw = origTermios;
@@ -314,7 +350,7 @@ struct TetrisGame {
         screen += "+\n|";
         screen.append(totalWidth, ' ');
         screen += "|\n|";
-        const string title = "GAME OVER!";
+        const string title = "GAME OVER";
         int titlePadding = totalWidth - title.length();
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
@@ -324,13 +360,35 @@ struct TetrisGame {
         screen += "|\n|";
         screen.append(totalWidth, ' ');
         screen += "|\n|";
-        const string prompt = "Press R to Restart or Q to Quit";
-        int promptPadding = totalWidth - prompt.length();
-        int promptLeft = promptPadding / 2;
-        int promptRight = promptPadding - promptLeft;
-        screen.append(promptLeft, ' ');
-        screen += prompt;
-        screen.append(promptRight, ' ');
+        char scoreBuf[64];
+        snprintf(scoreBuf, sizeof(scoreBuf), "Final Score: %d", state.score);
+        string scoreStr(scoreBuf);
+        int scorePadding = totalWidth - scoreStr.length();
+        int scoreLeft = scorePadding / 2;
+        int scoreRight = scorePadding - scoreLeft;
+        screen.append(scoreLeft, ' ');
+        screen += scoreStr;
+        screen.append(scoreRight, ' ');
+        screen += "|\n|";
+        char levelBuf[64];
+        snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
+        string levelStr(levelBuf);
+        int levelPadding = totalWidth - levelStr.length();
+        int levelLeft = levelPadding / 2;
+        int levelRight = levelPadding - levelLeft;
+        screen.append(levelLeft, ' ');
+        screen += levelStr;
+        screen.append(levelRight, ' ');
+        screen += "|\n|";
+        char linesBuf[64];
+        snprintf(linesBuf, sizeof(linesBuf), "Lines Cleared: %d", state.linesCleared);
+        string linesStr(linesBuf);
+        int linesPadding = totalWidth - linesStr.length();
+        int linesLeft = linesPadding / 2;
+        int linesRight = linesPadding - linesLeft;
+        screen.append(linesLeft, ' ');
+        screen += linesStr;
+        screen.append(linesRight, ' ');
         screen += "|\n|";
         screen.append(totalWidth, ' ');
         screen += "|\n+";
@@ -343,7 +401,7 @@ struct TetrisGame {
 
     void getNextPiecePreview(string lines[4]) const {
         for (int row = 0; row < 4; ++row) {
-            lines[row] = "";
+            lines[row].clear();
             for (int col = 0; col < 4; ++col) {
                 char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
                 lines[row] += cell;
@@ -351,8 +409,24 @@ struct TetrisGame {
         }
     }
 
-    bool isInsidePlayfield(int x, int y) const {
-        return x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT;
+    bool canSpawn(const Piece& piece) const {
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                char cell = BlockTemplate::getCell(piece.type, piece.rotation, i, j);
+                if (cell == ' ') continue;
+
+                int xt = piece.pos.x + j;
+                int yt = piece.pos.y + i;
+
+                if (xt < 0 || xt >= BOARD_WIDTH) return false;
+                if (yt >= BOARD_HEIGHT) return false;
+                if (yt >= 0) {
+                    char gridCell = board.grid[yt][xt];
+                    if (gridCell != ' ') return false;
+                }
+            }
+        }
+        return true;
     }
 
     bool canMove(int dx, int dy, int newRotation) const {
@@ -381,8 +455,7 @@ struct TetrisGame {
                 int xt = piece.pos.x + j;
                 int yt = piece.pos.y + i;
 
-                if (yt < 0 || yt >= BOARD_HEIGHT ||
-                    xt < 0 || xt >= BOARD_WIDTH) {
+                if (yt < 0 || yt >= BOARD_HEIGHT || xt < 0 || xt >= BOARD_WIDTH) {
                     continue;
                 }
                 board.grid[yt][xt] = place ? cell : ' ';
@@ -390,91 +463,84 @@ struct TetrisGame {
         }
     }
 
-    int clearLines() {
-        int writeRow = BOARD_HEIGHT - 1;
-        int linesCleared = 0;
-
-        // Scan from bottom to top
-        for (int readRow = BOARD_HEIGHT - 1; readRow >= 0; --readRow) {
-            bool full = true;
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                if (board.grid[readRow][j] == ' ') {
-                    full = false;
-                    break;
-                }
-            }
-
-            // Keep non-full rows, skip full ones
-            if (!full) {
-                if (writeRow != readRow) {
-                    for (int j = 0; j < BOARD_WIDTH; ++j) {
-                        board.grid[writeRow][j] = board.grid[readRow][j];
-                    }
-                }
-                --writeRow;
-            } else {
-                ++linesCleared;
-            }
-        }
-
-        // Clear remaining top rows
-        while (writeRow >= 0) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                board.grid[writeRow][j] = ' ';
-            }
-            --writeRow;
-        }
-
-        return linesCleared;
-    }
+    int clearLines() { return board.clearLines(); }
 
     void spawnNewPiece() {
         std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
 
-        currentPiece.type = nextPieceType;
-        currentPiece.rotation = 0;
+        Piece testPiece;
+        testPiece.type = nextPieceType;
+        testPiece.rotation = 0;
         int spawnX = (BOARD_WIDTH / 2) - (BLOCK_SIZE / 2);
-        currentPiece.pos = Position(spawnX, -1);
+        testPiece.pos = Position(spawnX, -1);
+
+        // Update current piece for rendering
+        currentPiece = testPiece;
+
+        // If spawn invalid, end game
+        if (!canSpawn(testPiece)) {
+            state.running = false;
+            return;
+        }
+
+        // Prepare next piece
         nextPieceType = dist(rng);
     }
 
     bool lockPieceAndCheck() {
         placePiece(currentPiece, true);
 
-        // New score logic:
         int lines = clearLines();
         if (lines > 0) {
             state.linesCleared += lines;
-            // Standard Tetris scoring: 1=40, 2=100, 3=300, 4=1200
             const int scores[] = {0, 40, 100, 300, 1200};
             state.score += scores[lines] * state.level;
             state.level = 1 + (state.linesCleared / 10);
         }
 
         spawnNewPiece();
-
-        return true;
+        return state.running;
     }
 
     void softDrop() {
-        if (canMove(0, 1, currentPiece.rotation)) currentPiece.pos.y++;
-        else { lockPieceAndCheck(); dropCounter = 0;}
+        if (canMove(0, 1, currentPiece.rotation)) {
+            currentPiece.pos.y++;
+        } else {
+            // If piece still above board, game over
+            if (currentPiece.pos.y < 0) {
+                state.running = false;
+                return;
+            }
+            state.running = lockPieceAndCheck();
+            dropCounter = 0;
+        }
     }
 
     void hardDrop() {
         while (canMove(0, 1, currentPiece.rotation)) currentPiece.pos.y++;
-        lockPieceAndCheck();
+        if (currentPiece.pos.y < 0) { state.running = false; return; }
+        state.running = lockPieceAndCheck();
         dropCounter = 0;
     }
 
-    void handleInput(bool& wantRestart, bool& wantQuit) {
+    void handleInput() {
         char c = getInput();
         if (c == 0) return;
+
         switch (c) {
-            case 'a': if (canMove(-1, 0, currentPiece.rotation)) currentPiece.pos.x--; break;
-            case 'd': if (canMove(1, 0, currentPiece.rotation)) currentPiece.pos.x++; break;
-            case 'x': softDrop(); break;
-            case ' ': hardDrop(); flushInput(); break;
+            case 'a':
+                if (canMove(-1, 0, currentPiece.rotation)) currentPiece.pos.x--;
+                break;
+            case 'd':
+                if (canMove(1, 0, currentPiece.rotation)) currentPiece.pos.x++;
+                break;
+            case 'x':
+                softDrop();
+                break;
+            case ' ':
+                hardDrop();
+                flushInput();
+                break;
             case 'w': {
                 int newRot = (currentPiece.rotation + 1) % 4;
                 int kicks[] = {0, -1, 1, -2, 2};
@@ -487,22 +553,25 @@ struct TetrisGame {
                 }
                 break;
             }
-            case 'q': state.running = false; break;
-            case 'r': wantRestart = true; break;
-            default: break;
+            case 'q':
+                state.running = false;
+                break;
+            default:
+                break;
         }
-        if (c == 'q') wantQuit = true;
     }
 
     void handleGravity() {
         if (!state.running) return;
         ++dropCounter;
-        if (dropCounter < 5) return;
+        if (dropCounter < DROP_INTERVAL_TICKS) return;
         dropCounter = 0;
+
         if (canMove(0, 1, currentPiece.rotation)) {
             currentPiece.pos.y++;
         } else {
-            lockPieceAndCheck();
+            if (currentPiece.pos.y < 0) { state.running = false; return; }
+            state.running = lockPieceAndCheck();
         }
     }
 
@@ -520,9 +589,9 @@ struct TetrisGame {
         state.running = true;
 
         while (state.running) {
-            bool wantRestart = false, wantQuit = false;
-            handleInput(wantRestart, wantQuit);
+            handleInput();
             if (!state.running) break;
+
             handleGravity();
 
             placePiece(currentPiece, true);
@@ -531,24 +600,12 @@ struct TetrisGame {
             board.draw(state, preview);
             placePiece(currentPiece, false);
 
-            usleep(dropSpeedUs / 5);
-
-            if (wantRestart || wantQuit) {
-                state.running = false;
-                break;
-            }
+            usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
         }
 
+        // Simple game over screen (no animation, no restart)
         drawGameOverScreen();
-
-        char choice = waitForKeyPress();
-        if (choice == 'r' || choice == 'R') {
-            // Reset score, etc. when restarting
-            state.score = 0;
-            state.level = 1;
-            state.linesCleared = 0;
-            run();
-        }
+        disableRawMode();
     }
 };
 
