@@ -303,6 +303,44 @@ struct TetrisGame {
         return key;
     }
 
+    void drawGameOverScreen() {
+        string screen;
+        screen.reserve(512);
+
+        screen += "\033[2J\033[1;1H";
+        int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+        screen += '+';
+        screen.append(totalWidth, '-');
+        screen += "+\n|";
+        screen.append(totalWidth, ' ');
+        screen += "|\n|";
+        const string title = "GAME OVER!";
+        int titlePadding = totalWidth - title.length();
+        int titleLeft = titlePadding / 2;
+        int titleRight = titlePadding - titleLeft;
+        screen.append(titleLeft, ' ');
+        screen += title;
+        screen.append(titleRight, ' ');
+        screen += "|\n|";
+        screen.append(totalWidth, ' ');
+        screen += "|\n|";
+        const string prompt = "Press R to Restart or Q to Quit";
+        int promptPadding = totalWidth - prompt.length();
+        int promptLeft = promptPadding / 2;
+        int promptRight = promptPadding - promptLeft;
+        screen.append(promptLeft, ' ');
+        screen += prompt;
+        screen.append(promptRight, ' ');
+        screen += "|\n|";
+        screen.append(totalWidth, ' ');
+        screen += "|\n+";
+        screen.append(totalWidth, '-');
+        screen += "+\n";
+
+        cout << screen;
+        cout.flush();
+    }
+
     void getNextPiecePreview(string lines[4]) const {
         for (int row = 0; row < 4; ++row) {
             lines[row] = "";
@@ -500,6 +538,8 @@ struct TetrisGame {
                 break;
             }
         }
+
+        drawGameOverScreen();
 
         char choice = waitForKeyPress();
         if (choice == 'r' || choice == 'R') {
