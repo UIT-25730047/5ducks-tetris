@@ -41,7 +41,7 @@ struct Board {
         }
     }
 
-    void draw(const GameState& state) const {
+    void draw(const GameState& state, const string nextPieceLines[4]) const {
         // Build entire frame in a string buffer for single output
         string frame;
         frame.reserve(3072); // Pre-allocate
@@ -66,7 +66,7 @@ struct Board {
         frame.append(leftPad, ' ');
         frame += title;
         frame.append(rightPad, ' ');
-        frame += "|              |\n";
+        frame += "|  NEXT PIECE  |\n";
 
         // Divider
         frame += '+';
@@ -82,10 +82,21 @@ struct Board {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 frame += grid[i][j];
             }
-            // Right border + empty panel
+            // Right border + preview panel
             frame += '|';
-            frame.append(NEXT_PICE_WIDTH, ' ');
-            frame += '|';
+            if (i == 0) {
+                frame += "              |";
+            } else if (i >= 1 && i <= 4) {
+                frame += "     ";
+                frame += nextPieceLines[i - 1];
+                frame += "     |";
+            } else if (i == 5) {
+                frame.append(NEXT_PICE_WIDTH, '-');
+                frame += '|';
+            } else {
+                frame.append(NEXT_PICE_WIDTH, ' ');
+                frame += '|';
+            }
             frame += '\n';
         }
 
