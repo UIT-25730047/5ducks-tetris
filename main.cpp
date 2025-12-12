@@ -14,7 +14,7 @@ constexpr int BLOCK_SIZE       = 4;
 constexpr int NUM_BLOCK_TYPES  = 7;
 
 // gameplay tuning
-constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (5s)
+constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (0.5s)
 constexpr int  DROP_INTERVAL_TICKS  = 5;      // logic steps per drop
 
 struct Position {
@@ -25,6 +25,8 @@ struct Position {
 
 struct GameState {
     bool running{true};
+    // Added pause state tracking
+    bool paused{false};
 };
 
 struct Piece {
@@ -50,7 +52,8 @@ struct Board {
     void draw(const GameState& state) const {
         // clear screen + move cursor to top-left
         cout << "\033[2J\033[1;1H";
-        cout << "Controls: a=left d=right w=rotate x=soft-drop SPACE=hard-drop q=quit\n\n";
+        // Updated controls info to include Pause
+        cout << "Controls: A/D=Move  W=Rotate  X=Soft-drop  SPACE=Hard-drop  P=Pause  Q=Quit\n\n";
 
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
@@ -58,6 +61,19 @@ struct Board {
             }
             cout << "\n";
         }
+        cout.flush();
+    }
+
+    // Function to draw the pause screen overlay
+    void drawPause() const {
+        cout << "\033[2J\033[1;1H"; // Clear screen
+        
+        cout << "\n\n\n";
+        cout << "      ======================\n";
+        cout << "      =    GAME PAUSED     =\n";
+        cout << "      ======================\n\n";
+        cout << "        Press P to Resume   \n";
+        cout << "        Press Q to Quit     \n";
         cout.flush();
     }
 
@@ -168,7 +184,7 @@ struct BlockTemplate {
         }
     }
 
-    // rotation: 0-3 (90° steps clockwise)
+    // rotation: 0-3 (90 degrees steps clockwise)
     static char getCell(int type, int rotation, int row, int col) {
         int r = row;
         int c = col;
@@ -355,6 +371,23 @@ struct TetrisGame {
         char c = getInput();
         if (c == 0) return;
 
+        // Handle 'P' key for Pause toggle
+        if (c == 'p') {
+            state.paused = !state.paused;
+            if (state.paused) {
+                board.drawPause(); // Draw pause screen immediately
+            }
+            return;
+        }
+
+        // If paused, block all inputs except 'Q' and 'P'
+        if (state.paused) {
+            if (c == 'q') { // Allow quitting while paused
+                state.running = false;
+            }
+            return; // Skip movement logic below
+        }
+
         switch (c) {
             case 'a': // move left
                 if (canMove(-1, 0, currentPiece.rotation)) {
@@ -395,6 +428,8 @@ struct TetrisGame {
 
     void handleGravity() {
         if (!state.running) return;
+        // Do not process gravity if game is paused
+        if (state.paused) return;
 
         ++dropCounter;
         if (dropCounter < DROP_INTERVAL_TICKS) return;
@@ -427,6 +462,13 @@ struct TetrisGame {
 
         while (state.running) {
             handleInput();
+
+            // If paused, skip rendering and gravity logic to save CPU
+            if (state.paused) {
+                usleep(100000); // Sleep for 100ms
+                continue;
+            }
+
             handleGravity();
             placePiece(currentPiece, true);
             board.draw(state);
