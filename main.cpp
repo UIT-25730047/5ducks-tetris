@@ -22,6 +22,9 @@ struct Position {
 
 struct GameState {
     bool running{true};
+    int score{0};
+    int level{1};
+    int linesCleared{0};
 };
 
 struct Piece {
@@ -42,9 +45,8 @@ struct Board {
     }
 
     void draw(const GameState& state, const string nextPieceLines[4]) const {
-        // Build entire frame in a string buffer for single output
         string frame;
-        frame.reserve(3072); // Pre-allocate
+        frame.reserve(3072);
 
         // Clear screen + move cursor to top-left
         frame += "\033[2J\033[1;1H";
@@ -77,13 +79,13 @@ struct Board {
 
         // Draw board rows with borders
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            // Left border
             frame += '|';
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 frame += grid[i][j];
             }
-            // Right border + preview panel
             frame += '|';
+
+            // UI panel: next piece and stats
             if (i == 0) {
                 frame += "              |";
             } else if (i >= 1 && i <= 4) {
@@ -92,6 +94,21 @@ struct Board {
                 frame += "     |";
             } else if (i == 5) {
                 frame.append(NEXT_PICE_WIDTH, '-');
+                frame += '|';
+            } else if (i == 6) {
+                char buf[20];
+                snprintf(buf, sizeof(buf), " SCORE: %-6d", state.score);
+                frame += buf;
+                frame += '|';
+            } else if (i == 7) {
+                char buf[20];
+                snprintf(buf, sizeof(buf), " LEVEL: %-6d", state.level);
+                frame += buf;
+                frame += '|';
+            } else if (i == 8) {
+                char buf[20];
+                snprintf(buf, sizeof(buf), " LINES: %-6d", state.linesCleared);
+                frame += buf;
                 frame += '|';
             } else {
                 frame.append(NEXT_PICE_WIDTH, ' ');
@@ -287,7 +304,6 @@ struct TetrisGame {
     }
 
     void getNextPiecePreview(string lines[4]) const {
-        // Render the next piece as 4 lines of 4 characters each
         for (int row = 0; row < 4; ++row) {
             lines[row] = "";
             for (int col = 0; col < 4; ++col) {
@@ -312,7 +328,6 @@ struct TetrisGame {
 
                 if (xt < 0 || xt >= BOARD_WIDTH) return false;
                 if (yt >= BOARD_HEIGHT) return false;
-
                 if (yt >= 0 && board.grid[yt][xt] != ' ') return false;
             }
         }
@@ -337,23 +352,69 @@ struct TetrisGame {
         }
     }
 
+    int clearLines() {
+        int writeRow = BOARD_HEIGHT - 1;
+        int linesCleared = 0;
+
+        // Scan from bottom to top
+        for (int readRow = BOARD_HEIGHT - 1; readRow >= 0; --readRow) {
+            bool full = true;
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                if (board.grid[readRow][j] == ' ') {
+                    full = false;
+                    break;
+                }
+            }
+
+            // Keep non-full rows, skip full ones
+            if (!full) {
+                if (writeRow != readRow) {
+                    for (int j = 0; j < BOARD_WIDTH; ++j) {
+                        board.grid[writeRow][j] = board.grid[readRow][j];
+                    }
+                }
+                --writeRow;
+            } else {
+                ++linesCleared;
+            }
+        }
+
+        // Clear remaining top rows
+        while (writeRow >= 0) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                board.grid[writeRow][j] = ' ';
+            }
+            --writeRow;
+        }
+
+        return linesCleared;
+    }
+
     void spawnNewPiece() {
         std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
 
-        // Create piece for this spawn
         currentPiece.type = nextPieceType;
         currentPiece.rotation = 0;
-
         int spawnX = (BOARD_WIDTH / 2) - (BLOCK_SIZE / 2);
         currentPiece.pos = Position(spawnX, -1);
-
-        // Generate next
         nextPieceType = dist(rng);
     }
 
     bool lockPieceAndCheck() {
         placePiece(currentPiece, true);
+
+        // New score logic:
+        int lines = clearLines();
+        if (lines > 0) {
+            state.linesCleared += lines;
+            // Standard Tetris scoring: 1=40, 2=100, 3=300, 4=1200
+            const int scores[] = {0, 40, 100, 300, 1200};
+            state.score += scores[lines] * state.level;
+            state.level = 1 + (state.linesCleared / 10);
+        }
+
         spawnNewPiece();
+
         return true;
     }
 
@@ -414,7 +475,7 @@ struct TetrisGame {
         std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
         nextPieceType = dist(rng);
 
-        drawStartScreen()
+        drawStartScreen();
         waitForKeyPress();
 
         spawnNewPiece();
@@ -426,7 +487,6 @@ struct TetrisGame {
             if (!state.running) break;
             handleGravity();
 
-            // Draw everything
             placePiece(currentPiece, true);
             string preview[4];
             getNextPiecePreview(preview);
@@ -443,6 +503,10 @@ struct TetrisGame {
 
         char choice = waitForKeyPress();
         if (choice == 'r' || choice == 'R') {
+            // Reset score, etc. when restarting
+            state.score = 0;
+            state.level = 1;
+            state.linesCleared = 0;
             run();
         }
     }
