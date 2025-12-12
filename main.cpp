@@ -1,7 +1,3 @@
-// [VERSION 5: INFINITE LOOP]
-// Description: The game automatically restarts immediately after Game Over.
-// It fixes the crash from Version 4 but introduces a bad User Experience (UX).
-
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -12,109 +8,479 @@
 
 using namespace std;
 
-// Constants (kept same as previous versions)
-constexpr int BOARD_HEIGHT = 20; 
-constexpr int BOARD_WIDTH = 15; 
-constexpr int BLOCK_SIZE = 4; 
-constexpr int NUM_BLOCK_TYPES = 7;
-constexpr long BASE_DROP_SPEED_US = 500000; 
-constexpr int DROP_INTERVAL_TICKS = 5;
+constexpr int BOARD_HEIGHT      = 20;
+constexpr int BOARD_WIDTH       = 15;
+constexpr int BLOCK_SIZE        = 4;
+constexpr int NUM_BLOCK_TYPES   = 7;
 
-struct Position { int x{}, y{}; Position() = default; Position(int _x, int _y) : x(_x), y(_y) {} };
-struct GameState { bool running{true}; bool paused{false}; int score{0}; }; 
-struct Piece { int type{0}; int rotation{0}; Position pos{5, 0}; };
+// gameplay tuning
+constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (0.5s)
+constexpr int  DROP_INTERVAL_TICKS  = 5;      // logic steps per drop
 
-// Board and Template structs (Identical to previous versions)
+struct Position {
+    int x{}, y{};
+    Position() = default;
+    Position(int _x, int _y) : x(_x), y(_y) {}
+};
+
+struct GameState {
+    bool running{true};
+    bool paused{false};
+    
+    // [NEW] Stats for the game
+    int score{0};
+    int level{1};
+    int lines{0};
+};
+
+struct Piece {
+    int type{0};
+    int rotation{0};
+    Position pos{5, 0};
+};
+
 struct Board {
     char grid[BOARD_HEIGHT][BOARD_WIDTH]{};
-    void init() { for(int i=0;i<BOARD_HEIGHT;++i) for(int j=0;j<BOARD_WIDTH;++j) grid[i][j]=(i==0||i==BOARD_HEIGHT-1||j==0||j==BOARD_WIDTH-1)?'#':' '; }
-    void draw(const GameState& s) const { 
-        cout << "\033[2J\033[1;1H === VERSION 5: INFINITE LOOP ===\n(Status: Die -> Auto Restart)\n"; 
-        for(int i=0;i<BOARD_HEIGHT;++i){for(int j=0;j<BOARD_WIDTH;++j)cout<<grid[i][j];cout<<"\n";} 
-        cout.flush(); 
+
+    void init() {
+        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                grid[i][j] = (i == 0 || i == BOARD_HEIGHT - 1 ||
+                              j == 0 || j == BOARD_WIDTH - 1)
+                              ? '#'
+                              : ' ';
+            }
+        }
     }
-    void clearLines() { int w=BOARD_HEIGHT-2; for(int r=BOARD_HEIGHT-2;r>0;--r){bool f=true;for(int j=1;j<BOARD_WIDTH-1;++j)if(grid[r][j]==' ')f=false; if(!f){if(w!=r)for(int j=1;j<BOARD_WIDTH-1;++j)grid[w][j]=grid[r][j]; --w;} } while(w>0){for(int j=1;j<BOARD_WIDTH-1;++j)grid[w][j]=' '; --w;} }
+
+    void draw(const GameState& state) const {
+        // clear screen + move cursor to top-left
+        cout << "\033[2J\033[1;1H";
+        
+        // [UPDATE] Display Stats
+        cout << "Tetris - Score: " << state.score 
+             << " | Lines: " << state.lines 
+             << " | Level: " << state.level << "\n";
+             
+        // [UPDATE] Added 'R' to controls
+        cout << "Controls: A/D=Move  W=Rotate  SPACE=Drop  P=Pause  R=Restart  Q=Quit\n\n";
+
+        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                cout << grid[i][j];
+            }
+            cout << "\n";
+        }
+        cout.flush();
+    }
+
+    void drawPause() const {
+        cout << "\033[2J\033[1;1H";
+        cout << "\n\n\n";
+        cout << "      ======================\n";
+        cout << "      =    GAME PAUSED     =\n";
+        cout << "      ======================\n\n";
+        cout << "        Press P to Resume   \n";
+        cout << "        Press R to Restart  \n"; // Updated menu
+        cout << "        Press Q to Quit     \n";
+        cout.flush();
+    }
+
+    // Updated to return number of lines cleared (for scoring)
+    int clearLines() {
+        int linesCleared = 0;
+        int writeRow = BOARD_HEIGHT - 2;
+
+        // Scan from bottom to top
+        for (int readRow = BOARD_HEIGHT - 2; readRow > 0; --readRow) {
+            bool full = true;
+            for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+                if (grid[readRow][j] == ' ') {
+                    full = false;
+                    break;
+                }
+            }
+
+            // Keep non-full rows, skip full ones
+            if (!full) {
+                if (writeRow != readRow) {
+                    for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+                        grid[writeRow][j] = grid[readRow][j];
+                    }
+                }
+                --writeRow;
+            } else {
+                linesCleared++;
+            }
+        }
+
+        // Clear remaining top rows
+        while (writeRow > 0) {
+            for (int j = 1; j < BOARD_WIDTH - 1; ++j) {
+                grid[writeRow][j] = ' ';
+            }
+            --writeRow;
+        }
+        return linesCleared;
+    }
 };
 
 struct BlockTemplate {
     static char templates[NUM_BLOCK_TYPES][BLOCK_SIZE][BLOCK_SIZE];
-    static void initializeTemplates() { 
-        static const int TET[7][4][4]={{{0,1,0,0},{0,1,0,0},{0,1,0,0},{0,1,0,0}},{{0,0,0,0},{0,1,1,0},{0,1,1,0},{0,0,0,0}},{{0,0,0,0},{0,1,0,0},{1,1,1,0},{0,0,0,0}},{{0,0,0,0},{0,1,1,0},{1,1,0,0},{0,0,0,0}},{{0,0,0,0},{1,1,0,0},{0,1,1,0},{0,0,0,0}},{{0,0,0,0},{1,0,0,0},{1,1,1,0},{0,0,0,0}},{{0,0,0,0},{0,0,1,0},{1,1,1,0},{0,0,0,0}}};
-        static const char N[7]={'I','O','T','S','Z','J','L'};
-        for(int t=0;t<7;t++) for(int i=0;i<4;i++) for(int j=0;j<4;j++) templates[t][i][j]=TET[t][i][j]?N[t]:' ';
+
+    static void setBlockTemplate(int type,
+                                 char symbol,
+                                 const int shape[BLOCK_SIZE][BLOCK_SIZE]) {
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                templates[type][i][j] = shape[i][j] ? symbol : ' ';
+            }
+        }
     }
-    static char getCell(int t, int r, int row, int col) { int rw=row, cl=col; for(int i=0;i<r;i++){int tm=3-cl;cl=rw;rw=tm;} return templates[t][rw][cl]; }
+
+    static void initializeTemplates() {
+        static const int TETROMINOES[7][4][4] = {
+            // I
+            { {0,1,0,0}, {0,1,0,0}, {0,1,0,0}, {0,1,0,0} },
+            // O
+            { {0,0,0,0}, {0,1,1,0}, {0,1,1,0}, {0,0,0,0} },
+            // T
+            { {0,0,0,0}, {0,1,0,0}, {1,1,1,0}, {0,0,0,0} },
+            // S
+            { {0,0,0,0}, {0,1,1,0}, {1,1,0,0}, {0,0,0,0} },
+            // Z
+            { {0,0,0,0}, {1,1,0,0}, {0,1,1,0}, {0,0,0,0} },
+            // J
+            { {0,0,0,0}, {1,0,0,0}, {1,1,1,0}, {0,0,0,0} },
+            // L
+            { {0,0,0,0}, {0,0,1,0}, {1,1,1,0}, {0,0,0,0} }
+        };
+
+        static const char NAMES[7] = {'I','O','T','S','Z','J','L'};
+
+        for (int i = 0; i < 7; i++) {
+            setBlockTemplate(i, NAMES[i], TETROMINOES[i]);
+        }
+    }
+
+    static char getCell(int type, int rotation, int row, int col) {
+        int r = row;
+        int c = col;
+
+        for (int i = 0; i < rotation; ++i) {
+            int temp = 3 - c;
+            c = r;
+            r = temp;
+        }
+
+        return templates[type][r][c];
+    }
 };
+
 char BlockTemplate::templates[NUM_BLOCK_TYPES][BLOCK_SIZE][BLOCK_SIZE];
 
 struct TetrisGame {
-    Board board; GameState state; Piece currentPiece{};
-    termios origTermios{}; long dropSpeedUs{BASE_DROP_SPEED_US}; int dropCounter{0}; std::mt19937 rng;
-    TetrisGame() { std::random_device rd; rng.seed(rd()); }
+    Board board;
+    GameState state;
+    Piece currentPiece{};
 
-    // Terminal handling
-    void enableRawMode() { tcgetattr(STDIN_FILENO, &origTermios); termios r=origTermios; r.c_lflag&=~(ICANON|ECHO); r.c_cc[VMIN]=0; r.c_cc[VTIME]=0; tcsetattr(STDIN_FILENO, TCSAFLUSH, &r); int f=fcntl(STDIN_FILENO,F_GETFL,0); fcntl(STDIN_FILENO,F_SETFL,f|O_NONBLOCK); }
-    void disableRawMode() { tcsetattr(STDIN_FILENO, TCSAFLUSH, &origTermios); }
-    char getInput() const { char c=0; if(read(STDIN_FILENO,&c,1)>0) return c; return 0; }
-    void flushInput() const { tcflush(STDIN_FILENO, TCIFLUSH); }
+    termios origTermios{};
+    long dropSpeedUs{BASE_DROP_SPEED_US};
+    int dropCounter{0};
 
-    bool canMove(int dx, int dy, int rot) const { for(int i=0;i<4;i++) for(int j=0;j<4;j++) if(BlockTemplate::getCell(currentPiece.type, rot, i, j)!=' ') { int nx=currentPiece.pos.x+j+dx, ny=currentPiece.pos.y+i+dy; if(nx<1||nx>=BOARD_WIDTH-1||ny>=BOARD_HEIGHT-1) return false; if(ny>=0 && board.grid[ny][nx]!=' ') return false; } return true; }
-    void placePiece(const Piece& p, bool place) { for(int i=0;i<4;i++) for(int j=0;j<4;j++) { char c=BlockTemplate::getCell(p.type,p.rotation,i,j); if(c!=' ' && p.pos.y+i>=0) board.grid[p.pos.y+i][p.pos.x+j]=place?c:' '; } }
-    void spawnNewPiece() { std::uniform_int_distribution<int> d(0,6); currentPiece={d(rng),0,{5,-1}}; if(!canMove(0,0,0)) state.running=false; }
+    std::mt19937 rng;
 
-    // [VER 5 Logic] - The Logic is now correct (Version 3 bug fixed)
-    // This correctly resets the board, score, and speed.
+    TetrisGame() {
+        std::random_device rd;
+        rng.seed(rd());
+    }
+
+    // ---------- terminal handling (POSIX) ----------
+
+    void enableRawMode() {
+        tcgetattr(STDIN_FILENO, &origTermios);
+        termios raw = origTermios;
+        raw.c_lflag &= ~(ICANON | ECHO);
+        raw.c_cc[VMIN] = 0;
+        raw.c_cc[VTIME] = 0;
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+        int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+    }
+
+    void disableRawMode() {
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &origTermios);
+    }
+
+    char getInput() const {
+        char ch = 0;
+        ssize_t result = read(STDIN_FILENO, &ch, 1);
+        return (result > 0) ? ch : 0;
+    }
+
+    void flushInput() const {
+        char ch;
+        tcflush(STDIN_FILENO, TCIFLUSH);
+    }
+
+    // ---------- helpers for spawn / movement ----------
+
+    bool isInsidePlayfield(int x, int y) const {
+        return x >= 1 && x < BOARD_WIDTH - 1 &&
+               y >= 0 && y < BOARD_HEIGHT - 1;
+    }
+
+    bool canSpawn(const Piece& piece) const {
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                char cell = BlockTemplate::getCell(piece.type, piece.rotation, i, j);
+                if (cell == ' ') continue;
+
+                int xt = piece.pos.x + j;
+                int yt = piece.pos.y + i;
+
+                if (yt >= 0 && !isInsidePlayfield(xt, yt)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    bool canMove(int dx, int dy, int newRotation) const {
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                char cell = BlockTemplate::getCell(currentPiece.type, newRotation, i, j);
+                if (cell == ' ') continue;
+
+                int xt = currentPiece.pos.x + j + dx;
+                int yt = currentPiece.pos.y + i + dy;
+
+                if (xt < 1 || xt >= BOARD_WIDTH - 1) return false;
+                if (yt >= BOARD_HEIGHT - 1) return false;
+                if (yt >= 0 && board.grid[yt][xt] != ' ') return false;
+            }
+        }
+        return true;
+    }
+
+    void placePiece(const Piece& piece, bool place) {
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                char cell = BlockTemplate::getCell(piece.type, piece.rotation, i, j);
+                if (cell == ' ') continue;
+
+                int xt = piece.pos.x + j;
+                int yt = piece.pos.y + i;
+
+                if (yt < 0 || yt >= BOARD_HEIGHT || xt < 0 || xt >= BOARD_WIDTH) continue;
+
+                board.grid[yt][xt] = place ? cell : ' ';
+            }
+        }
+    }
+
+    void spawnNewPiece() {
+        std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
+        currentPiece.type = dist(rng);
+        currentPiece.rotation = 0;
+        int spawnX = (BOARD_WIDTH / 2) - (BLOCK_SIZE / 2);
+        currentPiece.pos = Position(spawnX, -1);
+
+        if (!canSpawn(currentPiece)) {
+            state.running = false;
+        }
+    }
+    
+    // [NEW] Feature: Restart Game Logic
+    // Resets everything to initial state
     void resetGame() {
-        board.init();
+        // 1. Reset Board
+        board.init(); 
+        
+        // 2. Reset Stats
+        state.score = 0;
+        state.lines = 0;
+        state.level = 1;
+        
+        // 3. Reset State
         state.running = true;
-        state.score = 0; // Fix: Score is now reset properly
+        state.paused = false;
+        
+        // 4. Reset Timers
         dropSpeedUs = BASE_DROP_SPEED_US;
+        dropCounter = 0;
+        
+        // 5. Generate new piece
         spawnNewPiece();
-        cout << "\033[2J\033[1;1H RESTARTING..."; usleep(500000);
+        
+        // 6. Visual feedback (flash/clear screen)
+        cout << "\033[2J\033[1;1H"; 
+        cout << ">>> GAME RESTARTED <<<";
+        cout.flush();
+        usleep(500000); // Small delay to let user see "Restarted"
+    }
+
+    bool lockPieceAndCheck() {
+        placePiece(currentPiece, true);
+        
+        // Update stats
+        int lines = board.clearLines();
+        if (lines > 0) {
+            state.lines += lines;
+            state.score += (lines * 100 * state.level);
+            // Simple level up logic every 5 lines
+            if (state.lines / 5 > state.level - 1) {
+                 state.level++;
+                 dropSpeedUs = max(100000L, dropSpeedUs - 50000); // Increase speed
+            }
+        }
+
+        spawnNewPiece();
+        if (!state.running) {
+            // Draw one last time to show where you died
+            board.draw(state);
+            cout << "\n*** GAME OVER ***\nPress R to Restart or Q to Quit\n";
+            return false;
+        }
+        return true;
+    }
+
+    void softDrop() {
+        if (canMove(0, 1, currentPiece.rotation)) {
+            currentPiece.pos.y++;
+        } else {
+            state.running = lockPieceAndCheck();
+            dropCounter = 0;
+        }
+    }
+
+    void hardDrop() {
+        while (canMove(0, 1, currentPiece.rotation)) {
+            currentPiece.pos.y++;
+        }
+        state.running = lockPieceAndCheck();
+        dropCounter = 0;
     }
 
     void handleInput() {
-        char c = getInput(); 
-        // Logic: Press R to restart mid-game
-        if(c=='r') { resetGame(); return; } 
-        // Force exit because we are inside a while(true) loop
-        if(c=='q') exit(0); 
-        
-        switch(c) {
-            case 'a': if(canMove(-1,0,currentPiece.rotation)) currentPiece.pos.x--; break;
-            case 'd': if(canMove(1,0,currentPiece.rotation)) currentPiece.pos.x++; break;
-            case ' ': while(canMove(0,1,currentPiece.rotation)) currentPiece.pos.y++; placePiece(currentPiece,true); board.clearLines(); spawnNewPiece(); break;
+        char c = getInput();
+        if (c == 0) return;
+
+        // [NEW] Check Restart Key 'R' (Global check)
+        if (c == 'r') {
+            resetGame();
+            return;
+        }
+
+        if (c == 'p') {
+            state.paused = !state.paused;
+            if (state.paused) board.drawPause();
+            return;
+        }
+
+        if (state.paused) {
+            if (c == 'q') state.running = false;
+            return;
+        }
+
+        // Gameplay controls
+        switch (c) {
+            case 'a': 
+                if (canMove(-1, 0, currentPiece.rotation)) currentPiece.pos.x--; 
+                break;
+            case 'd': 
+                if (canMove(1, 0, currentPiece.rotation)) currentPiece.pos.x++; 
+                break;
+            case 'x': softDrop(); break;
+            case ' ': hardDrop(); flushInput(); break;
+            case 'w': {
+                int newRot = (currentPiece.rotation + 1) % 4;
+                if (canMove(0, 0, newRot)) currentPiece.rotation = newRot;
+                // Add simple wall kicks for boundaries
+                else if (canMove(-1, 0, newRot)) { currentPiece.pos.x--; currentPiece.rotation = newRot; }
+                else if (canMove(1, 0, newRot)) { currentPiece.pos.x++; currentPiece.rotation = newRot; }
+                break;
+            }
+            case 'q': state.running = false; break;
+        }
+    }
+
+    void handleGravity() {
+        if (!state.running || state.paused) return;
+
+        ++dropCounter;
+        if (dropCounter < DROP_INTERVAL_TICKS) return;
+
+        dropCounter = 0;
+        if (canMove(0, 1, currentPiece.rotation)) {
+            currentPiece.pos.y++;
+        } else {
+            state.running = lockPieceAndCheck();
         }
     }
 
     void run() {
-        BlockTemplate::initializeTemplates(); board.init(); enableRawMode(); spawnNewPiece();
+        BlockTemplate::initializeTemplates();
+        board.init();
         
-        // [VER 5 Loop] - The Infinite Outer Loop
-        // Used to prevent the application from closing when state.running becomes false.
-        while (true) {
+        // Clean start
+        for (int y = 1; y < BOARD_HEIGHT - 1; ++y) {
+            for (int x = 1; x < BOARD_WIDTH - 1; ++x) {
+                board.grid[y][x] = ' ';
+            }
+        }
+
+        enableRawMode();
+        spawnNewPiece();
+
+        cout << "Tetris Game - Starting...\n";
+        usleep(500000);
+
+        // [UPDATE] Game Loop Logic
+        // Changed loop condition to allow restarting after Game Over
+        // We use an outer loop or just let 'state.running' handle it.
+        // But since 'lockPieceAndCheck' sets running=false on death, 
+        // we need to keep the process alive to catch 'R'.
+        
+        bool appRunning = true;
+        while (appRunning) {
             
-            // Inner Game Loop
+            // Sub-loop: Actual Gameplay
             while (state.running) {
                 handleInput();
-                dropCounter++;
-                if (dropCounter >= DROP_INTERVAL_TICKS) {
-                    dropCounter = 0;
-                    if (canMove(0,1,currentPiece.rotation)) currentPiece.pos.y++;
-                    else { placePiece(currentPiece,true); board.clearLines(); spawnNewPiece(); }
-                }
-                placePiece(currentPiece,true); board.draw(state); placePiece(currentPiece,false);
-                usleep(dropSpeedUs/DROP_INTERVAL_TICKS);
-            }
 
-            // [CRITICAL UX ISSUE] 
-            // The code reaches here when the game is over (state.running == false).
-            // BUG: It does NOT wait for user input (like 'Press R to Restart').
-            // Result: The game restarts immediately. The user never sees the "Game Over" state.
-            resetGame(); 
+                if (state.paused) {
+                    usleep(100000);
+                    continue;
+                }
+
+                handleGravity();
+                placePiece(currentPiece, true);
+                board.draw(state);
+                placePiece(currentPiece, false);
+
+                usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
+            }
+            
+            // Sub-loop: Game Over State
+            // Wait for user to Quit (Q) or Restart (R)
+            char c = getInput();
+            if (c == 'q') {
+                appRunning = false;
+            } else if (c == 'r') {
+                resetGame(); // This sets state.running = true, loop restarts
+            }
+            usleep(100000);
         }
+
         disableRawMode();
+        cout << "Thanks for playing!\n";
     }
 };
 
-int main() { TetrisGame game; game.run(); return 0; }
+int main() {
+    TetrisGame game;
+    game.run();
+    return 0;
+}
