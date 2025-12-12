@@ -76,7 +76,7 @@ struct TetrisGame {
     void handleInput() {
         char c = getInput(); 
         // Logic: Press R to restart mid-game
-        if(c=='r') { resetGame(); return true; } 
+        if(c=='r') { resetGame(); return; } 
         // Force exit because we are inside a while(true) loop
         if(c=='q') exit(0); 
         
