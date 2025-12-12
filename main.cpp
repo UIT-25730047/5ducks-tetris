@@ -434,6 +434,15 @@ struct TetrisGame {
 
         // 2. Restore terminal and show final message
         disableRawMode();
+        
+        cout << "\n\n";
+        cout << "   ##########################\n";
+        cout << "   #                        #\n";
+        cout << "   #       GAME OVER!       #\n";
+        cout << "   #     (Touch Roof)       #\n";
+        cout << "   #                        #\n";
+        cout << "   ##########################\n\n";
+        
         usleep(2000000); 
     }
 };
