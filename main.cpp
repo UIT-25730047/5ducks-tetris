@@ -41,7 +41,7 @@ struct Board {
         }
     }
 
-    void draw(const GameState& state) const {
+    void draw(const GameState& state, const string nextPieceLines[4]) const {
         // Build entire frame in a string buffer for single output
         string frame;
         frame.reserve(3072); // Pre-allocate
@@ -66,7 +66,7 @@ struct Board {
         frame.append(leftPad, ' ');
         frame += title;
         frame.append(rightPad, ' ');
-        frame += "|              |\n";
+        frame += "|  NEXT PIECE  |\n";
 
         // Divider
         frame += '+';
@@ -82,10 +82,21 @@ struct Board {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 frame += grid[i][j];
             }
-            // Right border + empty panel
+            // Right border + preview panel
             frame += '|';
-            frame.append(NEXT_PICE_WIDTH, ' ');
-            frame += '|';
+            if (i == 0) {
+                frame += "              |";
+            } else if (i >= 1 && i <= 4) {
+                frame += "     ";
+                frame += nextPieceLines[i - 1];
+                frame += "     |";
+            } else if (i == 5) {
+                frame.append(NEXT_PICE_WIDTH, '-');
+                frame += '|';
+            } else {
+                frame.append(NEXT_PICE_WIDTH, ' ');
+                frame += '|';
+            }
             frame += '\n';
         }
 
@@ -196,6 +207,8 @@ struct TetrisGame {
     Board board;
     GameState state;
     Piece currentPiece{};
+    int nextPieceType{0};  // next piece type storage
+
     termios origTermios{};
     long dropSpeedUs{500000};
     int dropCounter{0};
@@ -273,6 +286,17 @@ struct TetrisGame {
         return key;
     }
 
+    void getNextPiecePreview(string lines[4]) const {
+        // Render the next piece as 4 lines of 4 characters each
+        for (int row = 0; row < 4; ++row) {
+            lines[row] = "";
+            for (int col = 0; col < 4; ++col) {
+                char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
+                lines[row] += cell;
+            }
+        }
+    }
+
     bool isInsidePlayfield(int x, int y) const {
         return x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT;
     }
@@ -317,11 +341,14 @@ struct TetrisGame {
         std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
 
         // Create piece for this spawn
-        currentPiece.type = dist(rng);
+        currentPiece.type = nextPieceType;
         currentPiece.rotation = 0;
 
         int spawnX = (BOARD_WIDTH / 2) - (BLOCK_SIZE / 2);
         currentPiece.pos = Position(spawnX, -1);
+
+        // Generate next
+        nextPieceType = dist(rng);
     }
 
     bool lockPieceAndCheck() {
@@ -384,7 +411,10 @@ struct TetrisGame {
         BlockTemplate::initializeTemplates();
         board.init();
 
-        drawStartScreen();
+        std::uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
+        nextPieceType = dist(rng);
+
+        drawStartScreen()
         waitForKeyPress();
 
         spawnNewPiece();
@@ -398,7 +428,9 @@ struct TetrisGame {
 
             // Draw everything
             placePiece(currentPiece, true);
-            board.draw(state);
+            string preview[4];
+            getNextPiecePreview(preview);
+            board.draw(state, preview);
             placePiece(currentPiece, false);
 
             usleep(dropSpeedUs / 5);
