@@ -48,18 +48,66 @@ struct Board {
     }
 
     void draw(const GameState& state) const {
-        // clear screen + move cursor to top-left
-        cout << "\033[2J\033[1;1H";
-        cout << "Controls: a=left d=right w=rotate x=soft-drop SPACE=hard-drop q=quit\n\n";
+            // Build entire frame in a string buffer for single output
+            string frame;
+            frame.reserve(3072); // Pre-allocate
 
-        for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                cout << grid[i][j];
+            // Clear screen + move cursor to top-left
+            frame += "\033[2J\033[1;1H";
+            const string title = "TETRIS GAME";
+
+            // Top border
+            frame += '+';
+            frame.append(BOARD_WIDTH, '-');
+            frame += '+';
+            frame.append(NEXT_PICE_WIDTH, '-');
+            frame += "+\n";
+
+            // Title row
+            frame += '|';
+            int totalPadding = BOARD_WIDTH - title.size();
+            int leftPad = totalPadding / 2;
+            int rightPad = totalPadding - leftPad;
+
+            frame.append(leftPad, ' ');
+            frame += title;
+            frame.append(rightPad, ' ');
+            frame += "|              |\n";
+
+            // Divider
+            frame += '+';
+            frame.append(BOARD_WIDTH, '-');
+            frame += '+';
+            frame.append(NEXT_PICE_WIDTH, '-');
+            frame += "+\n";
+
+            // Draw board rows with borders
+            for (int i = 0; i < BOARD_HEIGHT; ++i) {
+                // Left border
+                frame += '|';
+                for (int j = 0; j < BOARD_WIDTH; ++j) {
+                    frame += grid[i][j];
+                }
+                // Right border + empty panel
+                frame += '|';
+                frame.append(NEXT_PICE_WIDTH, ' ');
+                frame += '|';
+                frame += '\n';
             }
-            cout << "\n";
+
+            // Bottom border
+            frame += '+';
+            frame.append(BOARD_WIDTH, '-');
+            frame += '+';
+            frame.append(NEXT_PICE_WIDTH, '-');
+            frame += "+\n";
+
+            frame += "Controls: a=left d=right w=rotate x=soft-drop SPACE=hard-drop q=quit\n";
+
+            cout << frame;
+            cout.flush();
         }
-        cout.flush();
-    }
+    };
 
     void clearLines() {
         int writeRow = BOARD_HEIGHT - 2;
