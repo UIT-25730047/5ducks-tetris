@@ -628,9 +628,16 @@ struct TetrisGame {
         int lines = board.clearLines();
         if (lines > 0) {
             state.linesCleared += lines;
-            const int scores[] = {0, 40, 100, 300, 1200};
+
+            // Scoring rules
+            const int scores[] = {0, 100, 300, 500, 800};
             state.score += scores[lines] * state.level;
+
+            // Level progression: +1 level per 10 lines
             state.level = 1 + (state.linesCleared / 10);
+
+            // Update falling speed based on new level
+            updateDifficulty();
         }
 
         spawnNewPiece();
@@ -757,6 +764,8 @@ struct TetrisGame {
         drawStartScreen();
         waitForKeyPress();
 
+        // initialize speed for starting level
+        updateDifficulty();
         spawnNewPiece();
 
         while (state.running) {
@@ -795,6 +804,22 @@ struct TetrisGame {
         waitForKeyPress(); // wait then quit
 
         disableRawMode();
+    }
+
+    long computeDropSpeedUs(int level) const {
+        if (level <= 3) {            // Levels 1–3: Slow
+            return 500000;           // 0.50s per tick group
+        } else if (level <= 6) {     // Levels 4–6: Medium
+            return 300000;           // 0.30s
+        } else if (level <= 9) {     // Levels 7–9: Fast
+            return 150000;           // 0.15s
+        } else {                     // Level 10+
+            return 80000;            // 0.08s
+        }
+    }
+
+    void updateDifficulty() {
+        dropSpeedUs = computeDropSpeedUs(state.level);
     }
 };
 
