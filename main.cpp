@@ -33,6 +33,8 @@ struct GameState {
     int score{0};
     int level{1};
     int linesCleared{0};
+    // Added pause state tracking
+    bool paused{false};
 };
 
 struct Piece {
@@ -134,6 +136,19 @@ struct Board {
         cout.flush();
     }
 
+    // Function to draw the pause screen overlay
+    void drawPause() const {
+        cout << "\033[2J\033[1;1H"; // Clear screen
+
+        cout << "\n\n\n";
+        cout << "      ======================\n";
+        cout << "      =    GAME PAUSED     =\n";
+        cout << "      ======================\n\n";
+        cout << "        Press P to Resume   \n";
+        cout << "        Press Q to Quit     \n";
+        cout.flush();
+    }
+
     int clearLines() {
         int writeRow = BOARD_HEIGHT - 1;
         int linesCleared = 0;
@@ -185,42 +200,49 @@ struct BlockTemplate {
 
     static void initializeTemplates() {
         static const int TETROMINOES[7][4][4] = {
+            // I
             {
                 {0,1,0,0},
                 {0,1,0,0},
                 {0,1,0,0},
                 {0,1,0,0}
             },
+            // O
             {
                 {0,0,0,0},
                 {0,1,1,0},
                 {0,1,1,0},
                 {0,0,0,0}
             },
+            // T
             {
                 {0,0,0,0},
                 {0,1,0,0},
                 {1,1,1,0},
                 {0,0,0,0}
             },
+            // S
             {
                 {0,0,0,0},
                 {0,1,1,0},
                 {1,1,0,0},
                 {0,0,0,0}
             },
+            // Z
             {
                 {0,0,0,0},
                 {1,1,0,0},
                 {0,1,1,0},
                 {0,0,0,0}
             },
+            // J
             {
                 {0,0,0,0},
                 {1,0,0,0},
                 {1,1,1,0},
                 {0,0,0,0}
             },
+            // L
             {
                 {0,0,0,0},
                 {0,0,1,0},
@@ -680,6 +702,23 @@ struct TetrisGame {
 
         if (c == 0) return;
 
+        // Handle 'P' key for Pause toggle
+        if (c == 'p') {
+            state.paused = !state.paused;
+            if (state.paused) {
+                board.drawPause(); // Draw pause screen immediately
+            }
+            return;
+        }
+
+        // If paused, block all inputs except 'Q' and 'P'
+        if (state.paused) {
+            if (c == 'q') { // Allow quitting while paused
+                state.running = false;
+            }
+            return; // Skip movement logic below
+        }
+
         switch (c) {
             case 'a':
                 if (canMove(-1, 0, currentPiece.rotation)) {
@@ -723,6 +762,8 @@ struct TetrisGame {
 
     void handleGravity() {
         if (!state.running) return;
+        // Do not process gravity if game is paused
+        if (state.paused) return;
 
         ++dropCounter;
 
@@ -772,6 +813,13 @@ struct TetrisGame {
             handleInput();
 
             if (!state.running) break;
+
+
+            // If paused, skip rendering and gravity logic to save CPU
+            if (state.paused) {
+                usleep(100000); // Sleep for 100ms
+                continue;
+            }
 
             handleGravity();
 
