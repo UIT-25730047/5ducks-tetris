@@ -32,6 +32,7 @@ struct GameState {
     int score{0};
     int level{1};
     int linesCleared{0};
+    bool quitByUser{false};
 };
 
 struct Piece {
