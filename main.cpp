@@ -1,9 +1,12 @@
 #include <iostream>
-#include <string>
-#include <random>
+#include <vector>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <random>
 
 using namespace std;
 
