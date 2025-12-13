@@ -59,14 +59,12 @@ struct Board {
         frame += "\033[2J\033[1;1H";
         const string title = "TETRIS GAME";
 
-        // Top border
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
-        // Title row
         frame += '|';
         int totalPadding = BOARD_WIDTH - title.size();
         int leftPad = totalPadding / 2;
@@ -77,22 +75,21 @@ struct Board {
         frame.append(rightPad, ' ');
         frame += "|  NEXT PIECE  |\n";
 
-        // Divider
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
-        // Board rows
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             frame += '|';
+
             for (int j = 0; j < BOARD_WIDTH; ++j) {
                 frame += grid[i][j];
             }
+
             frame += '|';
 
-            // Right panel
             if (i == 0) {
                 frame += "              |";
             } else if (i >= 1 && i <= 4) {
@@ -121,21 +118,22 @@ struct Board {
                 frame.append(NEXT_PICE_WIDTH, ' ');
                 frame += '|';
             }
+
             frame += '\n';
         }
 
-        // Bottom border
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
-        frame += "Controls: a=left d=right w=rotate x=soft-drop SPACE=hard-drop q=quit\n";
+        frame += "Controls: ←→ or A/D (Move)  ↑/W (Rotate)  ↓/S (Soft Drop)  SPACE (Hard Drop)  Q (Quit)\n";
 
         cout << frame;
         cout.flush();
     }
+
 
     int clearLines() {
         int writeRow = BOARD_HEIGHT - 1;
