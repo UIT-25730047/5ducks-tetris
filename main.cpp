@@ -31,6 +31,7 @@ struct GameState {
     // [NEW] Stats for the game
     int score{0};
     int highScore{0}; // Variable exists, but lives in RAM only
+    vector<int> allScores; // Stores EVERY score ever recorded
 
     int level{1};
     int lines{0};
@@ -225,6 +226,24 @@ struct TetrisGame {
         }
         // PROBLEM: The file grows forever.
         // PROBLEM: To find the "Best" score, we have to read the WHOLE file every time.
+    }
+
+    void updateAndSave() {
+        // 1. Add current score
+        state.allScores.push_back(state.score);
+
+        // 2. Sort Descending (Big -> Small)
+        sort(state.allScores.begin(), state.allScores.end(), greater<int>());
+
+        // 3. Save EVERYTHING back to file
+        ofstream file("leaderboard.txt");
+        if (file.is_open()) {
+            for (int s : state.allScores) {
+                file << s << endl;
+            }
+        }
+        // PROBLEM: Performance degrades as file size increases.
+        // PROBLEM: displaying the "Top 1000" scores on Game Over screen is messy.
     }
 }
 
