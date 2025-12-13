@@ -143,19 +143,6 @@ struct Board {
         cout.flush();
     }
 
-    // Draw the pause screen overlay
-    void drawPause() const {
-        cout << "\033[2J\033[1;1H"; // Clear screen
-
-        cout << "\n\n\n";
-        cout << "      ======================\n";
-        cout << "      =    GAME PAUSED     =\n";
-        cout << "      ======================\n\n";
-        cout << "        Press P to Resume   \n";
-        cout << "        Press Q to Quit     \n";
-        cout.flush();
-    }
-
     int clearLines() {
         int writeRow = BOARD_HEIGHT - 1;
         int linesCleared = 0;
@@ -713,8 +700,9 @@ struct TetrisGame {
         // Handle 'P' key for Pause toggle
         if (c == 'p') {
             state.paused = !state.paused;
+            flushInput(); // Clear input buffer when toggling pause
             if (state.paused) {
-                board.drawPause(); // Draw pause screen immediately
+                drawPauseScreen();
             }
             return;
         }
@@ -876,6 +864,133 @@ struct TetrisGame {
 
     void updateDifficulty() {
         dropSpeedUs = computeDropSpeedUs(state.level);
+    }
+
+    void drawPauseScreen() const {
+        // Build pause overlay in a string buffer
+        string screen;
+        screen.reserve(1024);
+
+        // Clear screen + move cursor to top-left
+        screen += "\033[2J\033[1;1H";
+
+        // Calculate width for pause screen
+        int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+
+        // Top border
+        screen += '+';
+        screen.append(totalWidth, '-');
+        screen += "+\n";
+
+        // Empty rows for spacing
+        for (int i = 0; i < 3; ++i) {
+            screen += '|';
+            screen.append(totalWidth, ' ');
+            screen += "|\n";
+        }
+
+        // "GAME PAUSED" title
+        const string title = "GAME PAUSED";
+        int titlePadding = totalWidth - static_cast<int>(title.length());
+        int titleLeft = titlePadding / 2;
+        int titleRight = titlePadding - titleLeft;
+
+        screen += '|';
+        screen.append(titleLeft, ' ');
+        screen += title;
+        screen.append(titleRight, ' ');
+        screen += "|\n";
+
+        // Empty row
+        screen += '|';
+        screen.append(totalWidth, ' ');
+        screen += "|\n";
+
+        // Current stats - Score
+        char scoreBuf[64];
+        snprintf(scoreBuf, sizeof(scoreBuf), "Score: %d", state.score);
+        string scoreStr(scoreBuf);
+        int scorePadding = totalWidth - static_cast<int>(scoreStr.length());
+        int scoreLeft = scorePadding / 2;
+        int scoreRight = scorePadding - scoreLeft;
+
+        screen += '|';
+        screen.append(scoreLeft, ' ');
+        screen += scoreStr;
+        screen.append(scoreRight, ' ');
+        screen += "|\n";
+
+        // Level
+        char levelBuf[64];
+        snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
+        string levelStr(levelBuf);
+        int levelPadding = totalWidth - static_cast<int>(levelStr.length());
+        int levelLeft = levelPadding / 2;
+        int levelRight = levelPadding - levelLeft;
+
+        screen += '|';
+        screen.append(levelLeft, ' ');
+        screen += levelStr;
+        screen.append(levelRight, ' ');
+        screen += "|\n";
+
+        // Lines
+        char linesBuf[64];
+        snprintf(linesBuf, sizeof(linesBuf), "Lines: %d", state.linesCleared);
+        string linesStr(linesBuf);
+        int linesPadding = totalWidth - static_cast<int>(linesStr.length());
+        int linesLeft = linesPadding / 2;
+        int linesRight = linesPadding - linesLeft;
+
+        screen += '|';
+        screen.append(linesLeft, ' ');
+        screen += linesStr;
+        screen.append(linesRight, ' ');
+        screen += "|\n";
+
+        // Empty row
+        screen += '|';
+        screen.append(totalWidth, ' ');
+        screen += "|\n";
+
+        // Menu options
+        const string resumeOption = "P - Resume";
+        int resumePadding = totalWidth - static_cast<int>(resumeOption.length());
+        int resumeLeft = resumePadding / 2;
+        int resumeRight = resumePadding - resumeLeft;
+
+        screen += '|';
+        screen.append(resumeLeft, ' ');
+        screen += resumeOption;
+        screen.append(resumeRight, ' ');
+        screen += "|\n";
+
+        const string quitOption = "Q - Quit";
+        int quitPadding = totalWidth - static_cast<int>(quitOption.length());
+        int quitLeft = quitPadding / 2;
+        int quitRight = quitPadding - quitLeft;
+
+        screen += '|';
+        screen.append(quitLeft, ' ');
+        screen += quitOption;
+        screen.append(quitRight, ' ');
+        screen += "|\n";
+
+        // Empty rows for spacing
+        for (int i = 0; i < 3; ++i) {
+            screen += '|';
+            screen.append(totalWidth, ' ');
+            screen += "|\n";
+        }
+
+        // Bottom border
+        screen += '+';
+        screen.append(totalWidth, '-');
+        screen += "+\n";
+
+        // Single output call
+        cout << screen;
+        cout.flush();
     }
 };
 
