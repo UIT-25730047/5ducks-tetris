@@ -30,11 +30,10 @@ struct Position {
 struct GameState {
     bool running{true};
     bool quitByUser{false};   // Track if user quit manually vs. game over
+    bool paused{false};       // Pause state tracking
     int score{0};
     int level{1};
     int linesCleared{0};
-    // Added pause state tracking
-    bool paused{false};
 };
 
 struct Piece {
@@ -58,17 +57,21 @@ struct Board {
         string frame;
         frame.reserve(3072);
 
+        // clear screen + move cursor to top-left
         frame += "\033[2J\033[1;1H";
+
         const string title = "TETRIS GAME";
 
+        // top border
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
+        // title row with "NEXT PIECE"
         frame += '|';
-        int totalPadding = BOARD_WIDTH - title.size();
+        int totalPadding = BOARD_WIDTH - static_cast<int>(title.size());
         int leftPad = totalPadding / 2;
         int rightPad = totalPadding - leftPad;
 
@@ -77,12 +80,14 @@ struct Board {
         frame.append(rightPad, ' ');
         frame += "|  NEXT PIECE  |\n";
 
+        // separator under title
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
+        // board rows + side panel
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             frame += '|';
 
@@ -124,19 +129,21 @@ struct Board {
             frame += '\n';
         }
 
+        // bottom border
         frame += '+';
         frame.append(BOARD_WIDTH, '-');
         frame += '+';
         frame.append(NEXT_PICE_WIDTH, '-');
         frame += "+\n";
 
-        frame += "Controls: ←→ or A/D (Move)  ↑/W (Rotate)  ↓/S (Soft Drop)  SPACE (Hard Drop)  Q (Quit)\n";
+        // controls, updated to include Pause
+        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  P (Pause)  Q (Quit)\n";
 
         cout << frame;
         cout.flush();
     }
 
-    // Function to draw the pause screen overlay
+    // Draw the pause screen overlay
     void drawPause() const {
         cout << "\033[2J\033[1;1H"; // Clear screen
 
@@ -258,6 +265,7 @@ struct BlockTemplate {
         }
     }
 
+    // rotation: 0-3 (90 degrees steps clockwise)
     static char getCell(int type, int rotation, int row, int col) {
         int r = row;
         int c = col;
@@ -309,7 +317,7 @@ struct TetrisGame {
         screen += "|\n";
 
         const string title = "TETRIS GAME";
-        int titlePadding = totalWidth - title.length();
+        int titlePadding = totalWidth - static_cast<int>(title.length());
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
@@ -324,7 +332,7 @@ struct TetrisGame {
         screen += "|\n";
 
         const string prompt = "Press any key to start...";
-        int promptPadding = totalWidth - prompt.length();
+        int promptPadding = totalWidth - static_cast<int>(prompt.length());
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
 
@@ -376,7 +384,7 @@ struct TetrisGame {
         screen += "|\n";
 
         const string title = "GAME OVER";
-        int titlePadding = totalWidth - title.length();
+        int titlePadding = totalWidth - static_cast<int>(title.length());
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
@@ -393,7 +401,7 @@ struct TetrisGame {
         char scoreBuf[64];
         snprintf(scoreBuf, sizeof(scoreBuf), "Final Score: %d", state.score);
         string scoreStr(scoreBuf);
-        int scorePadding = totalWidth - scoreStr.length();
+        int scorePadding = totalWidth - static_cast<int>(scoreStr.length());
         int scoreLeft = scorePadding / 2;
         int scoreRight = scorePadding - scoreLeft;
 
@@ -406,7 +414,7 @@ struct TetrisGame {
         char levelBuf[64];
         snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
         string levelStr(levelBuf);
-        int levelPadding = totalWidth - levelStr.length();
+        int levelPadding = totalWidth - static_cast<int>(levelStr.length());
         int levelLeft = levelPadding / 2;
         int levelRight = levelPadding - levelLeft;
 
@@ -419,7 +427,7 @@ struct TetrisGame {
         char linesBuf[64];
         snprintf(linesBuf, sizeof(linesBuf), "Lines Cleared: %d", state.linesCleared);
         string linesStr(linesBuf);
-        int linesPadding = totalWidth - linesStr.length();
+        int linesPadding = totalWidth - static_cast<int>(linesStr.length());
         int linesLeft = linesPadding / 2;
         int linesRight = linesPadding - linesLeft;
 
@@ -440,7 +448,7 @@ struct TetrisGame {
         else if (rank == 3) suffix = "rd";
         snprintf(rankBuf, sizeof(rankBuf), "Your Rank: %d%s", rank, suffix);
         string rankStr(rankBuf);
-        int rankPadding = totalWidth - rankStr.length();
+        int rankPadding = totalWidth - static_cast<int>(rankStr.length());
         int rankLeft = rankPadding / 2;
         int rankRight = rankPadding - rankLeft;
 
@@ -455,7 +463,7 @@ struct TetrisGame {
         screen += "|\n";
 
         const string prompt = "Press any key to quit";
-        int promptPadding = totalWidth - prompt.length();
+        int promptPadding = totalWidth - static_cast<int>(prompt.length());
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
 
@@ -731,6 +739,7 @@ struct TetrisGame {
                 }
                 break;
             case 's':
+                // `s` enables soft drop via softDropActive above
                 break;
             case 'x':
                 softDrop();
@@ -786,7 +795,7 @@ struct TetrisGame {
 
     void getNextPiecePreview(string lines[4]) const {
         for (int row = 0; row < 4; ++row) {
-            lines[row] = "";
+            lines[row].clear();
             for (int col = 0; col < 4; ++col) {
                 char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
                 lines[row] += cell;
@@ -812,14 +821,13 @@ struct TetrisGame {
         while (state.running) {
             handleInput();
 
-            if (!state.running) break;
-
-
             // If paused, skip rendering and gravity logic to save CPU
             if (state.paused) {
                 usleep(100000); // Sleep for 100ms
                 continue;
             }
+
+            if (!state.running) break;
 
             handleGravity();
 
