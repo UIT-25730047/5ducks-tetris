@@ -214,18 +214,17 @@ struct TetrisGame {
         }
     }
 
-    // 2. Saving (Overwrite mode)
-    void saveHighScore() {
-        // Only save if we beat the previous record
-        if (state.score > state.highScore) {
-            state.highScore = state.score;
-            
-            ofstream file(FILE_NAME); // Default mode: OVERWRITES everything
-            if (file.is_open()) {
-                file << state.highScore;
-                file.close();
-            }
+    // 2. Saving (Append to end of file)
+    void saveScoreLog() {
+        // open file with 'ios::app' (Append Mode)
+        ofstream file("score_history.txt", ios::app); 
+        if (file.is_open()) {
+            // Just adds the new score to the bottom of the list
+            file << state.score << "\n"; 
+            file.close();
         }
+        // PROBLEM: The file grows forever.
+        // PROBLEM: To find the "Best" score, we have to read the WHOLE file every time.
     }
 }
 
