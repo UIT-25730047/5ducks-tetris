@@ -12,6 +12,7 @@ constexpr int BOARD_HEIGHT      = 20;
 constexpr int BOARD_WIDTH       = 15;
 constexpr int BLOCK_SIZE        = 4;
 constexpr int NUM_BLOCK_TYPES   = 7;
+const string FILE_NAME = "highscore.txt";
 
 // gameplay tuning
 constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (0.5s)
@@ -203,6 +204,28 @@ struct TetrisGame {
     if (state.score > state.highScore) {
         state.highScore = state.score;
         // PROBLEM: This data is lost when the program terminates.
+    }
+    // 1. Loading (Read one integer)
+    void loadHighScore() {
+        ifstream file(FILE_NAME);
+        if (file.is_open()) {
+            file >> state.highScore; // Only reads the first number
+            file.close();
+        }
+    }
+
+    // 2. Saving (Overwrite mode)
+    void saveHighScore() {
+        // Only save if we beat the previous record
+        if (state.score > state.highScore) {
+            state.highScore = state.score;
+            
+            ofstream file(FILE_NAME); // Default mode: OVERWRITES everything
+            if (file.is_open()) {
+                file << state.highScore;
+                file.close();
+            }
+        }
     }
 }
 
