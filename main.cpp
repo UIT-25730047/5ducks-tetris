@@ -287,7 +287,25 @@ struct TetrisGame {
     char getInput() const {
         char ch = 0;
         ssize_t result = read(STDIN_FILENO, &ch, 1);
-        return (result > 0) ? ch : 0;
+        if (result <= 0) return 0;
+
+        if (ch == 27) {
+            char seq[2];
+            if (read(STDIN_FILENO, &seq[0], 1) <= 0) return 27;
+            if (read(STDIN_FILENO, &seq[1], 1) <= 0) return 27;
+
+            if (seq[0] == '[') {
+                switch (seq[1]) {
+                    case 'A': return 'w';
+                    case 'B': return 's';
+                    case 'C': return 'd';
+                    case 'D': return 'a';
+                }
+            }
+            return 27;
+        }
+
+        return ch;
     }
     void flushInput() const { tcflush(STDIN_FILENO, TCIFLUSH); }
 
