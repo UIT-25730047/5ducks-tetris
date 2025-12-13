@@ -314,32 +314,48 @@ struct TetrisGame {
         screen.reserve(512);
 
         screen += "\033[2J\033[1;1H";
+
         int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+
         screen += '+';
         screen.append(totalWidth, '-');
-        screen += "+\n|";
+        screen += "+\n";
+
+        screen += '|';
         screen.append(totalWidth, ' ');
-        screen += "|\n|";
+        screen += "|\n";
+
         const string title = "TETRIS GAME";
         int titlePadding = totalWidth - title.length();
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
+
+        screen += '|';
         screen.append(titleLeft, ' ');
         screen += title;
         screen.append(titleRight, ' ');
-        screen += "|\n|";
+        screen += "|\n";
+
+        screen += '|';
         screen.append(totalWidth, ' ');
-        screen += "|\n|";
+        screen += "|\n";
+
         const string prompt = "Press any key to start...";
         int promptPadding = totalWidth - prompt.length();
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
+
+        screen += '|';
         screen.append(promptLeft, ' ');
         screen += prompt;
         screen.append(promptRight, ' ');
-        screen += "|\n|";
+        screen += "|\n";
+
+        screen += '|';
         screen.append(totalWidth, ' ');
-        screen += "|\n+";
+        screen += "|\n";
+
+        screen += '+';
         screen.append(totalWidth, '-');
         screen += "+\n";
 
