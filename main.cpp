@@ -221,7 +221,7 @@ struct TetrisGame {
         }
     }
 
-    // Update and Save Top 10
+    // Update and Save Top 5
     void updateAndSaveHighScores() {
         // 1. Add current score to the list
         state.highScores.push_back(state.score);
@@ -229,9 +229,9 @@ struct TetrisGame {
         // 2. Sort descending (Highest first)
         sort(state.highScores.begin(), state.highScores.end(), greater<int>());
 
-        // 3. Keep only top 10
-        if (state.highScores.size() > 10) {
-            state.highScores.resize(10);
+        // 3. Keep only top 5
+        if (state.highScores.size() > 5) {
+            state.highScores.resize(5);
         }
 
         // 4. Write back to file
