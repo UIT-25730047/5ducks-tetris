@@ -561,14 +561,27 @@ struct TetrisGame {
 
     void handleInput() {
         char c = getInput();
+
+        if (c == 's') {
+            softDropActive = true;
+        } else {
+            softDropActive = false;
+        }
+
         if (c == 0) return;
 
         switch (c) {
             case 'a':
-                if (canMove(-1, 0, currentPiece.rotation)) currentPiece.pos.x--;
+                if (canMove(-1, 0, currentPiece.rotation)) {
+                    currentPiece.pos.x--;
+                }
                 break;
             case 'd':
-                if (canMove(1, 0, currentPiece.rotation)) currentPiece.pos.x++;
+                if (canMove(1, 0, currentPiece.rotation)) {
+                    currentPiece.pos.x++;
+                }
+                break;
+            case 's':
                 break;
             case 'x':
                 softDrop();
@@ -579,7 +592,7 @@ struct TetrisGame {
                 break;
             case 'w': {
                 int newRot = (currentPiece.rotation + 1) % 4;
-                int kicks[] = {0, -1, 1, -2, 2};
+                int kicks[] = {0, -1, 1, -2, 2, -3, 3};
                 for (int dx : kicks) {
                     if (canMove(dx, 0, newRot)) {
                         currentPiece.pos.x += dx;
@@ -591,11 +604,13 @@ struct TetrisGame {
             }
             case 'q':
                 state.running = false;
+                state.quitByUser = true;
                 break;
             default:
                 break;
         }
     }
+
 
     void handleGravity() {
         if (!state.running) return;
