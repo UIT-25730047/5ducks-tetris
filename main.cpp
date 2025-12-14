@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <random>
+#include <fstream>
 
 using namespace std;
 
@@ -21,6 +22,7 @@ constexpr int NUM_BLOCK_TYPES  = 7;
 constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (5s)
 constexpr int  DROP_INTERVAL_TICKS  = 5;      // logic steps per drop
 constexpr int ANIM_DELAY_US = 15000; // 15ms per cell for smooth animation
+const string HIGH_SCORE_FILE    = "highscores.txt";
 
 
 struct Position {
@@ -36,6 +38,8 @@ struct GameState {
     int score{0};
     int level{1};
     int linesCleared{0};
+    vector<int> highScores;   // Stores the Top 5 High Scores
+
 };
 
 struct Piece {
@@ -244,12 +248,30 @@ struct TetrisGame {
     TetrisGame() {
         random_device rd;
         rng.seed(rd());
+        loadHighScores();
+    }
+
+    // Load multiple scores from file
+    void loadHighScores() {
+        state.highScores.clear();
+        ifstream file(HIGH_SCORE_FILE);
+        int scoreVal;
+        if (file.is_open()) {
+            while (file >> scoreVal) {
+                state.highScores.push_back(scoreVal);
+            }
+            file.close();
+
+            // Sort just in case the file was messed up
+            sort(state.highScores.begin(), state.highScores.end(), greater<int>());
+        }
     }
 
     void drawStartScreen() {
         string screen;
         screen.reserve(512);
 
+        // Clear screen + move cursor to top-left
         screen += "\033[2J\033[1;1H";
 
         int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
@@ -313,24 +335,74 @@ struct TetrisGame {
         return key;
     }
 
-    void drawGameOverScreen(int rank) {
-        string screen;
-        screen.reserve(1024);
+    int saveAndGetRank() {
+        // Read existing scores
+        vector<int> scores;
+        ifstream inFile(HIGH_SCORE_FILE);
+        if (inFile.is_open()) {
+            int score;
+            while (inFile >> score) {
+                scores.push_back(score);
+            }
+            inFile.close();
+        }
 
+        // Add current score
+        scores.push_back(state.score);
+
+        // Sort in descending order
+        sort(scores.begin(), scores.end(), greater<int>());
+
+        // Keep only top 10 scores
+        if (scores.size() > 10) {
+            scores.resize(10);
+        }
+
+        // Write back to file
+        ofstream outFile(HIGH_SCORE_FILE);
+        if (outFile.is_open()) {
+            for (int score : scores) {
+                outFile << score << "\n";
+            }
+            outFile.close();
+        }
+
+        // Find rank of current score
+        int rank = 1;
+        for (int score : scores) {
+            if (score == state.score) {
+                break;
+            }
+            rank++;
+        }
+
+        return rank;
+    }
+
+    void drawGameOverScreen(int rank) {
+        // Build entire game over screen in a string buffer for single output
+        string screen;
+        screen.reserve(1024); // Pre-allocate to avoid reallocation
+
+        // Clear screen + move cursor to top-left
         screen += "\033[2J\033[1;1H";
 
+        // Calculate width for game over screen
         int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
 
+        // Top border
         screen += '+';
         screen.append(totalWidth, '-');
         screen += "+\n";
 
+        // Empty row
         screen += '|';
         screen.append(totalWidth, ' ');
         screen += "|\n";
 
+        // "GAME OVER" title
         const string title = "GAME OVER";
-        int titlePadding = totalWidth - static_cast<int>(title.length());
+        int titlePadding = totalWidth - title.length();
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
@@ -340,14 +412,16 @@ struct TetrisGame {
         screen.append(titleRight, ' ');
         screen += "|\n";
 
+        // Empty row
         screen += '|';
         screen.append(totalWidth, ' ');
         screen += "|\n";
 
+        // Score display
         char scoreBuf[64];
         snprintf(scoreBuf, sizeof(scoreBuf), "Final Score: %d", state.score);
         string scoreStr(scoreBuf);
-        int scorePadding = totalWidth - static_cast<int>(scoreStr.length());
+        int scorePadding = totalWidth - scoreStr.length();
         int scoreLeft = scorePadding / 2;
         int scoreRight = scorePadding - scoreLeft;
 
@@ -357,10 +431,11 @@ struct TetrisGame {
         screen.append(scoreRight, ' ');
         screen += "|\n";
 
+        // Level display
         char levelBuf[64];
         snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
         string levelStr(levelBuf);
-        int levelPadding = totalWidth - static_cast<int>(levelStr.length());
+        int levelPadding = totalWidth - levelStr.length();
         int levelLeft = levelPadding / 2;
         int levelRight = levelPadding - levelLeft;
 
@@ -370,10 +445,11 @@ struct TetrisGame {
         screen.append(levelRight, ' ');
         screen += "|\n";
 
+        // Lines display
         char linesBuf[64];
         snprintf(linesBuf, sizeof(linesBuf), "Lines Cleared: %d", state.linesCleared);
         string linesStr(linesBuf);
-        int linesPadding = totalWidth - static_cast<int>(linesStr.length());
+        int linesPadding = totalWidth - linesStr.length();
         int linesLeft = linesPadding / 2;
         int linesRight = linesPadding - linesLeft;
 
@@ -383,10 +459,12 @@ struct TetrisGame {
         screen.append(linesRight, ' ');
         screen += "|\n";
 
+        // Empty row
         screen += '|';
         screen.append(totalWidth, ' ');
         screen += "|\n";
 
+        // Rank display with ordinal suffix
         char rankBuf[64];
         const char* suffix = "th";
         if (rank == 1) suffix = "st";
@@ -394,7 +472,7 @@ struct TetrisGame {
         else if (rank == 3) suffix = "rd";
         snprintf(rankBuf, sizeof(rankBuf), "Your Rank: %d%s", rank, suffix);
         string rankStr(rankBuf);
-        int rankPadding = totalWidth - static_cast<int>(rankStr.length());
+        int rankPadding = totalWidth - rankStr.length();
         int rankLeft = rankPadding / 2;
         int rankRight = rankPadding - rankLeft;
 
@@ -404,12 +482,77 @@ struct TetrisGame {
         screen.append(rankRight, ' ');
         screen += "|\n";
 
+        // Empty row
         screen += '|';
         screen.append(totalWidth, ' ');
         screen += "|\n";
 
-        const string prompt = "Press any key to quit";
-        int promptPadding = totalWidth - static_cast<int>(prompt.length());
+        // Separator line
+        screen += '|';
+        screen.append(totalWidth, '-');
+        screen += "|\n";
+
+        // LEADERBOARD header
+        const string leaderboardTitle = "LEADERBOARD";
+        int lbTitlePadding = totalWidth - leaderboardTitle.length();
+        int lbTitleLeft = lbTitlePadding / 2;
+        int lbTitleRight = lbTitlePadding - lbTitleLeft;
+
+        screen += '|';
+        screen.append(lbTitleLeft, ' ');
+        screen += leaderboardTitle;
+        screen.append(lbTitleRight, ' ');
+        screen += "|\n";
+
+        // Separator line
+        screen += '|';
+        screen.append(totalWidth, '-');
+        screen += "|\n";
+
+        // Display each high score with rank left-aligned and score right-aligned
+        for (size_t i = 0; i < state.highScores.size(); ++i) {
+            // Determine suffix (st, nd, rd, th)
+            string suffix = "th";
+            if (i == 0) suffix = "st";
+            else if (i == 1) suffix = "nd";
+            else if (i == 2) suffix = "rd";
+
+            // Build rank string (e.g., "1st", "2nd", etc.)
+            string rankStr = to_string(i + 1) + suffix;
+
+            // Build score string
+            string scoreStr = to_string(state.highScores[i]);
+
+            // Add "NEW!" indicator if this is the current score
+            bool isNew = (state.score > 0 && state.score == state.highScores[i]);
+            if (isNew) {
+                scoreStr += " NEW!";
+            }
+
+            // Calculate spacing to align rank left and score right
+            int contentWidth = rankStr.length() + scoreStr.length();
+            int spacing = totalWidth - contentWidth - 2; // -2 for left/right padding
+            if (spacing < 1) spacing = 1; // Ensure at least 1 space
+
+            screen += "| ";
+            screen += rankStr;
+            screen.append(spacing, ' ');
+            screen += scoreStr;
+            screen += " |\n";
+        }
+        // Separator line
+        screen += '|';
+        screen.append(totalWidth, '-');
+        screen += "|\n";
+
+        // Empty row
+        screen += '|';
+        screen.append(totalWidth, ' ');
+        screen += "|\n";
+
+        // "Press R to Restart or Q to Quit" prompt
+        const string prompt = "Press R to Restart or Q to Quit";
+        int promptPadding = totalWidth - prompt.length();
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
 
@@ -419,27 +562,57 @@ struct TetrisGame {
         screen.append(promptRight, ' ');
         screen += "|\n";
 
+        // Empty row
         screen += '|';
         screen.append(totalWidth, ' ');
         screen += "|\n";
 
+        // Bottom border
         screen += '+';
         screen.append(totalWidth, '-');
         screen += "+\n";
 
+        // Single output call
         cout << screen;
         cout.flush();
+    }
+
+    void resetGame() {
+        // Reset game state
+        state.running = true;
+        state.paused = false;
+        state.quitByUser = false;
+        state.score = 0;
+        state.level = 1;
+        state.linesCleared = 0;
+
+        // Reset board
+        board.init();
+
+        // Reset timing
+        dropCounter = 0;
+        softDropActive = false;
+
+        // Generate new next piece
+        uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
+        nextPieceType = dist(rng);
+
+        // Spawn first piece
+        spawnNewPiece();
     }
 
     // ---------- terminal handling (POSIX) ----------
 
     void enableRawMode() {
         tcgetattr(STDIN_FILENO, &origTermios);
+
         termios raw = origTermios;
         raw.c_lflag &= ~(ICANON | ECHO);
         raw.c_cc[VMIN] = 0;
         raw.c_cc[VTIME] = 0;
+
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
         int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
     }
@@ -692,7 +865,10 @@ struct TetrisGame {
         }
 
         if (state.paused) {
-            if (c == 'q') state.running = false;
+            if (c == 'q') {
+                state.running = false;
+                state.quitByUser = true;
+            }
             return;
         }
 
@@ -773,66 +949,79 @@ struct TetrisGame {
     void run() {
         BlockTemplate::initializeTemplates();
 
-        board.init();
+        // Main game loop with restart support
+        bool shouldRestart = true;
 
-        uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
-        nextPieceType = dist(rng);
+        while (shouldRestart) {
 
-        drawStartScreen();
-        waitForKeyPress();
+            board.init();
 
-        // initialize speed for starting level
-        updateDifficulty();
-        spawnNewPiece();
+            uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
+            nextPieceType = dist(rng);
 
-        // --- MAIN GAME LOOP ---
-        while (state.running) {
-            handleInput();
+            drawStartScreen();
+            waitForKeyPress();
 
-            if (state.paused) {
-                usleep(100000);
-                continue;
+            // initialize speed for starting level
+            updateDifficulty();
+            spawnNewPiece();
+
+            // --- MAIN GAME LOOP ---
+            while (state.running) {
+                handleInput();
+
+                if (state.paused) {
+                    usleep(100000);
+                    continue;
+                }
+
+                if (!state.running) break;
+
+                handleGravity();
+
+                placePiece(currentPiece, true);
+
+                string preview[4];
+                getNextPiecePreview(preview);
+                board.draw(state, preview);
+
+                placePiece(currentPiece, false);
+
+                usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
             }
 
-            if (!state.running) break;
+            if (!state.quitByUser) {
+                placePieceSafe(currentPiece);
 
-            handleGravity();
+                string preview[4];
+                getNextPiecePreview(preview);
+                board.draw(state, preview);
 
-            placePiece(currentPiece, true);
+                flushInput();
+                usleep(800000);
+                flushInput();
 
-            string preview[4];
-            getNextPiecePreview(preview);
-            board.draw(state, preview);
+                animateGameOver();
+            }
 
-            placePiece(currentPiece, false);
+            // Show game over screen and wait for user choice
+            int rank = saveAndGetRank();
+            loadHighScores(); // Reload scores to display updated leaderboard
+            drawGameOverScreen(rank);
 
-            usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
+            char choice = waitForKeyPress();
+
+            if (choice == 'r' || choice == 'R') {
+                // Restart the game
+                resetGame();
+                shouldRestart = true;
+            } else {
+                // Quit the game
+                shouldRestart = false;
+            }
+
+            disableRawMode();
         }
-
-
-        if (!state.quitByUser) {
-            placePieceSafe(currentPiece);
-
-            string preview[4];
-            getNextPiecePreview(preview);
-            board.draw(state, preview);
-
-            flushInput();
-            usleep(800000);
-            flushInput();
-        }
-
-        if (!state.quitByUser) {
-            // --- GAME OVER SEQUENCE ---
-            animateGameOver();
-        }
-
-        int rank = 1; // no file I/O, dummy rank
-        drawGameOverScreen(rank);
-
-        waitForKeyPress(); // wait then quit
-
-        disableRawMode();
     }
 
     long computeDropSpeedUs(int level) const {
