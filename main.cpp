@@ -35,6 +35,7 @@ struct GameState {
     bool running{true};
     bool quitByUser{false};   // Track if user quit manually vs. game over
     bool paused{false};       // Pause state tracking
+    bool ghostEnabled{true};  // Ghost shadow enabled by default
     int score{0};
     int level{1};
     int linesCleared{0};
@@ -144,7 +145,7 @@ struct Board {
         frame += "+\n";
 
         // controls, updated to include Pause
-        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  P (Pause)  Q (Quit)\n";
+        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  G (Ghost)  P (Pause)  Q (Quit)\n";
 
         cout << frame;
         cout.flush();
@@ -680,6 +681,54 @@ struct TetrisGame {
         return x >= 0 && x < BOARD_WIDTH &&
                y >= 0 && y < BOARD_HEIGHT;
     }
+    
+    // Calculate where the current piece would land if dropped straight down
+    Piece calculateGhostPiece() const {
+        Piece ghost = currentPiece;
+
+        // Keep moving down until we hit something
+        // Check collision only with locked pieces (not dots or current piece)
+        bool canMoveDown = true;
+        while (canMoveDown) {
+            canMoveDown = false;
+
+            // Check if ghost can move down one more position
+            for (int i = 0; i < BLOCK_SIZE; ++i) {
+                for (int j = 0; j < BLOCK_SIZE; ++j) {
+                    char cell = BlockTemplate::getCell(ghost.type, ghost.rotation, i, j);
+                    if (cell == ' ') continue;
+
+                    int xt = ghost.pos.x + j;
+                    int yt = ghost.pos.y + i + 1;  // +1 for next position
+
+                    // Check bounds
+                    if (yt >= BOARD_HEIGHT) {
+                        canMoveDown = false;
+                        goto done_checking;
+                    }
+
+                    // Check collision with LOCKED pieces only (not dots or spaces)
+                    // Locked pieces are letters (I, O, T, S, Z, J, L) or '#'
+                    if (yt >= 0) {
+                        char gridCell = board.grid[yt][xt];
+                        if (gridCell != ' ' && gridCell != '.') {
+                            canMoveDown = false;
+                            goto done_checking;
+                        }
+                    }
+                }
+            }
+
+            canMoveDown = true;
+            done_checking:
+
+            if (canMoveDown) {
+                ghost.pos.y++;
+            }
+        }
+
+        return ghost;
+    }
 
     bool canSpawn(const Piece& piece) const {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
@@ -693,9 +742,10 @@ struct TetrisGame {
                 if (xt < 0 || xt >= BOARD_WIDTH) return false;
                 if (yt >= BOARD_HEIGHT) return false;
 
+                // Check collision with LOCKED blocks only (ignore ghost dots)
                 if (yt >= 0) {
                     char gridCell = board.grid[yt][xt];
-                    if (gridCell != ' ') {
+                    if (gridCell != ' ' && gridCell != '.') {
                         return false;
                     }
                 }
@@ -722,9 +772,10 @@ struct TetrisGame {
                 if (xt < 0 || xt >= BOARD_WIDTH) return false;
                 if (yt >= BOARD_HEIGHT) return false;
 
+                // Check collision with LOCKED pieces only (ignore ghost dots)
                 if (yt >= 0) {
                     char gridCell = board.grid[yt][xt];
-                    if (gridCell != ' ') {
+                    if (gridCell != ' ' && gridCell != '.') {
                         return false;
                     }
                 }
@@ -745,6 +796,42 @@ struct TetrisGame {
                 if (yt < 0 || yt >= BOARD_HEIGHT || xt < 0 || xt >= BOARD_WIDTH) continue;
 
                 board.grid[yt][xt] = place ? cell : ' ';
+            }
+        }
+    }
+    
+    void clearAllGhostDots() {
+        // Clear all ghost dots from the board
+        for (int i = 0; i < BOARD_HEIGHT; ++i) {
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                if (board.grid[i][j] == '.') {
+                    board.grid[i][j] = ' ';
+                }
+            }
+        }
+    }
+    
+    void placeGhostPiece(const Piece& ghostPiece) {
+        // Place ghost piece using '.' character for outline effect
+        for (int i = 0; i < BLOCK_SIZE; ++i) {
+            for (int j = 0; j < BLOCK_SIZE; ++j) {
+                char cell = BlockTemplate::getCell(
+                    ghostPiece.type, ghostPiece.rotation, i, j
+                );
+                if (cell == ' ') continue;
+
+                int xt = ghostPiece.pos.x + j;
+                int yt = ghostPiece.pos.y + i;
+
+                if (yt < 0 || yt >= BOARD_HEIGHT ||
+                    xt < 0 || xt >= BOARD_WIDTH) {
+                    continue;
+                }
+
+                // Only draw ghost where there's empty space (don't overwrite actual pieces)
+                if (board.grid[yt][xt] == ' ') {
+                    board.grid[yt][xt] = '.';
+                }
             }
         }
     }
@@ -854,6 +941,12 @@ struct TetrisGame {
             if (state.paused) {
                 drawPauseScreen();
             }
+            return;
+        }
+        
+        // Handle ghost toggle (can toggle even when paused)
+        if (c == 'g') {
+            state.ghostEnabled = !state.ghostEnabled;
             return;
         }
 
@@ -976,6 +1069,18 @@ struct TetrisGame {
                 if (!state.running) break;
 
                 handleGravity();
+                
+                // Clear all ghost dots from previous frame
+                clearAllGhostDots();
+                
+                // Calculate and draw ghost position (if enabled)
+                if (state.ghostEnabled) {
+                    Piece ghostPiece = calculateGhostPiece();
+                    // Only draw ghost if it's different from current piece position
+                    if (ghostPiece.pos.y != currentPiece.pos.y) {
+                        placeGhostPiece(ghostPiece);
+                    }
+                }
 
                 placePiece(currentPiece, true);
 
