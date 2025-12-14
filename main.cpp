@@ -35,6 +35,7 @@ struct GameState {
     bool running{true};
     bool quitByUser{false};   // Track if user quit manually vs. game over
     bool paused{false};       // Pause state tracking
+    bool ghostEnabled{true};  // Ghost shadow enabled by default
     int score{0};
     int level{1};
     int linesCleared{0};
@@ -144,7 +145,7 @@ struct Board {
         frame += "+\n";
 
         // controls, updated to include Pause
-        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  P (Pause)  Q (Quit)\n";
+        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  G (Ghost)  P (Pause)  Q (Quit)\n";
 
         cout << frame;
         cout.flush();
