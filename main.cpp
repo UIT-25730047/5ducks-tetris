@@ -788,35 +788,6 @@ struct TetrisGame {
 
         nextPieceType = dist(rng);
     }
-    
-    // [NEW] Feature: Restart Game Logic
-    // Resets everything to initial state
-    void resetGame() {
-        // 1. Reset Board
-        board.init(); 
-        
-        // 2. Reset Stats
-        state.score = 0;
-        state.lines = 0;
-        state.level = 1;
-        
-        // 3. Reset State
-        state.running = true;
-        state.paused = false;
-        
-        // 4. Reset Timers
-        dropSpeedUs = BASE_DROP_SPEED_US;
-        dropCounter = 0;
-        
-        // 5. Generate new piece
-        spawnNewPiece();
-        
-        // 6. Visual feedback (flash/clear screen)
-        cout << "\033[2J\033[1;1H"; 
-        cout << ">>> GAME RESTARTED <<<";
-        cout.flush();
-        usleep(500000); // Small delay to let user see "Restarted"
-    }
 
     bool lockPieceAndCheck() {
         placePiece(currentPiece, true);
