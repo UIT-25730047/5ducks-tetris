@@ -943,6 +943,12 @@ struct TetrisGame {
             }
             return;
         }
+        
+        // Handle ghost toggle (can toggle even when paused)
+        if (c == 'g') {
+            state.ghostEnabled = !state.ghostEnabled;
+            return;
+        }
 
         if (state.paused) {
             if (c == 'q') {
