@@ -15,6 +15,9 @@
 #include <mach-o/dyld.h>
 #endif
 
+#include <thread>
+#include <chrono>
+
 using namespace std;
 
 constexpr int BOARD_HEIGHT     = 20;
@@ -117,6 +120,13 @@ struct SoundManager {
         system(cmd.c_str());
     }
     
+    static void playSoundAfterDelay(const std::string& file, int delayMs) {
+        std::thread([file, delayMs]() {
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
+            playSFX(file);
+        }).detach();
+    }
+    
     // Soft drop
     static inline std::string softDropSoundFile = "soft_drop.mp3";
     static void playSoftDropSound() {
@@ -145,6 +155,12 @@ struct SoundManager {
     static inline std::string fourLinesClearSoundFile = "4lines_clear.mp3";
     static void play4LinesClearSound() {
         playSFX(fourLinesClearSoundFile);
+    }
+    
+    // Level up
+    static inline std::string levelUpSoundFile = "level_up.mp3";
+    static void playLevelUpSound() {
+        playSoundAfterDelay(levelUpSoundFile, 1000);
     }
     
     // Game over
@@ -913,8 +929,14 @@ struct TetrisGame {
             const int scores[] = {0, 100, 300, 500, 800};
             state.score += scores[lines] * state.level;
 
+            int oldLevel = state.level;
+            
             // Level progression: +1 level per 10 lines
             state.level = 1 + (state.linesCleared / 10);
+            
+            if (state.level > oldLevel) {
+                SoundManager::playLevelUpSound();
+            }
 
             // Update falling speed based on new level
             updateDifficulty();
