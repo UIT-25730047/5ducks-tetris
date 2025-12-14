@@ -86,12 +86,12 @@ struct SoundManager {
         return getExecutableDirectory() + "/sounds/" + filename;
     }
 
-    // File names
-    static inline std::string backgroundSoundFile = "background_sound_01.mp3";
+    // File names - using const char* for C++11 compatibility
+    static const char* getBackgroundSoundFile() { return "background_sound_01.mp3"; }
 
     // Background sound
     static void playBackgroundSound() {
-        std::string path = soundPath(backgroundSoundFile);
+        std::string path = soundPath(getBackgroundSoundFile());
 
     #if __APPLE__
         std::string cmd =
@@ -129,45 +129,45 @@ struct SoundManager {
     }
     
     // Soft drop
-    static inline std::string softDropSoundFile = "soft_drop.mp3";
+    static const char* getSoftDropSoundFile() { return "soft_drop.mp3"; }
     static void playSoftDropSound() {
-        playSFX(softDropSoundFile);
+        playSFX(getSoftDropSoundFile());
     }
-    
+
     // Hard drop
-    static inline std::string hardDropSoundFile = "hard_drop.wav";
+    static const char* getHardDropSoundFile() { return "hard_drop.wav"; }
     static void playHardDropSound() {
-        playSFX(hardDropSoundFile);
+        playSFX(getHardDropSoundFile());
     }
-    
+
     // Lock piece
-    static inline std::string lockPieceSoundFile = "lock_piece.wav";
+    static const char* getLockPieceSoundFile() { return "lock_piece.wav"; }
     static void playLockPieceSound() {
-        playSFX(lockPieceSoundFile);
+        playSFX(getLockPieceSoundFile());
     }
-    
+
     // Line clear
-    static inline std::string lineClearSoundFile = "line_clear.wav";
+    static const char* getLineClearSoundFile() { return "line_clear.wav"; }
     static void playLineClearSound() {
-        playSFX(lineClearSoundFile);
+        playSFX(getLineClearSoundFile());
     }
-    
+
     // Tetris (4 lines)
-    static inline std::string fourLinesClearSoundFile = "4lines_clear.mp3";
+    static const char* getFourLinesClearSoundFile() { return "4lines_clear.mp3"; }
     static void play4LinesClearSound() {
-        playSFX(fourLinesClearSoundFile);
+        playSFX(getFourLinesClearSoundFile());
     }
-    
+
     // Level up
-    static inline std::string levelUpSoundFile = "level_up.mp3";
+    static const char* getLevelUpSoundFile() { return "level_up.mp3"; }
     static void playLevelUpSound() {
-        playSoundAfterDelay(levelUpSoundFile, 1000);
+        playSoundAfterDelay(getLevelUpSoundFile(), 1000);
     }
-    
+
     // Game over
-    static inline std::string gameOverSoundFile = "game_over.mp3";
+    static const char* getGameOverSoundFile() { return "game_over.mp3"; }
     static void playGameOverSound() {
-        playSFX(gameOverSoundFile);
+        playSFX(getGameOverSoundFile());
     }
 };
 
