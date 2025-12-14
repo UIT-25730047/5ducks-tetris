@@ -18,8 +18,10 @@ constexpr int BLOCK_SIZE       = 4;
 constexpr int NUM_BLOCK_TYPES  = 7;
 
 // gameplay tuning
-constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (µs)
+constexpr long BASE_DROP_SPEED_US   = 500000; // base drop speed (5s)
 constexpr int  DROP_INTERVAL_TICKS  = 5;      // logic steps per drop
+constexpr int ANIM_DELAY_US = 15000; // 15ms per cell for smooth animation
+
 
 struct Position {
     int x{}, y{};
@@ -475,6 +477,35 @@ struct TetrisGame {
     }
 
     // --- Game Logic ---
+    void animateGameOver() {
+        // Transform all locked pieces to '#' one by one from bottom to top
+        // This creates a cascade effect showing the game is ending
+        // Scan from bottom to top, left to right
+        for (int i = BOARD_HEIGHT - 1; i >= 0; --i) {
+            bool hasBlock = false;
+            for (int j = 0; j < BOARD_WIDTH; ++j) {
+                if (board.grid[i][j] != ' ') {
+                    hasBlock = true;
+                    board.grid[i][j] = '#';
+
+                    // Draw immediately for smooth animation
+                    string preview[4];
+                    getNextPiecePreview(preview);
+                    board.draw(state, preview);
+
+                    usleep(ANIM_DELAY_US);
+                }
+            }
+
+            // Skip empty rows to speed up animation
+            if (!hasBlock) continue;
+        }
+
+        // Final pause to see completed effect
+        flushInput();
+        usleep(500000); // 300ms final pause
+        flushInput();
+    }
 
     bool isInsidePlayfield(int x, int y) const {
         return x >= 0 && x < BOARD_WIDTH &&
@@ -503,7 +534,7 @@ struct TetrisGame {
                 // 2. Collision Check: Ensure piece doesn't overlap existing blocks
                 // This logic is crucial for "Touch Roof" detection.
                 if (yt >= 0 && board.grid[yt][xt] != ' ') {
-                    return false; 
+                    return false;
                 }
             }
         }
@@ -777,11 +808,7 @@ struct TetrisGame {
 
             usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
         }
-        
-        // --- GAME OVER SEQUENCE ---
-        
-        // 1. Play the rising wave animation
-        board.animateGameOver(state);
+
 
         if (!state.quitByUser) {
             placePieceSafe(currentPiece);
@@ -793,6 +820,11 @@ struct TetrisGame {
             flushInput();
             usleep(800000);
             flushInput();
+        }
+
+        if (!state.quitByUser) {
+            // --- GAME OVER SEQUENCE ---
+            animateGameOver();
         }
 
         int rank = 1; // no file I/O, dummy rank
