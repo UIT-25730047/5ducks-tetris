@@ -182,7 +182,6 @@ struct Board {
             }
             --writeRow;
         }
-
         return linesCleared;
     }
 };
@@ -605,14 +604,11 @@ struct TetrisGame {
 
     void enableRawMode() {
         tcgetattr(STDIN_FILENO, &origTermios);
-
         termios raw = origTermios;
         raw.c_lflag &= ~(ICANON | ECHO);
         raw.c_cc[VMIN] = 0;
         raw.c_cc[VTIME] = 0;
-
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-
         int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
     }
@@ -764,10 +760,7 @@ struct TetrisGame {
                 int xt = piece.pos.x + j;
                 int yt = piece.pos.y + i;
 
-                if (yt < 0 || yt >= BOARD_HEIGHT ||
-                    xt < 0 || xt >= BOARD_WIDTH) {
-                    continue;
-                }
+                if (yt < 0 || yt >= BOARD_HEIGHT || xt < 0 || xt >= BOARD_WIDTH) continue;
 
                 if (board.grid[yt][xt] == ' ') {
                     board.grid[yt][xt] = cell;
@@ -794,6 +787,35 @@ struct TetrisGame {
         }
 
         nextPieceType = dist(rng);
+    }
+    
+    // [NEW] Feature: Restart Game Logic
+    // Resets everything to initial state
+    void resetGame() {
+        // 1. Reset Board
+        board.init(); 
+        
+        // 2. Reset Stats
+        state.score = 0;
+        state.lines = 0;
+        state.level = 1;
+        
+        // 3. Reset State
+        state.running = true;
+        state.paused = false;
+        
+        // 4. Reset Timers
+        dropSpeedUs = BASE_DROP_SPEED_US;
+        dropCounter = 0;
+        
+        // 5. Generate new piece
+        spawnNewPiece();
+        
+        // 6. Visual feedback (flash/clear screen)
+        cout << "\033[2J\033[1;1H"; 
+        cout << ">>> GAME RESTARTED <<<";
+        cout.flush();
+        usleep(500000); // Small delay to let user see "Restarted"
     }
 
     bool lockPieceAndCheck() {
@@ -872,6 +894,12 @@ struct TetrisGame {
             return;
         }
 
+        if (state.paused) {
+            if (c == 'q') state.running = false;
+            return;
+        }
+
+        // Gameplay controls
         switch (c) {
             case 'a':
                 if (canMove(-1, 0, currentPiece.rotation)) {
@@ -924,7 +952,6 @@ struct TetrisGame {
         if (dropCounter < effectiveInterval) return;
 
         dropCounter = 0;
-
         if (canMove(0, 1, currentPiece.rotation)) {
             currentPiece.pos.y++;
         } else {
