@@ -45,6 +45,7 @@ struct Piece {
 struct Board {
     char grid[BOARD_HEIGHT][BOARD_WIDTH]{};
 
+    // Initialize the game board with walls and a "ceiling hole"
     void init() {
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
             for (int j = 0; j < BOARD_WIDTH; ++j) {
@@ -166,6 +167,7 @@ struct Board {
             } else {
                 ++linesCleared;
             }
+            // If row IS full, we skip incrementing writeRow (effectively deleting the line)
         }
 
         while (writeRow >= 0) {
@@ -182,9 +184,7 @@ struct Board {
 struct BlockTemplate {
     static char templates[NUM_BLOCK_TYPES][BLOCK_SIZE][BLOCK_SIZE];
 
-    static void setBlockTemplate(int type,
-                                 char symbol,
-                                 const int shape[BLOCK_SIZE][BLOCK_SIZE]) {
+    static void setBlockTemplate(int type, char symbol, const int shape[BLOCK_SIZE][BLOCK_SIZE]) {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
             for (int j = 0; j < BLOCK_SIZE; ++j) {
                 templates[type][i][j] = shape[i][j] ? symbol : ' ';
@@ -193,56 +193,15 @@ struct BlockTemplate {
     }
 
     static void initializeTemplates() {
+        // Tetromino definitions (I, O, T, S, Z, J, L)
         static const int TETROMINOES[7][4][4] = {
-            // I
-            {
-                {0,1,0,0},
-                {0,1,0,0},
-                {0,1,0,0},
-                {0,1,0,0}
-            },
-            // O
-            {
-                {0,0,0,0},
-                {0,1,1,0},
-                {0,1,1,0},
-                {0,0,0,0}
-            },
-            // T
-            {
-                {0,0,0,0},
-                {0,1,0,0},
-                {1,1,1,0},
-                {0,0,0,0}
-            },
-            // S
-            {
-                {0,0,0,0},
-                {0,1,1,0},
-                {1,1,0,0},
-                {0,0,0,0}
-            },
-            // Z
-            {
-                {0,0,0,0},
-                {1,1,0,0},
-                {0,1,1,0},
-                {0,0,0,0}
-            },
-            // J
-            {
-                {0,0,0,0},
-                {1,0,0,0},
-                {1,1,1,0},
-                {0,0,0,0}
-            },
-            // L
-            {
-                {0,0,0,0},
-                {0,0,1,0},
-                {1,1,1,0},
-                {0,0,0,0}
-            }
+            { {0,1,0,0}, {0,1,0,0}, {0,1,0,0}, {0,1,0,0} }, // I
+            { {0,0,0,0}, {0,1,1,0}, {0,1,1,0}, {0,0,0,0} }, // O
+            { {0,0,0,0}, {0,1,0,0}, {1,1,1,0}, {0,0,0,0} }, // T
+            { {0,0,0,0}, {0,1,1,0}, {1,1,0,0}, {0,0,0,0} }, // S
+            { {0,0,0,0}, {1,1,0,0}, {0,1,1,0}, {0,0,0,0} }, // Z
+            { {0,0,0,0}, {1,0,0,0}, {1,1,1,0}, {0,0,0,0} }, // J
+            { {0,0,0,0}, {0,0,1,0}, {1,1,1,0}, {0,0,0,0} }  // L
         };
 
         static const char NAMES[7] = {'I','O','T','S','Z','J','L'};
@@ -252,17 +211,15 @@ struct BlockTemplate {
         }
     }
 
-    // rotation: 0-3 (90 degrees steps clockwise)
     static char getCell(int type, int rotation, int row, int col) {
         int r = row;
         int c = col;
-
+        // Simple 90-degree clockwise rotation logic
         for (int i = 0; i < rotation; ++i) {
             int temp = 3 - c;
             c = r;
             r = temp;
         }
-
         return templates[type][r][c];
     }
 };
@@ -476,14 +433,11 @@ struct TetrisGame {
 
     void enableRawMode() {
         tcgetattr(STDIN_FILENO, &origTermios);
-
         termios raw = origTermios;
         raw.c_lflag &= ~(ICANON | ECHO);
         raw.c_cc[VMIN] = 0;
         raw.c_cc[VTIME] = 0;
-
         tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-
         int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
     }
@@ -520,7 +474,7 @@ struct TetrisGame {
         tcflush(STDIN_FILENO, TCIFLUSH);
     }
 
-    // ---------- helpers for spawn / movement ----------
+    // --- Game Logic ---
 
     bool isInsidePlayfield(int x, int y) const {
         return x >= 0 && x < BOARD_WIDTH &&
@@ -545,6 +499,12 @@ struct TetrisGame {
                         return false;
                     }
                 }
+
+                // 2. Collision Check: Ensure piece doesn't overlap existing blocks
+                // This logic is crucial for "Touch Roof" detection.
+                if (yt >= 0 && board.grid[yt][xt] != ' ') {
+                    return false; 
+                }
             }
         }
         return true;
@@ -553,9 +513,7 @@ struct TetrisGame {
     bool canMove(int dx, int dy, int newRotation) const {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
             for (int j = 0; j < BLOCK_SIZE; ++j) {
-                char cell = BlockTemplate::getCell(
-                    currentPiece.type, newRotation, i, j
-                );
+                char cell = BlockTemplate::getCell(currentPiece.type, newRotation, i, j);
                 if (cell == ' ') continue;
 
                 int xt = currentPiece.pos.x + j + dx;
@@ -578,18 +536,13 @@ struct TetrisGame {
     void placePiece(const Piece& piece, bool place) {
         for (int i = 0; i < BLOCK_SIZE; ++i) {
             for (int j = 0; j < BLOCK_SIZE; ++j) {
-                char cell = BlockTemplate::getCell(
-                    piece.type, piece.rotation, i, j
-                );
+                char cell = BlockTemplate::getCell(piece.type, piece.rotation, i, j);
                 if (cell == ' ') continue;
 
                 int xt = piece.pos.x + j;
                 int yt = piece.pos.y + i;
 
-                if (yt < 0 || yt >= BOARD_HEIGHT ||
-                    xt < 0 || xt >= BOARD_WIDTH) {
-                    continue;
-                }
+                if (yt < 0 || yt >= BOARD_HEIGHT || xt < 0 || xt >= BOARD_WIDTH) continue;
 
                 board.grid[yt][xt] = place ? cell : ' ';
             }
@@ -697,7 +650,7 @@ struct TetrisGame {
 
         if (c == 0) return;
 
-        // Handle 'P' key for Pause toggle
+        // Toggle Pause
         if (c == 'p') {
             state.paused = !state.paused;
             flushInput(); // Clear input buffer when toggling pause
@@ -707,12 +660,9 @@ struct TetrisGame {
             return;
         }
 
-        // If paused, block all inputs except 'Q' and 'P'
         if (state.paused) {
-            if (c == 'q') { // Allow quitting while paused
-                state.running = false;
-            }
-            return; // Skip movement logic below
+            if (c == 'q') state.running = false;
+            return;
         }
 
         switch (c) {
@@ -758,9 +708,7 @@ struct TetrisGame {
     }
 
     void handleGravity() {
-        if (!state.running) return;
-        // Do not process gravity if game is paused
-        if (state.paused) return;
+        if (!state.running || state.paused) return;
 
         ++dropCounter;
 
@@ -806,12 +754,12 @@ struct TetrisGame {
         updateDifficulty();
         spawnNewPiece();
 
+        // --- MAIN GAME LOOP ---
         while (state.running) {
             handleInput();
 
-            // If paused, skip rendering and gravity logic to save CPU
             if (state.paused) {
-                usleep(100000); // Sleep for 100ms
+                usleep(100000);
                 continue;
             }
 
@@ -829,6 +777,11 @@ struct TetrisGame {
 
             usleep(dropSpeedUs / DROP_INTERVAL_TICKS);
         }
+        
+        // --- GAME OVER SEQUENCE ---
+        
+        // 1. Play the rising wave animation
+        board.animateGameOver(state);
 
         if (!state.quitByUser) {
             placePieceSafe(currentPiece);
