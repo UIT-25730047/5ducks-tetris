@@ -742,9 +742,10 @@ struct TetrisGame {
                 if (xt < 0 || xt >= BOARD_WIDTH) return false;
                 if (yt >= BOARD_HEIGHT) return false;
 
+                // Check collision with LOCKED blocks only (ignore ghost dots)
                 if (yt >= 0) {
                     char gridCell = board.grid[yt][xt];
-                    if (gridCell != ' ') {
+                    if (gridCell != ' ' && gridCell != '.') {
                         return false;
                     }
                 }
@@ -771,9 +772,10 @@ struct TetrisGame {
                 if (xt < 0 || xt >= BOARD_WIDTH) return false;
                 if (yt >= BOARD_HEIGHT) return false;
 
+                // Check collision with LOCKED pieces only (ignore ghost dots)
                 if (yt >= 0) {
                     char gridCell = board.grid[yt][xt];
-                    if (gridCell != ' ') {
+                    if (gridCell != ' ' && gridCell != '.') {
                         return false;
                     }
                 }
