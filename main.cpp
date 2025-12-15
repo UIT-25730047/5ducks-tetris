@@ -33,6 +33,43 @@ constexpr int  DROP_INTERVAL_TICKS  = 5;      // logic steps per drop
 constexpr int ANIM_DELAY_US = 15000; // 15ms per cell for smooth animation
 const string HIGH_SCORE_FILE    = "highscores.txt";
 
+// Color codes for terminal
+const char* COLOR_RESET = "\033[0m";
+const char* COLOR_CYAN = "\033[36m";
+const char* COLOR_YELLOW = "\033[33m";
+const char* COLOR_PURPLE = "\033[35m";
+const char* COLOR_GREEN = "\033[32m";
+const char* COLOR_RED = "\033[31m";
+const char* COLOR_BLUE = "\033[34m";
+const char* COLOR_ORANGE = "\033[38;5;208m";
+const char* COLOR_WHITE = "\033[37m";
+
+// Color mapping for each piece type (by index)
+const char* PIECE_COLORS[7] = {
+    COLOR_CYAN,   // I - type 0
+    COLOR_YELLOW, // O - type 1
+    COLOR_PURPLE, // T - type 2
+    COLOR_GREEN,  // S - type 3
+    COLOR_RED,    // Z - type 4
+    COLOR_BLUE,   // J - type 5
+    COLOR_ORANGE  // L - type 6
+};
+
+// Helper function to get color code for a piece character
+static const char* getColorForPiece(char cell) {
+    switch (cell) {
+        case 'I': return PIECE_COLORS[0]; // Cyan
+        case 'O': return PIECE_COLORS[1]; // Yellow
+        case 'T': return PIECE_COLORS[2]; // Purple
+        case 'S': return PIECE_COLORS[3]; // Green
+        case 'Z': return PIECE_COLORS[4]; // Red
+        case 'J': return PIECE_COLORS[5]; // Blue
+        case 'L': return PIECE_COLORS[6]; // Orange
+        case '.': return COLOR_WHITE;     // Ghost piece (dim white)
+        case '#': return COLOR_WHITE;     // Game over animation
+        default: return COLOR_RESET;
+    }
+}
 
 struct Position {
     int x{}, y{};
@@ -97,37 +134,57 @@ struct SoundManager {
         std::string cmd =
             "while true; do afplay \"" + path + "\"; done &";
     #else
+        // Linux: Use mpg123 for MP3 files (fallback to ffplay if not available)
         std::string cmd =
-            "while true; do aplay \"" + path + "\"; done &";
+            "(command -v mpg123 >/dev/null 2>&1 && while true; do mpg123 -q \"" + path + "\"; done) || "
+            "(command -v ffplay >/dev/null 2>&1 && while true; do ffplay -nodisp -autoexit -loglevel quiet \"" + path + "\"; done) &";
     #endif
 
         system(cmd.c_str());
     }
-    
+
     static void stopBackgroundSound() {
-        // Kills all "play" processes running in loop
-        system("pkill -f \"play .*background_sound_01.mp3\" >/dev/null 2>&1");
+        // Kills all background music processes
+    #if __APPLE__
+        system("pkill -f \"afplay.*background_sound_01.mp3\" >/dev/null 2>&1");
+    #else
+        // Kill both mpg123 and ffplay processes playing background music
+        system("pkill -f \"mpg123.*background_sound_01.mp3\" >/dev/null 2>&1");
+        system("pkill -f \"ffplay.*background_sound_01.mp3\" >/dev/null 2>&1");
+    #endif
     }
-    
+
     // Sound effects
     static void playSFX(const std::string& filename) {
         std::string path = soundPath(filename);
-        
+
     #if __APPLE__
         std::string cmd = "afplay \"" + path + "\" &";
     #else
-        std::string cmd = "aplay \"" + path + "\" &";
+        // Linux: Determine player based on file extension
+        std::string ext = filename.substr(filename.find_last_of('.'));
+        std::string cmd;
+
+        if (ext == ".mp3") {
+            // For MP3: use mpg123 (fallback to ffplay)
+            cmd = "(command -v mpg123 >/dev/null 2>&1 && mpg123 -q \"" + path + "\") || "
+                  "(command -v ffplay >/dev/null 2>&1 && ffplay -nodisp -autoexit -loglevel quiet \"" + path + "\") &";
+        } else {
+            // For WAV: use aplay (fallback to ffplay)
+            cmd = "(command -v aplay >/dev/null 2>&1 && aplay -q \"" + path + "\") || "
+                  "(command -v ffplay >/dev/null 2>&1 && ffplay -nodisp -autoexit -loglevel quiet \"" + path + "\") &";
+        }
     #endif
         system(cmd.c_str());
     }
-    
+
     static void playSoundAfterDelay(const std::string& file, int delayMs) {
         std::thread([file, delayMs]() {
             std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
             playSFX(file);
         }).detach();
     }
-    
+
     // Soft drop
     static const char* getSoftDropSoundFile() { return "soft_drop.mp3"; }
     static void playSoftDropSound() {
@@ -185,89 +242,121 @@ struct Board {
 
     void draw(const GameState& state, const string nextPieceLines[4]) const {
         string frame;
-        frame.reserve(3072);
+        frame.reserve(12000); // Increased for colored blocks + ANSI codes
 
         // clear screen + move cursor to top-left
         frame += "\033[2J\033[1;1H";
 
         const string title = "TETRIS GAME";
+        int boardVisualWidth = BOARD_WIDTH * 2; // Each cell is 2 chars wide (██)
 
-        // top border
-        frame += '+';
-        frame.append(BOARD_WIDTH, '-');
-        frame += '+';
-        frame.append(NEXT_PICE_WIDTH, '-');
-        frame += "+\n";
+        // Top border with Unicode box-drawing characters
+        frame += "╔";
+        for (int i = 0; i < boardVisualWidth; i++) frame += "═";
+        frame += "╦";
+        for (int i = 0; i < 13; i++) frame += "═";
+        frame += "╗\n";
 
-        // title row with "NEXT PIECE"
-        frame += '|';
-        int totalPadding = BOARD_WIDTH - static_cast<int>(title.size());
+        // Title row
+        frame += "║";
+        int totalPadding = boardVisualWidth - title.size();
         int leftPad = totalPadding / 2;
         int rightPad = totalPadding - leftPad;
 
         frame.append(leftPad, ' ');
         frame += title;
         frame.append(rightPad, ' ');
-        frame += "|  NEXT PIECE  |\n";
+        frame += "║  NEXT PIECE ║\n";
 
-        // separator under title
-        frame += '+';
-        frame.append(BOARD_WIDTH, '-');
-        frame += '+';
-        frame.append(NEXT_PICE_WIDTH, '-');
-        frame += "+\n";
+        // Divider
+        frame += "╠";
+        for (int i = 0; i < boardVisualWidth; i++) frame += "═";
+        frame += "╬";
+        for (int i = 0; i < 13; i++) frame += "═";
+        frame += "╣\n";
 
-        // board rows + side panel
+        // Board rows with colored blocks
         for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            frame += '|';
+            frame += "║";
 
+            // Draw board cells WITH colors
             for (int j = 0; j < BOARD_WIDTH; ++j) {
-                frame += grid[i][j];
+                char cell = grid[i][j];
+
+                // Render based on cell content with colors
+                if (cell == '.') {
+                    // Ghost piece: show as [] (no color needed for outline)
+                    frame.append("[]");
+                } else if (cell != ' ') {
+                    // Non-empty cell: show as ██ with color
+                    frame += getColorForPiece(cell);
+                    frame.append("██");
+                    frame += COLOR_RESET;
+                } else {
+                    // Empty cell: show as two spaces
+                    frame.append("  ");
+                }
             }
 
-            frame += '|';
+            frame += "║";
 
+            // Right side panel
             if (i == 0) {
-                frame += "              |";
+                frame.append(13, ' ');
+                frame += "║";
             } else if (i >= 1 && i <= 4) {
-                frame += "     ";
+                frame += "  ";  // 2 spaces left padding
                 frame += nextPieceLines[i - 1];
-                frame += "     |";
+                frame += "   ║";  // 3 spaces right padding + border
             } else if (i == 5) {
-                frame.append(NEXT_PICE_WIDTH, '-');
-                frame += '|';
+                frame.append(13, ' ');
+                frame += "║";
             } else if (i == 6) {
-                char buf[20];
-                snprintf(buf, sizeof(buf), " SCORE: %-6d", state.score);
-                frame += buf;
-                frame += '|';
+                for (int k = 0; k < 13; k++) frame += "─";
+                frame += "║";
             } else if (i == 7) {
-                char buf[20];
-                snprintf(buf, sizeof(buf), " LEVEL: %-6d", state.level);
-                frame += buf;
-                frame += '|';
+                frame += " SCORE:      ║";
             } else if (i == 8) {
-                char buf[20];
-                snprintf(buf, sizeof(buf), " LINES: %-6d", state.linesCleared);
-                frame += buf;
-                frame += '|';
+                string scoreStr = to_string(state.score);
+                frame += " ";
+                frame += scoreStr;
+                int padding = 12 - scoreStr.length();
+                if (padding > 0) frame.append(padding, ' ');
+                frame += "║";
+            } else if (i == 9) {
+                frame += " LEVEL:      ║";
+            } else if (i == 10) {
+                string levelStr = to_string(state.level);
+                frame += " ";
+                frame += levelStr;
+                int padding = 12 - levelStr.length();
+                if (padding > 0) frame.append(padding, ' ');
+                frame += "║";
+            } else if (i == 11) {
+                frame += " LINES:      ║";
+            } else if (i == 12) {
+                string linesStr = to_string(state.linesCleared);
+                frame += " ";
+                frame += linesStr;
+                int padding = 12 - linesStr.length();
+                if (padding > 0) frame.append(padding, ' ');
+                frame += "║";
             } else {
-                frame.append(NEXT_PICE_WIDTH, ' ');
-                frame += '|';
+                frame.append(13, ' ');
+                frame += "║";
             }
 
             frame += '\n';
         }
 
-        // bottom border
-        frame += '+';
-        frame.append(BOARD_WIDTH, '-');
-        frame += '+';
-        frame.append(NEXT_PICE_WIDTH, '-');
-        frame += "+\n";
+        // Bottom border
+        frame += "╚";
+        for (int i = 0; i < boardVisualWidth; i++) frame += "═";
+        frame += "╩";
+        for (int i = 0; i < 13; i++) frame += "═";
+        frame += "╝\n";
 
-        // controls, updated to include Pause
-        frame += "Controls: \u2190\u2192 or A/D (Move)  \u2191/W (Rotate)  \u2193/S (Soft Drop)  X (Soft Drop)  SPACE (Hard Drop)  G (Ghost)  P (Pause)  Q (Quit)\n";
+        frame += "Controls: A/D (Move)  W (Rotate)  S (Soft Drop)  SPACE (Hard Drop)  G (Ghost)  P (Pause)  Q (Quit)\n";
 
         cout << frame;
         cout.flush();
@@ -366,6 +455,13 @@ struct TetrisGame {
     int dropCounter{0};
     bool softDropActive{false};
 
+    // Track ghost piece positions for efficient clearing
+    vector<Position> lastGhostPositions;
+
+    // Cache next piece preview to avoid regenerating every frame
+    string cachedNextPiecePreview[4];
+    int cachedNextPieceType{-1};
+
     mt19937 rng;
 
     TetrisGame() {
@@ -397,49 +493,57 @@ struct TetrisGame {
         // Clear screen + move cursor to top-left
         screen += "\033[2J\033[1;1H";
 
-        int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+        // Match the visual width of the game board
+        int totalWidth = (BOARD_WIDTH * 2) + 13; // Match board visual width
 
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        // Top border
+        screen += "╔";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╗\n";
 
-        screen += '|';
+        // Empty row
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
+        // Title row
         const string title = "TETRIS GAME";
-        int titlePadding = totalWidth - static_cast<int>(title.length());
+        int titlePadding = totalWidth - title.length();
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(titleLeft, ' ');
         screen += title;
         screen.append(titleRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
-        screen += '|';
+        // Empty row
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
+        // Prompt row
         const string prompt = "Press any key to start...";
-        int promptPadding = totalWidth - static_cast<int>(prompt.length());
+        int promptPadding = totalWidth - prompt.length();
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(promptLeft, ' ');
         screen += prompt;
         screen.append(promptRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
-        screen += '|';
+        // Empty row
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        // Bottom border
+        screen += "╚";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╝\n";
 
         cout << screen;
         cout.flush();
@@ -510,18 +614,18 @@ struct TetrisGame {
         // Clear screen + move cursor to top-left
         screen += "\033[2J\033[1;1H";
 
-        // Calculate width for game over screen
-        int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+        // Match the visual width of the game board
+        int totalWidth = (BOARD_WIDTH * 2) + 13;
 
         // Top border
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        screen += "╔";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╗\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // "GAME OVER" title
         const string title = "GAME OVER";
@@ -529,63 +633,54 @@ struct TetrisGame {
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(titleLeft, ' ');
         screen += title;
         screen.append(titleRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
-        // Score display
-        char scoreBuf[64];
-        snprintf(scoreBuf, sizeof(scoreBuf), "Final Score: %d", state.score);
-        string scoreStr(scoreBuf);
-        int scorePadding = totalWidth - scoreStr.length();
-        int scoreLeft = scorePadding / 2;
-        int scoreRight = scorePadding - scoreLeft;
+        // Score display - label left aligned, number right aligned
+        string scoreLabel = "Final Score:";
+        string scoreNum = to_string(state.score);
+        int scoreSpacing = totalWidth - scoreLabel.length() - scoreNum.length();
 
-        screen += '|';
-        screen.append(scoreLeft, ' ');
-        screen += scoreStr;
-        screen.append(scoreRight, ' ');
-        screen += "|\n";
+        screen += "║ ";
+        screen += scoreLabel;
+        screen.append(scoreSpacing - 2, ' '); // -2 for the left and right padding
+        screen += scoreNum;
+        screen += " ║\n";
 
         // Level display
-        char levelBuf[64];
-        snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
-        string levelStr(levelBuf);
-        int levelPadding = totalWidth - levelStr.length();
-        int levelLeft = levelPadding / 2;
-        int levelRight = levelPadding - levelLeft;
+        string levelLabel = "Level:";
+        string levelNum = to_string(state.level);
+        int levelSpacing = totalWidth - levelLabel.length() - levelNum.length();
 
-        screen += '|';
-        screen.append(levelLeft, ' ');
-        screen += levelStr;
-        screen.append(levelRight, ' ');
-        screen += "|\n";
+        screen += "║ ";
+        screen += levelLabel;
+        screen.append(levelSpacing - 2, ' ');
+        screen += levelNum;
+        screen += " ║\n";
 
         // Lines display
-        char linesBuf[64];
-        snprintf(linesBuf, sizeof(linesBuf), "Lines Cleared: %d", state.linesCleared);
-        string linesStr(linesBuf);
-        int linesPadding = totalWidth - linesStr.length();
-        int linesLeft = linesPadding / 2;
-        int linesRight = linesPadding - linesLeft;
+        string linesLabel = "Lines Cleared:";
+        string linesNum = to_string(state.linesCleared);
+        int linesSpacing = totalWidth - linesLabel.length() - linesNum.length();
 
-        screen += '|';
-        screen.append(linesLeft, ' ');
-        screen += linesStr;
-        screen.append(linesRight, ' ');
-        screen += "|\n";
+        screen += "║ ";
+        screen += linesLabel;
+        screen.append(linesSpacing - 2, ' ');
+        screen += linesNum;
+        screen += " ║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Rank display with ordinal suffix
         char rankBuf[64];
@@ -599,38 +694,16 @@ struct TetrisGame {
         int rankLeft = rankPadding / 2;
         int rankRight = rankPadding - rankLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(rankLeft, ' ');
         screen += rankStr;
         screen.append(rankRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
-
-        // Separator line
-        screen += '|';
-        screen.append(totalWidth, '-');
-        screen += "|\n";
-
-        // LEADERBOARD header
-        const string leaderboardTitle = "LEADERBOARD";
-        int lbTitlePadding = totalWidth - leaderboardTitle.length();
-        int lbTitleLeft = lbTitlePadding / 2;
-        int lbTitleRight = lbTitlePadding - lbTitleLeft;
-
-        screen += '|';
-        screen.append(lbTitleLeft, ' ');
-        screen += leaderboardTitle;
-        screen.append(lbTitleRight, ' ');
-        screen += "|\n";
-
-        // Separator line
-        screen += '|';
-        screen.append(totalWidth, '-');
-        screen += "|\n";
+        screen += "║\n";
 
         // Display each high score with rank left-aligned and score right-aligned
         for (size_t i = 0; i < state.highScores.size(); ++i) {
@@ -657,21 +730,17 @@ struct TetrisGame {
             int spacing = totalWidth - contentWidth - 2; // -2 for left/right padding
             if (spacing < 1) spacing = 1; // Ensure at least 1 space
 
-            screen += "| ";
+            screen += "║ ";
             screen += rankStr;
             screen.append(spacing, ' ');
             screen += scoreStr;
-            screen += " |\n";
+            screen += " ║\n";
         }
-        // Separator line
-        screen += '|';
-        screen.append(totalWidth, '-');
-        screen += "|\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // "Press R to Restart or Q to Quit" prompt
         const string prompt = "Press R to Restart or Q to Quit";
@@ -679,21 +748,21 @@ struct TetrisGame {
         int promptLeft = promptPadding / 2;
         int promptRight = promptPadding - promptLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(promptLeft, ' ');
         screen += prompt;
         screen.append(promptRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Bottom border
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        screen += "╚";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╝\n";
 
         // Single output call
         cout << screen;
@@ -804,7 +873,7 @@ struct TetrisGame {
         return x >= 0 && x < BOARD_WIDTH &&
                y >= 0 && y < BOARD_HEIGHT;
     }
-    
+
     // Calculate where the current piece would land if dropped straight down
     Piece calculateGhostPiece() const {
         Piece ghost = currentPiece;
@@ -872,12 +941,6 @@ struct TetrisGame {
                         return false;
                     }
                 }
-
-                // 2. Collision Check: Ensure piece doesn't overlap existing blocks
-                // This logic is crucial for "Touch Roof" detection.
-                if (yt >= 0 && board.grid[yt][xt] != ' ') {
-                    return false;
-                }
             }
         }
         return true;
@@ -922,18 +985,17 @@ struct TetrisGame {
             }
         }
     }
-    
+
     void clearAllGhostDots() {
-        // Clear all ghost dots from the board
-        for (int i = 0; i < BOARD_HEIGHT; ++i) {
-            for (int j = 0; j < BOARD_WIDTH; ++j) {
-                if (board.grid[i][j] == '.') {
-                    board.grid[i][j] = ' ';
-                }
+        // Clear only previously tracked ghost positions (O(n) instead of O(width*height))
+        for (const Position& pos : lastGhostPositions) {
+            if (board.grid[pos.y][pos.x] == '.') {
+                board.grid[pos.y][pos.x] = ' ';
             }
         }
+        lastGhostPositions.clear();
     }
-    
+
     void placeGhostPiece(const Piece& ghostPiece) {
         // Place ghost piece using '.' character for outline effect
         for (int i = 0; i < BLOCK_SIZE; ++i) {
@@ -954,6 +1016,7 @@ struct TetrisGame {
                 // Only draw ghost where there's empty space (don't overwrite actual pieces)
                 if (board.grid[yt][xt] == ' ') {
                     board.grid[yt][xt] = '.';
+                    lastGhostPositions.push_back(Position(xt, yt));
                 }
             }
         }
@@ -1009,7 +1072,7 @@ struct TetrisGame {
             } else {
                 SoundManager::playLineClearSound();
             }
-            
+
             state.linesCleared += lines;
 
             // Scoring rules
@@ -1017,10 +1080,10 @@ struct TetrisGame {
             state.score += scores[lines] * state.level;
 
             int oldLevel = state.level;
-            
+
             // Level progression: +1 level per 10 lines
             state.level = 1 + (state.linesCleared / 10);
-            
+
             if (state.level > oldLevel) {
                 SoundManager::playLevelUpSound();
             }
@@ -1078,7 +1141,7 @@ struct TetrisGame {
             }
             return;
         }
-        
+
         // Handle ghost toggle (can toggle even when paused)
         if (c == 'g') {
             state.ghostEnabled = !state.ghostEnabled;
@@ -1089,6 +1152,7 @@ struct TetrisGame {
             if (c == 'q') {
                 state.running = false;
                 state.quitByUser = true;
+                SoundManager::stopBackgroundSound();
             }
             return;
         }
@@ -1137,6 +1201,7 @@ struct TetrisGame {
             case 'q':
                 state.running = false;
                 state.quitByUser = true;
+                SoundManager::stopBackgroundSound();
                 break;
             default:
                 break;
@@ -1165,14 +1230,38 @@ struct TetrisGame {
         }
     }
 
-    void getNextPiecePreview(string lines[4]) const {
+    void getNextPiecePreview(string lines[4]) {
+        // Use cached preview if next piece hasn't changed
+        if (cachedNextPieceType == nextPieceType) {
+            for (int i = 0; i < 4; ++i) {
+                lines[i] = cachedNextPiecePreview[i];
+            }
+            return;
+        }
+
+        // Render the next piece as 4 lines WITH colors (8 chars wide)
         for (int row = 0; row < 4; ++row) {
-            lines[row].clear();
+            cachedNextPiecePreview[row].clear();
+            cachedNextPiecePreview[row].reserve(64); // Pre-allocate for colors + blocks
+
+            // Render the piece blocks
             for (int col = 0; col < 4; ++col) {
                 char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
-                lines[row] += cell;
+
+                if (cell != ' ') {
+                    // Show piece block with color
+                    cachedNextPiecePreview[row] += PIECE_COLORS[nextPieceType];
+                    cachedNextPiecePreview[row].append("██");
+                    cachedNextPiecePreview[row] += COLOR_RESET;
+                } else {
+                    // Empty space
+                    cachedNextPiecePreview[row].append("  ");
+                }
             }
+            lines[row] = cachedNextPiecePreview[row];
         }
+
+        cachedNextPieceType = nextPieceType;
     }
 
     void run() {
@@ -1192,7 +1281,7 @@ struct TetrisGame {
 
             // Play background sound
             SoundManager::playBackgroundSound();
-            
+
             // initialize speed for starting level
             updateDifficulty();
             spawnNewPiece();
@@ -1209,10 +1298,10 @@ struct TetrisGame {
                 if (!state.running) break;
 
                 handleGravity();
-                
+
                 // Clear all ghost dots from previous frame
                 clearAllGhostDots();
-                
+
                 // Calculate and draw ghost position (if enabled)
                 if (state.ghostEnabled) {
                     Piece ghostPiece = calculateGhostPiece();
@@ -1249,7 +1338,7 @@ struct TetrisGame {
 
             // Stop background sound
             SoundManager::stopBackgroundSound();
-            
+
             // Show game over screen and wait for user choice
             int rank = saveAndGetRank();
             loadHighScores(); // Reload scores to display updated leaderboard
@@ -1294,119 +1383,119 @@ struct TetrisGame {
         // Clear screen + move cursor to top-left
         screen += "\033[2J\033[1;1H";
 
-        // Calculate width for pause screen
-        int totalWidth = BOARD_WIDTH + NEXT_PICE_WIDTH + 2;
+        // Match the visual width of the game board
+        int totalWidth = (BOARD_WIDTH * 2) + 13;
 
         // Top border
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        screen += "╔";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╗\n";
 
         // Empty rows for spacing
         for (int i = 0; i < 3; ++i) {
-            screen += '|';
+            screen += "║";
             screen.append(totalWidth, ' ');
-            screen += "|\n";
+            screen += "║\n";
         }
 
         // "GAME PAUSED" title
         const string title = "GAME PAUSED";
-        int titlePadding = totalWidth - static_cast<int>(title.length());
+        int titlePadding = totalWidth - title.length();
         int titleLeft = titlePadding / 2;
         int titleRight = titlePadding - titleLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(titleLeft, ' ');
         screen += title;
         screen.append(titleRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Current stats - Score
         char scoreBuf[64];
         snprintf(scoreBuf, sizeof(scoreBuf), "Score: %d", state.score);
         string scoreStr(scoreBuf);
-        int scorePadding = totalWidth - static_cast<int>(scoreStr.length());
+        int scorePadding = totalWidth - scoreStr.length();
         int scoreLeft = scorePadding / 2;
         int scoreRight = scorePadding - scoreLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(scoreLeft, ' ');
         screen += scoreStr;
         screen.append(scoreRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Level
         char levelBuf[64];
         snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
         string levelStr(levelBuf);
-        int levelPadding = totalWidth - static_cast<int>(levelStr.length());
+        int levelPadding = totalWidth - levelStr.length();
         int levelLeft = levelPadding / 2;
         int levelRight = levelPadding - levelLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(levelLeft, ' ');
         screen += levelStr;
         screen.append(levelRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Lines
         char linesBuf[64];
         snprintf(linesBuf, sizeof(linesBuf), "Lines: %d", state.linesCleared);
         string linesStr(linesBuf);
-        int linesPadding = totalWidth - static_cast<int>(linesStr.length());
+        int linesPadding = totalWidth - linesStr.length();
         int linesLeft = linesPadding / 2;
         int linesRight = linesPadding - linesLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(linesLeft, ' ');
         screen += linesStr;
         screen.append(linesRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty row
-        screen += '|';
+        screen += "║";
         screen.append(totalWidth, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Menu options
         const string resumeOption = "P - Resume";
-        int resumePadding = totalWidth - static_cast<int>(resumeOption.length());
+        int resumePadding = totalWidth - resumeOption.length();
         int resumeLeft = resumePadding / 2;
         int resumeRight = resumePadding - resumeLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(resumeLeft, ' ');
         screen += resumeOption;
         screen.append(resumeRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         const string quitOption = "Q - Quit";
-        int quitPadding = totalWidth - static_cast<int>(quitOption.length());
+        int quitPadding = totalWidth - quitOption.length();
         int quitLeft = quitPadding / 2;
         int quitRight = quitPadding - quitLeft;
 
-        screen += '|';
+        screen += "║";
         screen.append(quitLeft, ' ');
         screen += quitOption;
         screen.append(quitRight, ' ');
-        screen += "|\n";
+        screen += "║\n";
 
         // Empty rows for spacing
         for (int i = 0; i < 3; ++i) {
-            screen += '|';
+            screen += "║";
             screen.append(totalWidth, ' ');
-            screen += "|\n";
+            screen += "║\n";
         }
 
         // Bottom border
-        screen += '+';
-        screen.append(totalWidth, '-');
-        screen += "+\n";
+        screen += "╚";
+        for (int i = 0; i < totalWidth; i++) screen += "═";
+        screen += "╝\n";
 
         // Single output call
         cout << screen;
