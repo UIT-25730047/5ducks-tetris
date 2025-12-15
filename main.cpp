@@ -124,7 +124,7 @@ struct SoundManager {
     }
 
     // File names - using const char* for C++11 compatibility
-    static const char* getBackgroundSoundFile() { return "background_sound_01.mp3"; }
+    static const char* getBackgroundSoundFile() { return "background_sound_01.wav"; }
 
     // Background sound
     static void playBackgroundSound() {
@@ -134,10 +134,8 @@ struct SoundManager {
         std::string cmd =
             "while true; do afplay \"" + path + "\"; done &";
     #else
-        // Linux: Use mpg123 for MP3 files (fallback to ffplay if not available)
-        std::string cmd =
-            "(command -v mpg123 >/dev/null 2>&1 && while true; do mpg123 -q \"" + path + "\"; done) || "
-            "(command -v ffplay >/dev/null 2>&1 && while true; do ffplay -nodisp -autoexit -loglevel quiet \"" + path + "\"; done) &";
+        // Play wav files in Linux. (without mp3 files)
+        std::string cmd = "while true; do aplay -q \"" + path + "\"; done &";
     #endif
 
         system(cmd.c_str());
@@ -146,11 +144,10 @@ struct SoundManager {
     static void stopBackgroundSound() {
         // Kills all background music processes
     #if __APPLE__
-        system("pkill -f \"afplay.*background_sound_01.mp3\" >/dev/null 2>&1");
+        system("pkill -f \"afplay.*background_sound_01.wav\" >/dev/null 2>&1");
     #else
-        // Kill both mpg123 and ffplay processes playing background music
-        system("pkill -f \"mpg123.*background_sound_01.mp3\" >/dev/null 2>&1");
-        system("pkill -f \"ffplay.*background_sound_01.mp3\" >/dev/null 2>&1");
+        // Kill wav files processes playing background music (without mp3 files)
+        system("pkill -f \"aplay.*background_sound_01.wav\" >/dev/null 2>&1");
     #endif
     }
 
@@ -186,7 +183,7 @@ struct SoundManager {
     }
 
     // Soft drop
-    static const char* getSoftDropSoundFile() { return "soft_drop.mp3"; }
+    static const char* getSoftDropSoundFile() { return "soft_drop_2.wav"; }
     static void playSoftDropSound() {
         playSFX(getSoftDropSoundFile());
     }
@@ -210,19 +207,19 @@ struct SoundManager {
     }
 
     // Tetris (4 lines)
-    static const char* getFourLinesClearSoundFile() { return "4lines_clear.mp3"; }
+    static const char* getFourLinesClearSoundFile() { return "4lines_clear.wav"; }
     static void play4LinesClearSound() {
         playSFX(getFourLinesClearSoundFile());
     }
 
     // Level up
-    static const char* getLevelUpSoundFile() { return "level_up.mp3"; }
+    static const char* getLevelUpSoundFile() { return "level_up.wav"; }
     static void playLevelUpSound() {
         playSoundAfterDelay(getLevelUpSoundFile(), 1000);
     }
 
     // Game over
-    static const char* getGameOverSoundFile() { return "game_over.mp3"; }
+    static const char* getGameOverSoundFile() { return "game_over.wav"; }
     static void playGameOverSound() {
         playSFX(getGameOverSoundFile());
     }
