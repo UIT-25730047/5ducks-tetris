@@ -1059,7 +1059,7 @@ struct TetrisGame {
         nextPieceType = dist(rng);
     }
 
-    bool lockPieceAndCheck() {
+    bool lockPieceAndCheck(bool muteLockSound = false) {
         placePiece(currentPiece, true);
 
         int lines = board.clearLines();
@@ -1087,6 +1087,10 @@ struct TetrisGame {
 
             // Update falling speed based on new level
             updateDifficulty();
+        } else {
+            if (!muteLockSound) { // Only play lock piece sound in gravity case.
+                SoundManager::playLockPieceSound();
+            }
         }
 
         spawnNewPiece();
@@ -1101,7 +1105,7 @@ struct TetrisGame {
                 state.running = false;
                 return;
             }
-            state.running = lockPieceAndCheck();
+            state.running = lockPieceAndCheck(true);
             dropCounter = 0;
         }
     }
@@ -1114,7 +1118,7 @@ struct TetrisGame {
             state.running = false;
             return;
         }
-        state.running = lockPieceAndCheck();
+        state.running = lockPieceAndCheck(true);
         dropCounter = 0;
     }
 
@@ -1223,7 +1227,6 @@ struct TetrisGame {
                 return;
             }
             state.running = lockPieceAndCheck();
-            SoundManager::playLockPieceSound();
         }
     }
 
