@@ -450,7 +450,6 @@ struct TetrisGame {
     termios origTermios{};
     long dropSpeedUs{BASE_DROP_SPEED_US};
     int dropCounter{0};
-    bool softDropActive{false};
 
     // Track ghost piece positions for efficient clearing
     vector<Position> lastGhostPositions;
@@ -783,7 +782,6 @@ struct TetrisGame {
 
         // Reset timing
         dropCounter = 0;
-        softDropActive = false;
 
         // Generate new next piece
         uniform_int_distribution<int> dist(0, NUM_BLOCK_TYPES - 1);
@@ -1128,12 +1126,6 @@ struct TetrisGame {
     void handleInput() {
         char c = getInput();
 
-        if (c == 's') {
-            softDropActive = true;
-        } else {
-            softDropActive = false;
-        }
-
         if (c == 0) return;
 
         // Toggle Pause
@@ -1178,10 +1170,7 @@ struct TetrisGame {
                     currentPiece.pos.x++;
                 }
                 break;
-            case 's':
-                // `s` enables soft drop via softDropActive above
-                break;
-            case 'x': // soft drop one cell
+            case 's': // soft drop one cell
                 SoundManager::playSoftDropSound();
                 softDrop();
                 break;
@@ -1217,9 +1206,7 @@ struct TetrisGame {
 
         ++dropCounter;
 
-        int effectiveInterval = softDropActive ? 1 : DROP_INTERVAL_TICKS;
-
-        if (dropCounter < effectiveInterval) return;
+        if (dropCounter < DROP_INTERVAL_TICKS) return;  // Remove the ternary
 
         dropCounter = 0;
         if (canMove(0, 1, currentPiece.rotation)) {
