@@ -17,9 +17,6 @@ extern const char* COLOR_WHITE;
 // Piece color mapping array
 extern const char* PIECE_COLORS[BlockTemplate::NUM_BLOCK_TYPES];
 
-// Helper that maps a block character to a color code.
-const char* getColorForPiece(char cell);
-
 constexpr int BOARD_HEIGHT    = 20;
 constexpr int BOARD_WIDTH     = 15;
 
@@ -36,11 +33,10 @@ public:
         const GameState& state,
         const std::string nextPieceLines[4]
     ) const;
-    void draw(
-        const GameState& state,
-        const std::string nextPieceLines[4]
-    ) const;
 
     // Number of lines cleared.
     int clearLines();
 };
+
+// Helper that maps a block character to a color code.
+const char* getColorForPiece(char cell);

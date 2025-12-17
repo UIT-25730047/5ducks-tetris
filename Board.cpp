@@ -48,8 +48,10 @@ void Board::init() {
     }
 }
 
-void Board::draw(const GameState& state,
-                 const std::string nextPieceLines[4]) const {
+void Board::draw(
+    const GameState& state,
+    const std::string nextPieceLines[4]
+) const {
     using std::string;
     string frame;
     frame.reserve(12000); // Enough capacity for ANSI colors and full frame.
