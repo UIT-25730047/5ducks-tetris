@@ -1,18 +1,16 @@
 #pragma once
 #include <vector>
 
-// \brief Holds global game statistics and flags.
-// This is a plain data holder used by TetrisGame and Board.
 class GameState {
 public:
-    bool running{true};       // \true while the game loop is active
-    bool quitByUser{false};   // \true if user pressed \`q\` to quit
-    bool paused{false};       // \true if game is currently paused
-    bool ghostEnabled{true};  // \true if ghost piece (shadow) is shown
+    bool running{true};
+    bool quitByUser{false};
+    bool paused{false};
+    bool ghostEnabled{true};
 
-    int score{0};             // Current score
-    int level{1};             // Current level (affects speed)
-    int linesCleared{0};      // Total lines cleared in this run
+    int score{0};
+    int level{1};
+    int linesCleared{0};
 
-    std::vector<int> highScores; // Loaded high scores shown on game over
+    std::vector<int> highScores;
 };

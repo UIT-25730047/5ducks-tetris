@@ -1,7 +1,5 @@
-// Piece.h
 #pragma once
 
-// \brief 2D integer position on the board.
 struct Position {
     int x{0};
     int y{0};
@@ -10,7 +8,6 @@ struct Position {
     Position(int px, int py) : x(px), y(py) {}
 };
 
-// \brief Represents a falling tetromino piece.
 class Piece {
 public:
     int type{0};              // 0..6 index into tetromino shapes

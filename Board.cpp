@@ -174,7 +174,7 @@ void Board::draw(const GameState& state,
 }
 
 int Board::clearLines() {
-    int writeRow    = BOARD_HEIGHT - 1; // Where we copy down to
+    int writeRow    = BOARD_HEIGHT - 1;
     int linesCleared = 0;
 
     // Start from bottom row and scan upwards.

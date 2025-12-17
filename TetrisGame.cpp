@@ -11,17 +11,17 @@
 #include <algorithm>
 #include <cstdio>
 
-static const std::string HIGH_SCORE_FILE = "highscores.txt";
+static const string HIGH_SCORE_FILE = "highscores.txt";
 
 TetrisGame::TetrisGame() {
-    std::random_device rd;
+    random_device rd;
     rng.seed(rd());
     loadHighScores();
 }
 
 void TetrisGame::loadHighScores() {
     state.highScores.clear();
-    std::ifstream file(HIGH_SCORE_FILE);
+    ifstream file(HIGH_SCORE_FILE);
     int scoreVal;
 
     if (file.is_open()) {
@@ -31,14 +31,16 @@ void TetrisGame::loadHighScores() {
         file.close();
 
         // Keep scores sorted in descending order.
-        std::sort(state.highScores.begin(),
-                  state.highScores.end(),
-                  std::greater<int>());
+        sort(
+            state.highScores.begin(),
+            state.highScores.end(),
+            greater<int>()
+        );
     }
 }
 
 void TetrisGame::drawStartScreen() {
-    std::string screen;
+    string screen;
     screen.reserve(512);
 
     // Clear screen and move cursor to top\-left.
@@ -57,7 +59,7 @@ void TetrisGame::drawStartScreen() {
     screen += "║\n";
 
     // Title row.
-    const std::string title = "TETRIS GAME";
+    const string title = "TETRIS GAME";
     int titlePadding        = totalWidth - static_cast<int>(title.length());
     int titleLeft           = titlePadding / 2;
     int titleRight          = titlePadding - titleLeft;
@@ -74,7 +76,7 @@ void TetrisGame::drawStartScreen() {
     screen += "║\n";
 
     // Prompt row.
-    const std::string prompt = "Press any key to start...";
+    const string prompt = "Press any key to start...";
     int promptPadding        = totalWidth - static_cast<int>(prompt.length());
     int promptLeft           = promptPadding / 2;
     int promptRight          = promptPadding - promptLeft;
@@ -95,16 +97,17 @@ void TetrisGame::drawStartScreen() {
     for (int i = 0; i < totalWidth; ++i) screen += "═";
     screen += "╝\n";
 
-    std::cout << screen;
-    std::cout.flush();
+    cout << screen;
+    cout.flush();
 }
 
 char TetrisGame::waitForKeyPress() {
     enableRawMode();
 
     char key = 0;
-    // Poll non\-blocking input until one key is received.
+    // Liên tục kiểm tra có phím nào được nhấn không
     while ((key = getInput()) == 0) {
+        // Ngủ 50ms để giảm tải CPU
         usleep(50000);
     }
 
@@ -113,9 +116,9 @@ char TetrisGame::waitForKeyPress() {
 }
 
 int TetrisGame::saveAndGetRank() {
-    // Load any existing scores.
-    std::vector<int> scores;
-    std::ifstream inFile(HIGH_SCORE_FILE);
+    // Đọc file high score
+    vector<int> scores;
+    ifstream inFile(HIGH_SCORE_FILE);
     if (inFile.is_open()) {
         int score;
         while (inFile >> score) {
@@ -124,19 +127,19 @@ int TetrisGame::saveAndGetRank() {
         inFile.close();
     }
 
-    // Add current run score.
+    // Thêm điểm của player hiện tại vào vector
     scores.push_back(state.score);
 
-    // Sort highest to lowest.
-    std::sort(scores.begin(), scores.end(), std::greater<int>());
+    // Sắp xếp từ cao đến thấp
+    sort(scores.begin(), scores.end(), greater<int>());
 
-    // Keep only top 10.
+    // Chỉ giữ lại top 10
     if (scores.size() > 10) {
         scores.resize(10);
     }
 
-    // Save back to file.
-    std::ofstream outFile(HIGH_SCORE_FILE);
+    // Lưu lại vào file
+    ofstream outFile(HIGH_SCORE_FILE);
     if (outFile.is_open()) {
         for (int score : scores) {
             outFile << score << '\n';
@@ -144,7 +147,7 @@ int TetrisGame::saveAndGetRank() {
         outFile.close();
     }
 
-    // Compute 1\-based rank of current score.
+    // Tính thứ hạng của player hiện tại
     int rank = 1;
     for (int score : scores) {
         if (score == state.score) break;
@@ -157,26 +160,26 @@ int TetrisGame::saveAndGetRank() {
 void TetrisGame::drawGameOverScreen(int rank) {
     SoundManager::playGameOverSound();
 
-    std::string screen;
+    string screen;
     screen.reserve(1024);
 
-    // Clear screen and reset cursor.
+    // Xóa màn hình
     screen += "\033[2J\033[1;1H";
 
     int totalWidth = (BOARD_WIDTH * 2) + 13;
 
-    // Top border.
+    // Top border
     screen += "╔";
     for (int i = 0; i < totalWidth; ++i) screen += "═";
     screen += "╗\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // "GAME OVER" title.
-    const std::string title = "GAME OVER";
+    // "GAME OVER" title
+    const string title = "GAME OVER";
     int titlePadding        = totalWidth - static_cast<int>(title.length());
     int titleLeft           = titlePadding / 2;
     int titleRight          = titlePadding - titleLeft;
@@ -187,14 +190,14 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen.append(titleRight, ' ');
     screen += "║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Final score row (label left, value right).
-    std::string scoreLabel = "Final Score:";
-    std::string scoreNum   = std::to_string(state.score);
+    // Final score row (label left, value right)
+    string scoreLabel = "Final Score:";
+    string scoreNum   = to_string(state.score);
     int scoreSpacing       =
         totalWidth - static_cast<int>(scoreLabel.length()) -
         static_cast<int>(scoreNum.length());
@@ -205,9 +208,9 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen += scoreNum;
     screen += " ║\n";
 
-    // Level row.
-    std::string levelLabel = "Level:";
-    std::string levelNum   = std::to_string(state.level);
+    // Level row
+    string levelLabel = "Level:";
+    string levelNum   = to_string(state.level);
     int levelSpacing       =
         totalWidth - static_cast<int>(levelLabel.length()) -
         static_cast<int>(levelNum.length());
@@ -218,9 +221,9 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen += levelNum;
     screen += " ║\n";
 
-    // Lines row.
-    std::string linesLabel = "Lines Cleared:";
-    std::string linesNum   = std::to_string(state.linesCleared);
+    // Lines Cleared row
+    string linesLabel = "Lines Cleared:";
+    string linesNum   = to_string(state.linesCleared);
     int linesSpacing       =
         totalWidth - static_cast<int>(linesLabel.length()) -
         static_cast<int>(linesNum.length());
@@ -231,20 +234,20 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen += linesNum;
     screen += " ║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Rank row with ordinal suffix.
+    // Sắp xếp thứ hạng
     char rankBuf[64];
     const char* suffix = "th";
     if (rank == 1)      suffix = "st";
     else if (rank == 2) suffix = "nd";
     else if (rank == 3) suffix = "rd";
 
-    std::snprintf(rankBuf, sizeof(rankBuf), "Your Rank: %d%s", rank, suffix);
-    std::string rankStr(rankBuf);
+    snprintf(rankBuf, sizeof(rankBuf), "Your Rank: %d%s", rank, suffix);
+    string rankStr(rankBuf);
     int rankPadding = totalWidth - static_cast<int>(rankStr.length());
     int rankLeft    = rankPadding / 2;
     int rankRight   = rankPadding - rankLeft;
@@ -255,20 +258,20 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen.append(rankRight, ' ');
     screen += "║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // High score list (top N).
+    // Danh sách thứ hạng
     for (size_t i = 0; i < state.highScores.size(); ++i) {
-        std::string suff = "th";
+        string suff = "th";
         if (i == 0)      suff = "st";
         else if (i == 1) suff = "nd";
         else if (i == 2) suff = "rd";
 
-        std::string rankLabel  = std::to_string(i + 1) + suff;
-        std::string scoreStr   = std::to_string(state.highScores[i]);
+        string rankLabel  = to_string(i + 1) + suff;
+        string scoreStr   = to_string(state.highScores[i]);
         bool isNew             =
             (state.score > 0 && state.score == state.highScores[i]);
 
@@ -288,13 +291,13 @@ void TetrisGame::drawGameOverScreen(int rank) {
         screen += " ║\n";
     }
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Restart / quit prompt.
-    const std::string prompt = "Press R to Restart or Q to Quit";
+    // Restart / Quit prompt
+    const string prompt = "Press R to Restart or Q to Quit";
     int promptPadding        = totalWidth - static_cast<int>(prompt.length());
     int promptLeft           = promptPadding / 2;
     int promptRight          = promptPadding - promptLeft;
@@ -305,22 +308,22 @@ void TetrisGame::drawGameOverScreen(int rank) {
     screen.append(promptRight, ' ');
     screen += "║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Bottom border.
+    // Bottom border
     screen += "╚";
     for (int i = 0; i < totalWidth; ++i) screen += "═";
     screen += "╝\n";
 
-    std::cout << screen;
-    std::cout.flush();
+    cout << screen;
+    cout.flush();
 }
 
 void TetrisGame::resetGame() {
-    // Reset core state to a fresh run.
+    // Reset game state
     state.running      = true;
     state.paused       = false;
     state.quitByUser   = false;
@@ -331,8 +334,8 @@ void TetrisGame::resetGame() {
     board.init();
     dropCounter = 0;
 
-    // Pre\-roll next piece and spawn the first current piece.
-    std::uniform_int_distribution<int> dist(0,
+    // Lấy ngẫu nhiên loại block
+    uniform_int_distribution<int> dist(0,
         BlockTemplate::NUM_BLOCK_TYPES - 1);
     nextPieceType = dist(rng);
     spawnNewPiece();
@@ -341,23 +344,23 @@ void TetrisGame::resetGame() {
 // \=== Terminal raw mode handling ===
 
 void TetrisGame::enableRawMode() {
-    // Save current settings then disable canonical mode & echo.
+    // Lưu lại các cài đặt ban đầu
     tcgetattr(STDIN_FILENO, &origTermios);
 
     termios raw = origTermios;
-    raw.c_lflag &= ~(ICANON | ECHO); // Raw input, no echo
-    raw.c_cc[VMIN]  = 0;             // Non\-blocking read
-    raw.c_cc[VTIME] = 0;
+    raw.c_lflag &= ~(ICANON | ECHO); // Chuyển sang mode raw
+    raw.c_cc[VMIN]  = 0;             // Không đợi ký tự
+    raw.c_cc[VTIME] = 0;             // Không đợi thời gian
 
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 
-    // Make STDIN non\-blocking at the file descriptor level as well.
+    // Bật non-blocking mode
     int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
 
 void TetrisGame::disableRawMode() {
-    // Restore original terminal settings.
+    // Khôi phục lại các cài đặt ban đầu
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &origTermios);
 }
 
@@ -373,10 +376,10 @@ char TetrisGame::getInput() const {
 
         if (seq[0] == '[') {
             switch (seq[1]) {
-                case 'A': return 'w'; // Up    -> rotate
+                case 'A': return 'w'; // Up    -> Xoay
                 case 'B': return 's'; // Down  -> soft drop
-                case 'C': return 'd'; // Right -> move right
-                case 'D': return 'a'; // Left  -> move left
+                case 'C': return 'd'; // Right -> Di chuyển phải
+                case 'D': return 'a'; // Left  -> Di chuyển trái
             }
         }
         return 27;
@@ -386,14 +389,14 @@ char TetrisGame::getInput() const {
 }
 
 void TetrisGame::flushInput() const {
-    // Discard any pending input in the terminal buffer.
+    // Xóa bất kỳ ký tự đầu vào nào trong buffer terminal
     tcflush(STDIN_FILENO, TCIFLUSH);
 }
 
 // \=== Game logic ===
 
 void TetrisGame::animateGameOver() {
-    // Turn all locked blocks into '#' from bottom to top for a wave effect.
+    // Chuyển tất cả các block đã khóa thành '#' từ dưới lên để tạo hiệu ứng sóng
     for (int y = BOARD_HEIGHT - 1; y >= 0; --y) {
         bool hasBlock = false;
         for (int x = 0; x < BOARD_WIDTH; ++x) {
@@ -401,7 +404,7 @@ void TetrisGame::animateGameOver() {
                 hasBlock = true;
                 board.grid[y][x] = '#';
 
-                std::string preview[4];
+                string preview[4];
                 getNextPiecePreview(preview);
                 board.draw(state, preview);
 
@@ -410,29 +413,30 @@ void TetrisGame::animateGameOver() {
         }
 
         if (!hasBlock) {
-            // Skip empty rows more quickly.
+            // Bỏ qua các hàng trống
             continue;
         }
     }
 
     flushInput();
-    usleep(500000); // Short pause to let user see final frame.
+    usleep(500000); // Dừng 0.5s để người chơi thấy frame cuối cùng
     flushInput();
 }
 
 bool TetrisGame::isInsidePlayfield(int x, int y) const {
+    // Kiểm tra xem tọa độ có nằm trong playfield không
     return x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT;
 }
 
 Piece TetrisGame::calculateGhostPiece() const {
-    // Copy current piece and drop it down until collision.
+    // Tạo một bản sao của block hiện tại và thả nó xuống cho đến khi va chạm
     Piece ghost = currentPiece;
 
     bool canMoveDown = true;
     while (canMoveDown) {
         canMoveDown = false;
 
-        // Test collision one row below the current ghost position.
+        // Kiểm tra va chạm với các block đã khóa
         for (int row = 0; row < BlockTemplate::BLOCK_SIZE; ++row) {
             for (int col = 0; col < BlockTemplate::BLOCK_SIZE; ++col) {
                 char cell = BlockTemplate::getCell(
@@ -443,13 +447,13 @@ Piece TetrisGame::calculateGhostPiece() const {
                 int xt = ghost.pos.x + col;
                 int yt = ghost.pos.y + row + 1; // test next row down
 
-                // If out of bottom bound, stop.
+                // Nếu vượt quá giới hạn dưới, dừng lại
                 if (yt >= BOARD_HEIGHT) {
                     goto done_checking;
                 }
 
                 if (yt >= 0) {
-                    // Only collide with real blocks, not ghost cells '.'.
+                    // Chỉ va chạm với các block thực tế, không va chạm với các cell của ghost '.'
                     char gridCell = board.grid[yt][xt];
                     if (gridCell != ' ' && gridCell != '.') {
                         goto done_checking;
@@ -469,8 +473,7 @@ Piece TetrisGame::calculateGhostPiece() const {
 }
 
 bool TetrisGame::canSpawn(const Piece& piece) const {
-    // Check that the spawn position does not overlap locked cells
-    // and stays inside horizontal bounds.
+    // Kiểm tra xem block có thể xuất hiện không
     for (int row = 0; row < BlockTemplate::BLOCK_SIZE; ++row) {
         for (int col = 0; col < BlockTemplate::BLOCK_SIZE; ++col) {
             char cell = BlockTemplate::getCell(
@@ -496,8 +499,7 @@ bool TetrisGame::canSpawn(const Piece& piece) const {
 }
 
 bool TetrisGame::canMove(int dx, int dy, int newRotation) const {
-    // Test moving the current piece by (dx, dy) and rotation newRotation
-    // against board bounds and collisions.
+    // Kiểm tra xem block có thể di chuyển không
     for (int row = 0; row < BlockTemplate::BLOCK_SIZE; ++row) {
         for (int col = 0; col < BlockTemplate::BLOCK_SIZE; ++col) {
             char cell = BlockTemplate::getCell(
@@ -542,8 +544,7 @@ void TetrisGame::placePiece(const Piece& piece, bool place) {
 }
 
 void TetrisGame::clearAllGhostDots() {
-    // Only clear cells that were previously marked as ghost '.'
-    // for better performance than scanning the entire board.
+    // Chỉ xóa các cell đã được đánh dấu là ghost '.'
     for (const Position& pos : lastGhostPositions) {
         if (isInsidePlayfield(pos.x, pos.y) &&
             board.grid[pos.y][pos.x] == '.') {
@@ -554,7 +555,7 @@ void TetrisGame::clearAllGhostDots() {
 }
 
 void TetrisGame::placeGhostPiece(const Piece& ghostPiece) {
-    // Draw ghost outline as '.' into empty cells only.
+    // Vẽ outline của ghost block vào các cell trống
     for (int row = 0; row < BlockTemplate::BLOCK_SIZE; ++row) {
         for (int col = 0; col < BlockTemplate::BLOCK_SIZE; ++col) {
             char cell = BlockTemplate::getCell(
@@ -576,7 +577,7 @@ void TetrisGame::placeGhostPiece(const Piece& ghostPiece) {
 }
 
 void TetrisGame::placePieceSafe(const Piece& piece) {
-    // Like placePiece(true) but does not overwrite non\-empty cells.
+    // Giống placePiece(true) nhưng không ghi đè các cell không rỗng
     for (int row = 0; row < BlockTemplate::BLOCK_SIZE; ++row) {
         for (int col = 0; col < BlockTemplate::BLOCK_SIZE; ++col) {
             char cell = BlockTemplate::getCell(
@@ -597,7 +598,8 @@ void TetrisGame::placePieceSafe(const Piece& piece) {
 }
 
 void TetrisGame::spawnNewPiece() {
-    std::uniform_int_distribution<int> dist(0,
+    // Tạo block mới
+    uniform_int_distribution<int> dist(0,
         BlockTemplate::NUM_BLOCK_TYPES - 1);
 
     Piece spawn;
@@ -609,7 +611,7 @@ void TetrisGame::spawnNewPiece() {
     currentPiece = spawn;
 
     if (!canSpawn(spawn)) {
-        // If the new piece cannot spawn, the game is over.
+        // Nếu block mới không thể xuất hiện, trò chơi kết thúc
         state.running = false;
         return;
     }
@@ -618,12 +620,12 @@ void TetrisGame::spawnNewPiece() {
 }
 
 bool TetrisGame::lockPieceAndCheck(bool muteLockSound) {
-    // Permanently place current piece and clear lines if needed.
+    // Tự động khóa block hiện tại và xóa các hàng nếu cần
     placePiece(currentPiece, true);
 
     int lines = board.clearLines();
     if (lines > 0) {
-        // Different sound for 4\-line clears.
+        // Nếu có hàng được xóa, chơi âm thanh
         if (lines == 4) {
             SoundManager::play4LinesClearSound();
         } else {
@@ -632,12 +634,14 @@ bool TetrisGame::lockPieceAndCheck(bool muteLockSound) {
 
         state.linesCleared += lines;
 
-        // Simple scoring: base scores multiplied by current level.
+        // Tính điểm: điểm cơ bản nhân với cấp độ hiện tại
         const int scores[] = {0, 100, 300, 500, 800};
         state.score += scores[lines] * state.level;
 
         int oldLevel = state.level;
-        state.level = 1 + (state.linesCleared / 10); // +1 level per 10 lines
+
+        // +1 level per 10 lines
+        state.level = 1 + (state.linesCleared / 10);
 
         if (state.level > oldLevel) {
             SoundManager::playLevelUpSound();
@@ -653,12 +657,12 @@ bool TetrisGame::lockPieceAndCheck(bool muteLockSound) {
 }
 
 void TetrisGame::softDrop() {
-    // Try to move piece down by one row, or lock if colliding.
+    // Di chuyển block xuống nhanh hơn
     if (canMove(0, 1, currentPiece.rotation)) {
         ++currentPiece.pos.y;
     } else {
+        // Kết thúc trò chơi nếu block rơi ra ngoài board
         if (currentPiece.pos.y < 0) {
-            // Locked above visible board => instant game over.
             state.running = false;
             return;
         }
@@ -668,11 +672,12 @@ void TetrisGame::softDrop() {
 }
 
 void TetrisGame::hardDrop() {
-    // Move piece down until it hits something, then lock.
+    // Di chuyển xuống cho đến khi block va chạm
     while (canMove(0, 1, currentPiece.rotation)) {
         ++currentPiece.pos.y;
     }
 
+    // Kết thúc trò chơi nếu block rơi ra ngoài board
     if (currentPiece.pos.y < 0) {
         state.running = false;
         return;
@@ -686,7 +691,7 @@ void TetrisGame::handleInput() {
     char c = getInput();
     if (c == 0) return;
 
-    // Toggle pause.
+    // Bật/tắt pause
     if (c == 'p') {
         state.paused = !state.paused;
         flushInput();
@@ -696,14 +701,14 @@ void TetrisGame::handleInput() {
         return;
     }
 
-    // Toggle ghost piece, allowed even when paused.
+    // Bật/tắt Ghost Piece
     if (c == 'g') {
         state.ghostEnabled = !state.ghostEnabled;
         return;
     }
 
     if (state.paused) {
-        // While paused, only 'q' is handled to quit.
+        // Chỉ xử lý 'q' để thoát khi trò chơi bị pause
         if (c == 'q') {
             state.running   = false;
             state.quitByUser = true;
@@ -712,14 +717,14 @@ void TetrisGame::handleInput() {
         return;
     }
 
-    // Gameplay key handling.
+    // Xử lý các phím gameplay
     switch (c) {
-        case 'a': // move left
+        case 'a': // di chuyển trái
             if (canMove(-1, 0, currentPiece.rotation)) {
                 --currentPiece.pos.x;
             }
             break;
-        case 'd': // move right
+        case 'd': // di chuyển phải
             if (canMove(1, 0, currentPiece.rotation)) {
                 ++currentPiece.pos.x;
             }
@@ -733,7 +738,7 @@ void TetrisGame::handleInput() {
             hardDrop();
             flushInput();
             break;
-        case 'w': { // rotate clockwise with simple wall kicks
+        case 'w': { // xoay block
             int newRot = (currentPiece.rotation + 1) % 4;
             int kicks[] = {0, -1, 1, -2, 2, -3, 3};
             for (int dx : kicks) {
@@ -756,15 +761,19 @@ void TetrisGame::handleInput() {
 }
 
 void TetrisGame::handleGravity() {
+    // Nếu trò chơi không chạy hoặc bị pause, không xử lý
     if (!state.running || state.paused) return;
 
     ++dropCounter;
+
+    // Block chỉ rơi xuống 1 hàng sau mỗi DROP_INTERVAL_TICKS lần gọi
     if (dropCounter < DROP_INTERVAL_TICKS) {
         return;
     }
 
     dropCounter = 0;
 
+    // Kiểm tra xem block có thể rơi xuống 1 hàng không
     if (canMove(0, 1, currentPiece.rotation)) {
         ++currentPiece.pos.y;
     } else {
@@ -776,8 +785,8 @@ void TetrisGame::handleGravity() {
     }
 }
 
-void TetrisGame::getNextPiecePreview(std::string lines[4]) {
-    // Reuse cached preview if the next type hasn't changed.
+void TetrisGame::getNextPiecePreview(string lines[4]) {
+    // Nếu block tiếp theo chưa thay đổi, tái sử dụng preview đã lưu
     if (cachedNextPieceType == nextPieceType) {
         for (int i = 0; i < 4; ++i) {
             lines[i] = cachedNextPiecePreview[i];
@@ -785,7 +794,7 @@ void TetrisGame::getNextPiecePreview(std::string lines[4]) {
         return;
     }
 
-    // Render 4 rows of the 4x4 template as colorized "██" + spaces.
+    // Render 4 hàng của template 4x4 thành "██" + khoảng trắng
     for (int row = 0; row < 4; ++row) {
         cachedNextPiecePreview[row].clear();
         cachedNextPiecePreview[row].reserve(64);
@@ -793,8 +802,7 @@ void TetrisGame::getNextPiecePreview(std::string lines[4]) {
         for (int col = 0; col < 4; ++col) {
             char cell = BlockTemplate::getCell(nextPieceType, 0, row, col);
             if (cell != ' ') {
-                cachedNextPiecePreview[row] +=
-                    PIECE_COLORS[nextPieceType];
+                cachedNextPiecePreview[row] += PIECE_COLORS[nextPieceType];
                 cachedNextPiecePreview[row].append("██");
                 cachedNextPiecePreview[row] += COLOR_RESET;
             } else {
@@ -809,7 +817,7 @@ void TetrisGame::getNextPiecePreview(std::string lines[4]) {
 }
 
 long TetrisGame::computeDropSpeedUs(int level) const {
-    // Piece fall speed profile per level range.
+    // Tốc độ rơi của block dựa theo level
     if (level <= 3) {          // Slow early levels
         return 500000;         // 0.50s per tick group
     } else if (level <= 6) {   // Medium
@@ -822,31 +830,32 @@ long TetrisGame::computeDropSpeedUs(int level) const {
 }
 
 void TetrisGame::updateDifficulty() {
+    // Cập nhật tốc độ rơi theo level
     dropSpeedUs = computeDropSpeedUs(state.level);
 }
 
 void TetrisGame::drawPauseScreen() const {
-    std::string screen;
+    string screen;
     screen.reserve(1024);
 
     screen += "\033[2J\033[1;1H";
 
     int totalWidth = (BOARD_WIDTH * 2) + 13;
 
-    // Top border.
+    // Top border
     screen += "╔";
     for (int i = 0; i < totalWidth; ++i) screen += "═";
     screen += "╗\n";
 
-    // Some spacer rows.
+    // Some spacer rows
     for (int i = 0; i < 3; ++i) {
         screen += "║";
         screen.append(totalWidth, ' ');
         screen += "║\n";
     }
 
-    // "GAME PAUSED" title.
-    const std::string title = "GAME PAUSED";
+    // "GAME PAUSED" title
+    const string title = "GAME PAUSED";
     int titlePadding        = totalWidth - static_cast<int>(title.length());
     int titleLeft           = titlePadding / 2;
     int titleRight          = titlePadding - titleLeft;
@@ -857,15 +866,15 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(titleRight, ' ');
     screen += "║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Score row.
+    // Score row
     char scoreBuf[64];
-    std::snprintf(scoreBuf, sizeof(scoreBuf), "Score: %d", state.score);
-    std::string scoreStr(scoreBuf);
+    snprintf(scoreBuf, sizeof(scoreBuf), "Score: %d", state.score);
+    string scoreStr(scoreBuf);
     int scorePadding = totalWidth - static_cast<int>(scoreStr.length());
     int scoreLeft    = scorePadding / 2;
     int scoreRight   = scorePadding - scoreLeft;
@@ -876,10 +885,10 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(scoreRight, ' ');
     screen += "║\n";
 
-    // Level row.
+    // Level row
     char levelBuf[64];
-    std::snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
-    std::string levelStr(levelBuf);
+    snprintf(levelBuf, sizeof(levelBuf), "Level: %d", state.level);
+    string levelStr(levelBuf);
     int levelPadding = totalWidth - static_cast<int>(levelStr.length());
     int levelLeft    = levelPadding / 2;
     int levelRight   = levelPadding - levelLeft;
@@ -890,11 +899,11 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(levelRight, ' ');
     screen += "║\n";
 
-    // Lines row.
+    // Lines row
     char linesBuf[64];
-    std::snprintf(linesBuf, sizeof(linesBuf), "Lines: %d",
+    snprintf(linesBuf, sizeof(linesBuf), "Lines: %d",
                   state.linesCleared);
-    std::string linesStr(linesBuf);
+    string linesStr(linesBuf);
     int linesPadding = totalWidth - static_cast<int>(linesStr.length());
     int linesLeft    = linesPadding / 2;
     int linesRight   = linesPadding - linesLeft;
@@ -905,13 +914,13 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(linesRight, ' ');
     screen += "║\n";
 
-    // Spacer.
+    // Spacer
     screen += "║";
     screen.append(totalWidth, ' ');
     screen += "║\n";
 
-    // Options: Resume and Quit.
-    const std::string resumeOption = "P - Resume";
+    // Options: Resume and Quit
+    const string resumeOption = "P - Resume";
     int resumePadding = totalWidth - static_cast<int>(resumeOption.length());
     int resumeLeft    = resumePadding / 2;
     int resumeRight   = resumePadding - resumeLeft;
@@ -922,7 +931,7 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(resumeRight, ' ');
     screen += "║\n";
 
-    const std::string quitOption = "Q - Quit";
+    const string quitOption = "Q - Quit";
     int quitPadding = totalWidth - static_cast<int>(quitOption.length());
     int quitLeft    = quitPadding / 2;
     int quitRight   = quitPadding - quitLeft;
@@ -933,20 +942,20 @@ void TetrisGame::drawPauseScreen() const {
     screen.append(quitRight, ' ');
     screen += "║\n";
 
-    // Bottom spacers.
+    // Bottom spacers
     for (int i = 0; i < 3; ++i) {
         screen += "║";
         screen.append(totalWidth, ' ');
         screen += "║\n";
     }
 
-    // Bottom border.
+    // Bottom border
     screen += "╚";
     for (int i = 0; i < totalWidth; ++i) screen += "═";
     screen += "╝\n";
 
-    std::cout << screen;
-    std::cout.flush();
+    cout << screen;
+    cout.flush();
 }
 
 // \=== Main game loop ===
@@ -959,7 +968,7 @@ void TetrisGame::run() {
     while (shouldRestart) {
         board.init();
 
-        std::uniform_int_distribution<int> dist(
+        uniform_int_distribution<int> dist(
             0, BlockTemplate::NUM_BLOCK_TYPES - 1
         );
         nextPieceType = dist(rng);
@@ -967,7 +976,7 @@ void TetrisGame::run() {
         drawStartScreen();
         waitForKeyPress();
 
-        // Restart background music cleanly.
+        // Restart background music cleanly
         SoundManager::stopBackgroundSound();
         usleep(100000);
         SoundManager::playBackgroundSound();
@@ -975,7 +984,7 @@ void TetrisGame::run() {
         updateDifficulty();
         spawnNewPiece();
 
-        // Core per\-frame game loop.
+        // Core game loop.
         while (state.running) {
             handleInput();
 
@@ -1000,7 +1009,7 @@ void TetrisGame::run() {
             // Draw current piece over board, then remove it again.
             placePiece(currentPiece, true);
 
-            std::string preview[4];
+            string preview[4];
             getNextPiecePreview(preview);
             board.draw(state, preview);
 
@@ -1013,7 +1022,7 @@ void TetrisGame::run() {
             // Make sure last piece is visible.
             placePieceSafe(currentPiece);
 
-            std::string preview[4];
+            string preview[4];
             getNextPiecePreview(preview);
             board.draw(state, preview);
 

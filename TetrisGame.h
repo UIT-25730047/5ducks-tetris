@@ -9,27 +9,15 @@
 #include "GameState.h"
 #include "Piece.h"
 
+using namespace std;
+
 // Base drop speed and timing constants (microseconds / ticks).
 constexpr long BASE_DROP_SPEED_US  = 500000; // Base tick group duration.
 constexpr int  DROP_INTERVAL_TICKS = 5;      // Logic steps per drop.
-constexpr int  ANIM_DELAY_US       = 15000;  // Game\-over animation delay.
+constexpr int  ANIM_DELAY_US       = 15000;  // Game-over animation delay.
 
-/**
- * \brief High\-level game controller.
- *
- * Owns:
- *  \- Board (playfield grid)
- *  \- GameState (stats and flags)
- *  \- current and next pieces
- *  \- input handling, gravity, drawing, and main loop
- */
+
 class TetrisGame {
-public:
-    TetrisGame();
-
-    // \brief Start the game main loop (includes restart support).
-    void run();
-
 private:
     Board      board;
     GameState  state;
@@ -41,13 +29,13 @@ private:
     int        dropCounter{0};
 
     // Track previous ghost locations to clear only those cells.
-    std::vector<Position> lastGhostPositions;
+    vector<Position> lastGhostPositions;
 
     // Cache for "next piece" preview.
-    std::string cachedNextPiecePreview[4];
+    string cachedNextPiecePreview[4];
     int         cachedNextPieceType{-1};
 
-    std::mt19937 rng;                 // Random generator for piece types.
+    mt19937 rng;                 // Random generator for piece types.
 
     // \=== High score handling ===
     void loadHighScores();
@@ -85,9 +73,16 @@ private:
     void handleInput();
     void handleGravity();
 
-    void getNextPiecePreview(std::string lines[4]);
+    void getNextPiecePreview(string lines[4]);
 
     // \=== Difficulty / speed ===
     long computeDropSpeedUs(int level) const;
     void updateDifficulty();
+
+public:
+    // Constructor
+    TetrisGame();
+
+    // Run the game
+    void run();
 };
