@@ -1034,7 +1034,7 @@ return templates[type][row][col];
 Class với static methods quản lý audio playback, platform-aware (macOS/Linux):
 
 \vspace{-0.4\baselineskip}
-\textbf{Private helper methods:}
+\noindent\textbf{Private helper methods:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{static string getExecutableDirectory()}: Lấy đường dẫn thư mục chứa executable
@@ -1048,7 +1048,7 @@ Class với static methods quản lý audio playback, platform-aware (macOS/Linu
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Public methods:}
+\noindent\textbf{Public methods:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{static void playBackgroundSound()}: Loop background\_sound\_01.wav
@@ -1056,7 +1056,8 @@ Class với static methods quản lý audio playback, platform-aware (macOS/Linu
         \item macOS: \texttt{while true; do afplay file; done \&}
         \item Linux: \texttt{while true; do aplay -q file; done \&}
     \end{itemize}
-    \item \texttt{static void stopBackgroundSound()}: Kill afplay/aplay process với \texttt{pkill -f}
+    \item \texttt{static void stopBackgroundSound()}: \\
+    Kill afplay/aplay process với \texttt{pkill -f}
     \item \texttt{static void playSoftDropSound()}: soft\_drop\_2.wav
     \item \texttt{static void playHardDropSound()}: hard\_drop.wav
     \item \texttt{static void playLockPieceSound()}: lock\_piece.wav
@@ -1075,7 +1076,7 @@ Class với static methods quản lý audio playback, platform-aware (macOS/Linu
 Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả components:
 
 \vspace{-0.4\baselineskip}
-\textbf{Private members:}
+\noindent\textbf{Private members:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{Board board}: Game board instance
@@ -1092,7 +1093,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Constants (TetrisGame.h):}
+\noindent\textbf{Constants (TetrisGame.h):}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{constexpr long BASE\_DROP\_SPEED\_US = 500000}: Base tick duration (0.5s)
@@ -1102,7 +1103,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Public methods:}
+\noindent\textbf{Public methods:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{TetrisGame()}: Constructor - seed RNG, load high scores
@@ -1110,7 +1111,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Private methods - High scores:}
+\noindent\textbf{Private methods - High scores:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{void loadHighScores()}: Load từ highscores.txt, sort descending
@@ -1118,7 +1119,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Private methods - Screens:}
+\noindent\textbf{Private methods - Screens:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{void drawStartScreen()}: Vẽ "Press any key to start"
@@ -1127,7 +1128,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Private methods - Terminal I/O:}
+\noindent\textbf{Private methods - Terminal I/O:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{void enableRawMode()}: Set termios flags (ICANON, ECHO off), O\_NONBLOCK
@@ -1138,7 +1139,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Private methods - Game logic:}
+\noindent\textbf{Private methods - Game logic:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{void resetGame()}: Reset board, state, counters
@@ -1173,7 +1174,7 @@ Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả compo
 \textbf{Độ phức tạp:} O(16) - quét 4×4 bounding box
 
 \vspace{-0.4\baselineskip}
-\textbf{Thuật toán (TetrisGame.cpp:501):}
+\noindent\textbf{Thuật toán (TetrisGame.cpp:501):}
 \vspace{-0.6\baselineskip}
 \begin{verbatim}
 for row = 0 to 3:
@@ -1205,7 +1206,7 @@ return true
 \textbf{Mục đích:} Preview vị trí mà piece sẽ land nếu hard drop
 
 \vspace{-0.4\baselineskip}
-\textbf{Thuật toán (TetrisGame.cpp:431):}
+\noindent\textbf{Thuật toán (TetrisGame.cpp:431):}
 \vspace{-0.6\baselineskip}
 \begin{verbatim}
 ghost = currentPiece  // Copy piece
@@ -1253,7 +1254,7 @@ state.score += scores[lines] × state.level
 \end{verbatim}
 
 \vspace{-0.4\baselineskip}
-\textbf{Base scores array:}
+\noindent\textbf{Base scores array:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
     \item \texttt{scores[0] = 0}: No lines cleared
@@ -1264,7 +1265,7 @@ state.score += scores[lines] × state.level
 \end{itemize}
 
 \vspace{-0.4\baselineskip}
-\textbf{Level progression (TetrisGame.cpp:644):}
+\noindent\textbf{Level progression (TetrisGame.cpp:644):}
 
 \begin{verbatim}
 state.level = 1 + (state.linesCleared / LINES_PER_LEVEL);
@@ -1273,7 +1274,7 @@ state.level = 1 + (state.linesCleared / LINES_PER_LEVEL);
 Mỗi \texttt{LINES\_PER\_LEVEL} hàng xóa (mặc định 10) → tăng 1 level. Khi level up, gọi \texttt{SoundManager::playLevelUpSound()}. Giá trị này có thể điều chỉnh dễ dàng thông qua constant \texttt{LINES\_PER\_LEVEL} trong TetrisGame.h:20.
 
 \vspace{-0.4\baselineskip}
-\textbf{Drop speed formula (computeDropSpeedUs):}
+\noindent\textbf{Drop speed formula (computeDropSpeedUs):}
 
 \begin{verbatim}
 if (level <= 3)      return 500000;  // 0.50s (slow)
@@ -1285,7 +1286,7 @@ else                 return 80000;   // 0.08s (very fast)
 \subsection{Terminal I/O và Rendering}
 \vspace{-0.6\baselineskip}
 
-\subsubsection{Raw Mode Terminal Setup - enableRawMode()}
+\noindent\subsubsection{Raw Mode Terminal Setup - enableRawMode()}
 \vspace{-0.6\baselineskip}
 
 Sử dụng POSIX termios~\cite{termios, stevens2013} để cấu hình terminal (TetrisGame.cpp:349):
