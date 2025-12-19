@@ -1,126 +1,189 @@
 # 🎮 Game Tetris - Phiên Bản Terminal
 
 [![C++](https://img.shields.io/badge/C++-11-blue.svg)](https://en.cppreference.com/w/cpp/11)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/lqnhat/5ducks-tetris)
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://github.com/UIT-25730047/5ducks-tetris)
 
 Game Tetris cổ điển được lập trình bằng C++ chạy trực tiếp trên terminal! Được phát triển bởi **Nhóm 5 Ducks** trong khuôn khổ đồ án môn Kỹ Năng Nghề Nghiệp tại UIT (Trường Đại học Công nghệ Thông tin).
 
 ## 📋 Mục Lục
 
-- [Giới Thiệu](#giới-thiệu)
-- [Tính Năng](#tính-năng)
-- [Cấu Trúc Dự Án](#cấu-trúc-dự-án)
-- [Yêu Cầu Hệ Thống](#yêu-cầu-hệ-thống)
-- [Hướng Dẫn Cài Đặt](#hướng-dẫn-cài-đặt)
-- [Cách Chơi](#cách-chơi)
-- [Phím Điều Khiển](#phím-điều-khiển)
-- [Hệ Thống Tính Điểm](#hệ-thống-tính-điểm)
-- [Phát Triển](#phát-triển)
-- [Thành Viên Nhóm](#thành-viên-nhóm)
-- [Đóng Góp](#đóng-góp)
-- [Giấy Phép](#giấy-phép)
+- [Giới Thiệu](#-giới-thiệu)
+- [Tính Năng](#-tính-năng)
+- [Cấu Trúc Dự Án](#-cấu-trúc-dự-án)
+- [Yêu Cầu Hệ Thống](#-yêu-cầu-hệ-thống)
+- [Hướng Dẫn Cài Đặt](#-hướng-dẫn-cài-đặt)
+- [Cách Chơi](#-cách-chơi)
+- [Phím Điều Khiển](#️-phím-điều-khiển)
+- [Hệ Thống Tính Điểm](#-hệ-thống-tính-điểm)
+- [Kiến Trúc Kỹ Thuật](#-kiến-trúc-kỹ-thuật)
+- [Thành Viên Nhóm](#-thành-viên-nhóm)
+- [Đóng Góp](#-đóng-góp)
 
 ## 🎯 Giới Thiệu
 
-Dự án này tái hiện trải nghiệm chơi game Tetris cổ điển trực tiếp trên terminal sử dụng C++ thuần túy với thư viện hệ thống POSIX. Điểm đặc biệt của dự án là chúng tôi phát triển **hai phiên bản song song** để minh họa các cách tiếp cận lập trình khác nhau:
+Dự án này tái hiện trải nghiệm chơi game Tetris cổ điển trực tiếp trên terminal sử dụng C++ với thư viện hệ thống POSIX. Game được phát triển theo phong cách **Object-Oriented Programming (OOP)** với kiến trúc modular, dễ mở rộng và bảo trì.
 
-### 🏗️ Hai Cách Triển Khai
+### 🎨 Đặc điểm nổi bật
 
-1. **Phiên Bản Struct** (`tetris_struct/`)
-   - Sử dụng phương pháp Lập trình Thủ tục (Procedural Programming)
-   - Tổ chức với struct và các hàm độc lập
-   - Phù hợp để học phong cách lập trình C++ truyền thống
-
-2. **Phiên Bản Class** (`tetris_class/`)
-   - Sử dụng Lập trình Hướng Đối Tượng (OOP)
-   - Triển khai class, encapsulation và inheritance
-   - Lý tưởng để nghiên cứu các mẫu thiết kế phần mềm và nguyên lý OOP
-
-Cả hai phiên bản đều có **gameplay giống hệt nhau** - điểm khác biệt duy nhất là cách tổ chức code và kiến trúc!
+- **Kiến trúc OOP**: Sử dụng class encapsulation, separation of concerns
+- **Cross-platform sound**: Hỗ trợ cả macOS (afplay) và Linux (aplay/mpg123)
+- **Unicode rendering**: Box-drawing characters (╔═╗║╚╝) cho giao diện đẹp mắt
+- **ANSI colors**: 7 màu sắc cho 7 loại Tetromino
+- **Terminal I/O**: POSIX APIs (termios, fcntl) cho non-blocking input
+- **Persistent storage**: Lưu top 10 high scores vào file
 
 ## ✨ Tính Năng
 
 - 🎨 **Gameplay Tetris Cổ Điển**: Đầy đủ 7 mảnh Tetromino truyền thống (I, O, T, S, Z, J, L)
 - ⌨️ **Điều Khiển Trực Quan**: Phím điều khiển với WASD hoặc phím mũi tên
 - 📊 **Hệ Thống Tính Điểm**: Điểm dựa trên số hàng xóa, có hệ số nhân theo cấp độ
-- 🎵 **Hiệu Ứng Âm Thanh**: Nhạc nền Tetris cổ điển và hiệu ứng âm thanh
-- 📈 **Độ Khó Tăng Dần**: Hệ thống cấp độ động tăng tốc độ
-- 📋 **Hiển Thị Thống Kê**: Theo dõi điểm số, cấp độ và số hàng đã xóa
-- ⏸️ **Tính Năng Tạm Dừng**: Tạm dừng và tiếp tục bất cứ lúc nào
-- 🏆 **Theo Dõi Điểm Cao**: Ghi nhớ thành tích tốt nhất của bạn
+- 🎵 **Hiệu Ứng Âm Thanh**: Nhạc nền Tetris cổ điển và hiệu ứng âm thanh (soft drop, hard drop, line clear, level up, game over)
+- 📈 **Độ Khó Tăng Dần**: Hệ thống cấp độ động tăng tốc độ (configurable qua `LINES_PER_LEVEL` constant)
+- 👻 **Ghost Piece**: Hiển thị preview vị trí khối sẽ rơi (toggle bằng phím G)
+- 📋 **Hiển Thị Thống Kê**: Theo dõi điểm số, cấp độ, số hàng đã xóa và khối tiếp theo
+- ⏸️ **Tính Năng Tạm Dừng**: Tạm dừng và tiếp tục bất cứ lúc nào (phím P)
+- 🏆 **Theo Dõi Điểm Cao**: Lưu trữ top 10 điểm cao nhất vào file `highscores.txt`
 
 ## 📁 Cấu Trúc Dự Án
 
 ```
 5ducks-tetris/
-├── tetris_struct/          # Phiên bản Lập trình Thủ tục
-│   ├── main.cpp           # Entry point cho phiên bản struct
-│   └── ...
-├── tetris_class/          # Phiên bản Lập trình Hướng Đối Tượng
-│   ├── main.cpp           # Entry point cho phiên bản class
-│   └── ...
-├── README.md             # File này
+├── main.cpp              # Entry point của game
+├── TetrisGame.h          # Class chính - game loop & logic
+├── TetrisGame.cpp        # Implementation của TetrisGame
+├── Board.h               # Class quản lý bảng chơi
+├── Board.cpp             # Rendering & line clearing
+├── Piece.h               # Class Piece và struct Position
+├── GameState.h           # Class quản lý game state
+├── BlockTemplate.h       # Class static cho 7 tetromino templates
+├── BlockTemplate.cpp     # Rotation logic
+├── SoundManager.h        # Class static cho audio system
+├── SoundManager.cpp      # Platform-aware sound playback
+├── sounds/               # Thư mục chứa các file âm thanh (.wav)
+│   ├── background_sound_01.wav
+│   ├── soft_drop_2.wav
+│   ├── hard_drop.wav
+│   ├── lock_piece.wav
+│   ├── line_clear.wav
+│   ├── 4lines_clear.wav
+│   ├── level_up.wav
+│   └── game_over.wav
+├── highscores.txt        # File lưu top 10 điểm cao (tự động tạo)
+└── README.md             # File này
 ```
 
 ## 💻 Yêu Cầu Hệ Thống
 
-- **Hệ điều hành**: macOS 10.14+ hoặc Linux (Ubuntu 20.04+, Fedora 30+, Debian 10+)
+### Khuyến nghị: Linux
+- **Hệ điều hành**: Linux (Ubuntu 20.04+, Fedora 30+, Debian 10+, Arch Linux)
+- **Terminal**: Hỗ trợ ANSI escape codes và UTF-8 encoding
+- **Compiler**: GCC 7.0+ hoặc Clang 5.0+ với hỗ trợ C++11
+- **Audio**: `aplay` (ALSA), `mpg123`, hoặc `ffplay` cho sound effects
 - **CPU**: Intel Core i3 hoặc tương đương
 - **RAM**: 2GB trở lên
 - **Dung lượng**: 50MB dung lượng trống
-- **Terminal**: Phải hỗ trợ ANSI escape codes
-- **Compiler**: GCC 7.0+ hoặc Clang 5.0+ với hỗ trợ C++11
 
-> **Lưu ý**: Hiện tại chỉ hỗ trợ hệ thống Unix (macOS và Linux). Hỗ trợ Windows đang được lên kế hoạch cho phiên bản tương lai. Người dùng Windows có thể sử dụng WSL (Windows Subsystem for Linux) để chạy game.
+### Tương thích nền tảng
+
+✅ **Linux**: Hỗ trợ đầy đủ, khuyến nghị sử dụng
+- Game chạy tốt nhất trên Linux do sử dụng POSIX APIs và Unicode box-drawing characters
+
+⚠️ **macOS**: Có thể compile nhưng **không khuyến nghị**
+- Vấn đề hiển thị box-drawing characters trên macOS terminal
+- Một số Unicode symbols có thể hiển thị không chính xác
+- Game có thể bị đứng hoặc render sai
+
+❌ **Windows**: Chưa hỗ trợ
+- Người dùng Windows có thể sử dụng **WSL2** (Windows Subsystem for Linux) để chạy game
 
 ## 🚀 Hướng Dẫn Cài Đặt
 
-### Bắt Đầu Nhanh
-
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/lqnhat/5ducks-tetris.git
-   cd 5ducks-tetris
-   ```
-
-2. **Chọn phiên bản của bạn** (Struct hoặc Class)
-
-   **Lựa chọn A: Phiên Bản Thủ Tục (Struct)**
-   ```bash
-   cd tetris_struct
-   g++ -std=c++11 main.cpp -o tetris
-   ./tetris
-   ```
-
-   **Lựa chọn B: Phiên Bản Hướng Đối Tượng (Class)**
-   ```bash
-   cd tetris_class
-   g++ -std=c++11 main.cpp -o tetris
-   ./tetris
-   ```
-
-   *Cách khác*: Nếu có Makefile, bạn có thể dùng:
-   ```bash
-   make
-   ./tetris
-   ```
-
-3. **Đảm bảo terminal đủ lớn** (tối thiểu 80×24 ký tự)
-
-4. **Bắt đầu chơi!**
-
-### Cài Đặt Compiler (nếu cần)
+### 1. Cài đặt dependencies (Linux)
 
 **Ubuntu/Debian:**
 ```bash
 sudo apt-get update
-sudo apt-get install build-essential
+sudo apt-get install build-essential g++ alsa-utils mpg123 pulseaudio
 ```
 
-**macOS:**
+**Fedora/RHEL:**
 ```bash
-xcode-select --install
+sudo dnf install gcc-c++ alsa-utils mpg123 pulseaudio
 ```
+
+**Arch Linux:**
+```bash
+sudo pacman -S base-devel alsa-utils mpg123 pulseaudio
+```
+
+### 2. Clone repository
+
+```bash
+git clone https://github.com/UIT-25730047/5ducks-tetris.git
+cd 5ducks-tetris
+```
+
+### 3. Compile game
+
+**QUAN TRỌNG**: Bạn phải compile **tất cả file .cpp** cùng nhau:
+
+```bash
+g++ -std=c++11 *.cpp -o tetris
+```
+
+
+### 4. Chuẩn bị terminal
+
+Đảm bảo terminal của bạn:
+- Hỗ trợ UTF-8 encoding (check: `echo $LANG` - nên là `en_US.UTF-8` hoặc tương tự)
+- Kích thước tối thiểu: 80 cột × 24 hàng
+- Hiển thị được box-drawing characters (╔═╗║╚╝)
+
+### 5. Chạy game
+
+```bash
+./tetris
+```
+
+### Troubleshooting
+
+**Lỗi compile:**
+```bash
+# Check compiler version
+g++ --version  # Cần >= 7.0
+
+# Nếu thiếu C++11 support
+sudo apt-get install gcc-7 g++-7
+```
+
+**Box-drawing characters bị vỡ:**
+```bash
+# Set UTF-8 encoding
+export LANG=en_US.UTF-8
+```
+
+**Không có âm thanh:**
+```bash
+# Cài đặt ALSA (Ubuntu/Debian)
+sudo apt-get install alsa-utils
+
+# Hoặc mpg123 (cho MP3)
+sudo apt-get install mpg123
+
+# Hoặc ffplay (fallback)
+sudo apt-get install ffmpeg
+
+# Hoặc pulseaudio (fallback)
+sudo apt-get install pulseaudio
+```
+
+**Game bị đứng trên macOS:**
+- Đây là vấn đề đã biết
+- Khuyến nghị: Chạy trên Linux hoặc WSL2
+
+**Phím không phản hồi:**
+- Đảm bảo terminal ở chế độ interactive (không pipe input/output)
+- Thử khởi động lại terminal
 
 ## 🎮 Cách Chơi
 
@@ -131,13 +194,13 @@ Sắp xếp các mảnh Tetromino rơi xuống để tạo thành các hàng nga
 
 | Mảnh | Hình Dạng | Màu Sắc | Chiến Thuật |
 |------|-----------|---------|-------------|
-| **Khối I** | ████ | Xanh dương | Để dành xóa 4 hàng cùng lúc (Tetris!) |
-| **Khối O** | ██<br>██ | Vàng | Mảnh duy nhất không xoay được, lấp khoảng trống lớn |
-| **Khối T** | ▀█▀ | Tím | Rất linh hoạt, có thể thực hiện T-Spin |
-| **Khối S** | ▄█▀ | Xanh lá | Tạo các đường zigzag |
-| **Khối Z** | ▀█▄ | Đỏ | Đối xứng với khối S |
-| **Khối J** | ▄██ | Xanh đậm | Tốt để lấp các góc |
-| **Khối L** | ██▄ | Cam | Đối xứng với khối J |
+| **Khối I** | ████ | Xanh dương (Cyan) | Để dành xóa 4 hàng cùng lúc (Tetris!) |
+| **Khối O** | ██<br>██ | Vàng (Yellow) | Mảnh duy nhất không xoay được, lấp khoảng trống lớn |
+| **Khối T** | ▀█▀ | Tím (Purple) | Rất linh hoạt, có thể thực hiện T-Spin |
+| **Khối S** | ▄█▀ | Xanh lá (Green) | Tạo các đường zigzag |
+| **Khối Z** | ▀█▄ | Đỏ (Red) | Đối xứng với khối S |
+| **Khối J** | ▄██ | Xanh đậm (Blue) | Tốt để lấp các góc |
+| **Khối L** | ██▄ | Cam (Orange) | Đối xứng với khối J |
 
 ## ⌨️ Phím Điều Khiển
 
@@ -148,8 +211,9 @@ Sắp xếp các mảnh Tetromino rơi xuống để tạo thành các hàng nga
 | `S` hoặc `↓` | Rơi nhanh (soft drop) |
 | `W` hoặc `↑` | Xoay mảnh theo chiều kim đồng hồ |
 | `Space` | Rơi ngay lập tức (hard drop) |
+| `G` | Bật/tắt Ghost Piece (bóng ma) |
 | `P` | Tạm dừng/Tiếp tục game |
-| `Q` hoặc `ESC` | Thoát game |
+| `Q` | Thoát game |
 
 > **Mẹo**: Giữ phím di chuyển để di chuyển liên tục!
 
@@ -164,56 +228,106 @@ Sắp xếp các mảnh Tetromino rơi xuống để tạo thành các hàng nga
 
 ### Hệ Số Nhân Theo Cấp Độ
 Điểm số của bạn được nhân với cấp độ hiện tại!
-- Ví dụ: Xóa 4 hàng ở Cấp độ 5 = 800 × 5 = **4,000 điểm**
+- **Công thức**: `score += base_points × level`
+- **Ví dụ**: Xóa 4 hàng ở Cấp độ 5 = 800 × 5 = **4,000 điểm**
 
-### Điểm Thưởng Combo
-Xóa các hàng liên tiếp trong các lượt kế tiếp nhau để nhận điểm thưởng combo. Combo càng dài, điểm thưởng càng cao!
+### Tiến Độ Cấp Độ
 
-## 🎓 Phát Triển
+Mỗi `LINES_PER_LEVEL` hàng xóa (mặc định: **10 hàng**) → tăng 1 level
 
-### So Sánh Các Mô Hình Lập Trình
+**Công thức**: `level = 1 + (linesCleared / LINES_PER_LEVEL)`
 
-Dự án này minh họa hai cách tiếp cận lập trình cơ bản:
+**Tốc độ rơi theo level**:
+- Level 1-3: 0.50s (chậm)
+- Level 4-6: 0.30s (trung bình)
+- Level 7-9: 0.15s (nhanh)
+- Level 10+: 0.08s (rất nhanh!)
 
-**Thủ Tục (Phiên Bản Struct):**
-- Dữ liệu và hàm tách biệt
-- Các hàm thao tác trên cấu trúc dữ liệu
-- Luồng đơn giản, trực tiếp hơn
-- Tuyệt vời cho người mới học C++
+> **Lưu ý**: Bạn có thể điều chỉnh độ khó bằng cách thay đổi constant `LINES_PER_LEVEL` trong file `TetrisGame.h:20`
 
-**Hướng Đối Tượng (Phiên Bản Class):**
-- Dữ liệu và phương thức được đóng gói trong class
-- Sử dụng inheritance và polymorphism
-- Module hóa và dễ bảo trì hơn
-- Cách tiếp cận chuẩn công nghiệp cho dự án lớn
+## 🏗️ Kiến Trúc Kỹ Thuật
 
-### Công Nghệ Sử Dụng
+### Object-Oriented Design
 
-- **Ngôn ngữ**: C++ (chuẩn C++11)
-- **Thư viện**: POSIX (`termios`, `fcntl`) để điều khiển terminal
-- **Đồ họa**: ANSI escape codes để render trên terminal
-- **Hệ thống Build**: g++ compiler, Makefile tùy chọn
+Game được thiết kế theo mô hình OOP với các class chính:
+
+**Core Classes:**
+- `TetrisGame`: Orchestrate game loop, logic và state
+- `Board`: Quản lý playfield (20×15 grid), rendering, line clearing
+- `Piece`: Đại diện cho một Tetromino piece
+- `GameState`: Lưu trữ game state (score, level, lines cleared, high scores)
+- `BlockTemplate`: Static templates cho 7 loại Tetromino với rotation logic
+- `SoundManager`: Platform-aware audio playback system
+
+**Supporting Structures:**
+- `Position`: Simple POD struct cho 2D coordinates
+
+### Technical Features
+
+**Terminal I/O:**
+- POSIX `termios` cho raw mode (no echo, no buffering)
+- POSIX `fcntl` cho non-blocking input
+- ANSI escape sequences cho colors và cursor control
+- Unicode box-drawing characters cho UI borders
+
+**Rendering:**
+- Double-buffering approach để giảm screen flickering
+- ANSI 256-color codes cho 7 piece colors
+- Cache next piece preview để tránh regenerate mỗi frame
+
+**Sound System:**
+- Platform detection: macOS (`__APPLE__`) vs Linux
+- macOS: `afplay` cho audio playback
+- Linux: Fallback chain (`aplay` → `mpg123` → `ffplay`)
+- Background music loop với `pkill` cleanup
+- Non-blocking sound effects với `system()` calls
+
+**Game Mechanics:**
+- Collision detection: O(16) algorithm (4×4 bounding box)
+- Rotation: 90° clockwise transformation `(row, col) → (col, 3 - row)`
+- Wall kick: Thử 7 vị trí offset khi rotate
+- Ghost piece: Simulate hard drop để preview landing position
+- Line clearing: O(n) scan + shift algorithm
+
+### Customization
+
+**Adjustable Constants** (TetrisGame.h):
+```cpp
+constexpr long BASE_DROP_SPEED_US  = 500000;  // Base tick duration
+constexpr int  DROP_INTERVAL_TICKS = 5;       // Ticks per drop
+constexpr int  LINES_PER_LEVEL     = 10;      // Lines to level up
+constexpr int  ANIM_DELAY_US       = 15000;   // Game over animation delay
+constexpr int  LINES_PER_LEVEL     = 10;      // Lines to level up
+```
+
+**Board Dimensions** (Board.h):
+```cpp
+constexpr int BOARD_HEIGHT = 20;
+constexpr int BOARD_WIDTH  = 15;
+```
 
 ## 👥 Thành Viên Nhóm
+
+**Môn học**: Kỹ Năng Nghề Nghiệp
+
+**Giảng viên**: ThS. Nguyễn Văn Toàn
+
+**Trường**: Trường Đại học Công nghệ Thông tin (UIT)
 
 **Nhóm 5 Ducks** - CN1.K2025.1.CNTT
 
 | Họ và Tên | MSSV | Vai Trò |
 |-----------|------|---------|
-| Lê Quang Nhật | 25730047 | Trưởng nhóm, Hệ thống âm thanh, Kiểm thử, Tài liệu |
-| Dương Hoà Long | 25730040 | Xử lý đầu vào, Thao tác Tetromino, Kiểm thử |
-| Lê Hữu Nhị | 25730048 | Xử lý đầu vào, Thao tác Tetromino, Kiểm thử |
-| Nguyễn Duy Thanh | 25730068 | Hệ thống điểm số, Hệ thống âm thanh, Kiểm thử |
-| Kiều Quang Việt | 25730093 | Thao tác Tetromino, Hệ thống điểm số, Kiểm thử |
-
-**Môn học**: Kỹ Năng Nghề Nghiệp
-**Giảng viên**: ThS. Nguyễn Văn Toàn
-**Trường**: Trường Đại học Công nghệ Thông tin (UIT)
+| Lê Quang Nhật | 25730047 | Trưởng nhóm, UI/UX, Performance optimization, Tài liệu |
+| Dương Hoà Long | 25730040 | Input handling, Collision detection, Testing |
+| Lê Hữu Nhị | 25730048 | Rotation logic, Wall kick, Code refactoring |
+| Nguyễn Duy Thanh | 25730068 | Ghost piece, Sound system, Platform compatibility |
+| Kiều Quang Việt | 25730093 | High scores, Pause/Resume, Game over animation |
 
 ## 🔧 Công Cụ Phát Triển
 
-- **Quản lý công việc**: [Trello Board](https://trello.com/invite/b/693024cd112ba6767e45fd9a/ATTI060c7059b51bb4a69e34c070c2254ff40261BBCD/5ducks)
-- **Quản lý mã nguồn**: [GitHub Repository](https://github.com/lqnhat/5ducks-tetris)
+- **Quản lý công việc**: [GitHub Projects](https://github.com/users/UIT-25730047/projects/1)
+- **Quản lý mã nguồn**: [GitHub Repository](https://github.com/UIT-25730047/5ducks-tetris)
 - **Giao tiếp**: [Slack Workspace](https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X)
 - **Soạn thảo tài liệu**: [Overleaf](https://www.overleaf.com/read/jnjfgkqtvpsh#9f751d)
 
@@ -222,41 +336,61 @@ Dự án này minh họa hai cách tiếp cận lập trình cơ bản:
 Chúng tôi hoan nghênh các đóng góp! Đây là cách bạn có thể giúp đỡ:
 
 1. Fork repository
-2. Tạo feature branch của bạn (`git checkout -b feature/TinhNangTuyetVoi`)
-3. Commit các thay đổi (`git commit -m 'Thêm tính năng tuyệt vời'`)
+2. Tạo feature branch (`git checkout -b feature/TinhNangTuyetVoi`)
+3. Commit các thay đổi (`git commit -m 'Add: Thêm tính năng tuyệt vời'`)
 4. Push lên branch (`git push origin feature/TinhNangTuyetVoi`)
 5. Mở Pull Request
 
 ### Hướng Dẫn Phát Triển
 
-- Tuân theo style code hiện có
-- Viết commit message rõ ràng
+- Tuân theo coding conventions:
+  - Class names: `PascalCase` (VD: `TetrisGame`, `SoundManager`)
+  - Function/variable names: `camelCase` (VD: `handleInput`, `currentPiece`)
+  - Constants: `UPPER_SNAKE_CASE` (VD: `BOARD_WIDTH`, `LINES_PER_LEVEL`)
+- Viết commit message rõ ràng (format: `<type>: <message>`)
 - Thêm comment cho logic phức tạp
-- Test kỹ lưỡng trước khi submit
+- Test kỹ lưỡng trước khi submit PR
 - Cập nhật tài liệu khi cần thiết
 
 ## 📝 Câu Hỏi Thường Gặp
 
-**H: Sự khác biệt giữa phiên bản Struct và Class là gì?**
-Đ: Cả hai đều có gameplay giống hệt nhau. Điểm khác biệt nằm ở cách tổ chức code - Struct dùng lập trình thủ tục còn Class dùng OOP. Chọn dựa trên mục tiêu học tập của bạn!
-
-**H: Tôi nên dùng phiên bản nào?**
-Đ: Nếu bạn mới học C++, bắt đầu với phiên bản Struct. Nếu muốn học OOP và thiết kế phần mềm, thử phiên bản Class. Bạn cũng có thể chơi cả hai để so sánh!
-
 **H: Game có chạy trên Windows không?**
-Đ: Chưa hỗ trợ trực tiếp, nhưng bạn có thể dùng WSL (Windows Subsystem for Linux) để chạy trên Windows.
+Đ: Chưa hỗ trợ trực tiếp. Người dùng Windows nên sử dụng WSL2 (Windows Subsystem for Linux) để chạy game.
+
+**H: Game có chạy trên macOS không?**
+Đ: Có thể compile nhưng **không khuyến nghị** do vấn đề hiển thị Unicode characters. Game chạy tốt nhất trên Linux.
 
 **H: Tại sao terminal không hiển thị màu đúng?**
-Đ: Đảm bảo terminal hỗ trợ ANSI escape codes. Hầu hết terminal hiện đại (Terminal.app, GNOME Terminal, iTerm2) đều hỗ trợ.
+Đ: Đảm bảo terminal hỗ trợ ANSI escape codes. Hầu hết terminal hiện đại (GNOME Terminal, Konsole, iTerm2) đều hỗ trợ.
+
+**H: Làm sao để thay đổi độ khó game?**
+Đ: Thay đổi constant `LINES_PER_LEVEL` trong file `TetrisGame.h:20`. Giảm giá trị (VD: 5) để game khó hơn, tăng giá trị (VD: 20) để dễ hơn.
+
+**H: File âm thanh nằm ở đâu?**
+Đ: Tất cả file âm thanh (.wav) nằm trong thư mục `sounds/` cùng thư mục với executable.
+
+**H: Làm sao để tắt âm thanh?**
+Đ: Hiện tại chưa có option trong game. Bạn có thể comment out các dòng `SoundManager::play*()` trong source code và recompile.
 
 **H: Game bị giật hoặc phím không phản hồi?**
-Đ: Thử đóng các ứng dụng terminal khác, tăng buffer size của terminal, hoặc khởi động lại terminal.
+Đ: Thử:
+- Đóng các ứng dụng terminal khác
+- Tăng buffer size của terminal
+- Khởi động lại terminal
+- Đảm bảo terminal không bị lag do quá nhiều processes
 
 ## 📞 Hỗ Trợ & Liên Hệ
 
-- **GitHub Issues**: [Báo lỗi hoặc yêu cầu tính năng](https://github.com/lqnhat/5ducks-tetris/issues)
+- **GitHub Issues**: [Báo lỗi hoặc yêu cầu tính năng](https://github.com/UIT-25730047/5ducks-tetris/issues)
 - **Slack Community**: [Tham gia workspace](https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X)
 
+## 📚 Tài Liệu Tham Khảo
+
+- **Tetris Original**: [Alexey Pajitnov (1985)](https://en.wikipedia.org/wiki/Tetris)
+- **Tetris Wiki**: [Gameplay & Strategy](https://tetris.wiki/Gameplay)
+- **POSIX termios**: [Terminal I/O Manual](https://man7.org/linux/man-pages/man3/termios.3.html)
+- **C++ Reference**: [C++11 Standard](https://en.cppreference.com/w/cpp/11)
+- **GitHub Flow**: [Branching Strategy](https://docs.github.com/en/get-started/quickstart/github-flow)
 
 ## 🙏 Ghi Nhận
 
@@ -272,5 +406,7 @@ Chúng tôi hoan nghênh các đóng góp! Đây là cách bạn có thể giúp
 **🎮 Được làm với ❤️ bởi Nhóm 5 Ducks**
 
 *"Trong Tetris như trong cuộc sống, những thành tựu (achievements) biến mất, còn những sai lầm (mistakes) thì tích lũy lại."*
+
+**[⭐ Star this repo](https://github.com/UIT-25730047/5ducks-tetris) | [📝 Report Issues](https://github.com/UIT-25730047/5ducks-tetris/issues) | [🤝 Contribute](https://github.com/UIT-25730047/5ducks-tetris/pulls)**
 
 </div>

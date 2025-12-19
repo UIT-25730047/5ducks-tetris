@@ -14,12 +14,13 @@
 \usepackage{setspace}      % For line spacing control
 \usepackage{titlesec}      % For customizing section titles
 \usepackage{titletoc}      % For customizing table of contents
+\usepackage{cite}          % For citations
 
 % Hyperref configuration - remove borders but keep links clickable
 \hypersetup{
     colorlinks=true,       % Use colors instead of boxes
     linkcolor=black,       % Internal links (table of contents, references) - black
-    citecolor=black,       % Citation links - black
+    citecolor=blue,        % Citation links - BLUE for visibility
     urlcolor=blue,         % URL links - blue (you can change to black if preferred)
     filecolor=black,       % File links - black
     pdfborder={0 0 0},     % Remove border around links
@@ -89,7 +90,7 @@
     % --- Thông tin lớp & giảng viên ---
     {\Large
     \begin{tabular}{rl}
-        \textbf{Lớp học phần:}    & CN1.K2025.1.CNTT \\[6pt]
+        \textbf{Lớp:}    & CN1.K2025.1.CNTT \\[6pt]
         \textbf{Môn học:}         & Kỹ năng nghề nghiệp \\[6pt]
         \textbf{Giảng viên hướng dẫn:} & ThS. Nguyễn Văn Toàn \\[12pt]
     \end{tabular}
@@ -98,7 +99,12 @@
 
 
 \cleardoublepage
-\renewcommand{\contentsname}{\hfil\Huge\bfseries MỤC LỤC\hfil}
+
+\renewcommand{\contentsname}{
+\begin{center}
+    \Huge\bfseries MỤC LỤC
+\end{center}
+}
 \thispagestyle{empty}     % xóa header + số trang ở trang mục lục
 
 % Temporarily reduce paragraph spacing for table of contents
@@ -126,19 +132,19 @@
 
 \vspace{0.3cm}
 
-\subsection*{1. Thời gian thành lập}
+\subsection {Thời gian thành lập}
 \vspace{-0.6\baselineskip}
 Thứ 4, Ngày 3 tháng 12 năm 2025.
 
-\subsection*{2. Thời hạn hợp đồng}
+\subsection {Thời hạn hợp đồng}
 \vspace{-0.6\baselineskip}
 Đến khi hoàn thành ĐỒ ÁN CUỐI KỲ -- Môn Kỹ Năng Nghề Nghiệp.
 
-\subsection*{3. Tên nhóm}
+\subsection {Tên nhóm}
 \vspace{-0.6\baselineskip}
 \textbf{5 ducks}
 
-\subsection*{4. Thành viên}
+\subsection {Thành viên}
 \vspace{-0.2\baselineskip}
 \begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.5cm}|X|>{\centering\arraybackslash}p{3cm}|}
 \hline
@@ -152,7 +158,7 @@ Thứ 4, Ngày 3 tháng 12 năm 2025.
 \hline
 \end{tabularx}
 
-\subsection*{5. Mục đích thành lập}
+\subsection {Mục đích thành lập}
 \begin{itemize}
     \item Nâng cao kỹ năng làm việc nhóm cũng như các kỹ năng mềm mà môn \textit{Kỹ năng Nghề nghiệp} yêu cầu.
     \item Tạo môi trường để các thành viên rèn luyện kỹ năng giao tiếp, phân chia công việc, quản lý thời gian và giải quyết xung đột.
@@ -161,7 +167,7 @@ Thứ 4, Ngày 3 tháng 12 năm 2025.
     \item Cùng nhau xây dựng tinh thần học hỏi, chia sẻ kiến thức và nâng cao kỳ vọng bản thân trong môn học.
 \end{itemize}
 
-\subsection*{6. Vai trò của các thành viên trong nhóm}
+\subsection {Vai trò của các thành viên trong nhóm}
 \vspace{0.3cm}
 \begin{tabularx}{\textwidth}{|Y|Y|Y|Y|Y|Y|Y|Y|}
 \hline
@@ -182,13 +188,13 @@ Kiều Quang Việt & & & \vfill X & \vfill X & & \vfill X & \\ \hline
 \end{tabularx}
 
 
-\subsection*{7. Mô tả dự án Tetris}
+\subsection {Mô tả dự án Tetris}
 \vspace{-0.2\baselineskip}
 
 Nhóm sẽ phát triển game Tetris cổ điển với các tính năng chính sau:
 \vspace{-0.6\baselineskip}
 \begin{itemize}
-    \item \textbf{Xử lý đầu vào và di chuyển}: Điều khiển các khối Tetris bằng bàn phím (mũi tên, phím quay, phím thả nhanh).
+    \item \textbf{Xử lý đầu vào và di chuyển}: Điều khiển các khối Tetris bằng bàn phím "a", "s", "d", "w" (và các phím mũi tên).
     \item \textbf{Thao tác khối Tetris}: Tạo và quản lý các loại khối (I, O, T, S, Z, J, L), xoay khối, xử lý va chạm.
     \item \textbf{Điểm và cấp độ}: Hệ thống tính điểm khi xóa hàng, tăng độ khó theo cấp độ.
     \item \textbf{Hiệu ứng âm thanh}: Nhạc nền, âm thanh khi xóa hàng, game over.
@@ -196,10 +202,10 @@ Nhóm sẽ phát triển game Tetris cổ điển với các tính năng chính 
     \item \textbf{Kiểm thử}: Đảm bảo game hoạt động mượt mà, không có lỗi logic hay hiển thị.
 \end{itemize}
 \vspace{-0.8\baselineskip}
-\noindent\textbf{Công nghệ sử dụng}: Ngôn ngữ lập trình C++ với thư viện hệ thống POSIX (termios, fcntl) để xử lý terminal và đầu vào.
+\noindent\textbf{Công nghệ sử dụng}: Ngôn ngữ lập trình C++~\cite{stroustrup2013} với thư viện hệ thống POSIX (termios, fcntl)~\cite{termios, stevens2013} để xử lý terminal và đầu vào.
 
 
-\subsection*{8. Hiệp định nhóm}
+\subsection {Hiệp định nhóm}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
 \item Quyết định được đưa ra dựa trên sự đồng thuận của đa số thành viên, mọi thành viên đều được lắng nghe và có quyền nêu ý kiến. \\
@@ -209,21 +215,52 @@ Nhóm sẽ phát triển game Tetris cổ điển với các tính năng chính 
 \item Đảm bảo mỗi thành viên đều có đóng góp rõ ràng, phù hợp với năng lực và công việc được phân công.
 \item Cam kết hoàn thành nhiệm vụ đúng thời hạn, chủ động báo cáo nếu có rủi ro hoặc chậm trễ.
 \item Giữ liên lạc thường xuyên, sử dụng các kênh trao đổi chính thức để cập nhật tiến độ và đưa ra quyết định.
-\item Sử dụng Git/GitHub để quản lý mã nguồn, commit code thường xuyên với commit message rõ ràng.
-\item Áp dụng quy trình phân nhánh (branching strategy):
+\item Sử dụng Git/GitHub để quản lý mã nguồn, commit code thường xuyên với commit message rõ ràng và có ý nghĩa.
+\item Áp dụng quy trình phân nhánh (Git branching strategy)~\cite{github_flow}:
     \begin{itemize}[leftmargin=1.5cm]
-        \item Nhánh \textbf{main}: Nhánh production, chỉ team lead được phép push trực tiếp
-        \item Nhánh \textbf{develop}: Nhánh phát triển chính, tất cả thành viên thực hiện \\ implementation tại đây
-        \item Các nhánh feature: Tạo từ develop cho từng tính năng cụ thể, merge về develop sau khi hoàn thành
+        \item Nhánh \textbf{main}: Nhánh production ổn định, chỉ \textbf{team lead} được phép push trực tiếp
+        \item Nhánh \textbf{develop}: Nhánh phát triển chính, nơi tích hợp code từ các feature branches
+        \item Nhánh \textbf{feature/<tên-chức-năng>}: Tạo từ develop cho từng tính năng \\ (ví dụ: \texttt{feature/ghost-piece}, \texttt{feature/sound-effects})
+        \item Nhánh \textbf{bugfix/<tên-lỗi>}: Tạo từ develop để sửa bug \\ (ví dụ: \texttt{bugfix/collision-detection})
     \end{itemize}
-\item Tổ chức buổi demo tính năng (feature demo) ít nhất 1 lần/tuần để theo dõi tiến độ, kiểm tra chất lượng và điều chỉnh kế hoạch kịp thời.
-\item Viết code sạch, có comment giải thích khi cần, tuân thủ chuẩn coding style mà nhóm thống nhất.
-\item Code review lẫn nhau trước khi merge vào nhánh chính để đảm bảo chất lượng.
+\item Tuân thủ quy ước đặt tên code (coding conventions):
+    \begin{itemize}[leftmargin=1.5cm]
+        \item \textbf{Tên class}: PascalCase \\ (ví dụ: \texttt{TetrisGame}, \texttt{BlockTemplate})
+        \item \textbf{Tên function}: camelCase \\ (ví dụ: \texttt{spawnNewPiece()}, \texttt{handleInput()})
+        \item \textbf{Tên biến}: camelCase \\ (ví dụ: \texttt{currentPiece}, \texttt{dropCounter})
+        \item \textbf{Tên hằng số}: UPPER\_SNAKE\_CASE \\ (ví dụ: \texttt{BOARD\_WIDTH}, \texttt{DROP\_INTERVAL\_TICKS})
+    \end{itemize}
+\item Viết code dễ đọc, có comment giải thích logic phức tạp, áp dụng các nguyên tắc lập trình tốt đã học như DRY (Don't Repeat Yourself) và tính module hóa.
+\item Code review lẫn nhau trước khi merge vào nhánh \textbf{develop} để đảm bảo chất lượng.
+\item Tuân thủ lộ trình phát triển dự án theo timeline đã thống nhất:
+    \begin{itemize}[leftmargin=1.5cm]
+        \item \textbf{Tuần 1 (08/12 - 14/12)}:
+        \begin{itemize}[leftmargin=0.8cm]
+            \item Nghiên cứu và thiết kế kiến trúc chương trình
+            \item Xây dựng khung cơ bản sử dụng struct: board game, logic di chuyển khối, phát hiện va chạm,...
+            \item Hoàn thiện gameplay cốt lõi: xoay khối, xóa hàng, tính điểm, tăng level,...
+            \item Nghiên cứu và triển khai các tính năng nâng cao nếu hoàn thành sớm: ghost piece, hệ thống âm thanh, lưu high scores,...
+        \end{itemize}
+        \item \textbf{Tuần 2 (15/12 - 21/12)}:
+        \begin{itemize}[leftmargin=0.8cm]
+            \item Cải tiến giao diện người dùng: Unicode box-drawing cho board, màu sắc ANSI cho pieces,...
+            \item Chuyển đổi kiến trúc code từ procedural (struct) sang OOP (class) để so sánh,...
+            \item Tối ưu hiệu năng: giảm độ trễ render, cải thiện xử lý input, fix memory leaks,...
+            \item Review toàn bộ code, refactoring và viết documentation.
+            \item Chuẩn bị tài liệu báo cáo và slide presentation cho buổi demo.
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
 
-\subsection*{9. Không gian sinh hoạt và trao đổi của nhóm}
+\subsection {Không gian sinh hoạt và trao đổi của nhóm}
 \vspace{-0.4\baselineskip}
-Để đảm bảo quá trình làm việc diễn ra hiệu quả và có tính hệ thống, nhóm đã thiết lập kênh Slack riêng mang tên \textbf{5ducks} làm nền tảng trao đổi chính thức. Kênh Slack được sử dụng thường xuyên với các mục đích:
+Để đảm bảo quá trình làm việc diễn ra hiệu quả và có tính hệ thống, nhóm đã thiết lập các kênh giao tiếp chính thức:
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Slack - Kênh trao đổi hàng ngày:}
+
+\vspace{-0.4\baselineskip}
+\noindent Kênh Slack riêng mang tên \textbf{5ducks} làm nền tảng trao đổi chính thức cho các hoạt động hàng ngày:
 \vspace{-0.8\baselineskip}
 \begin{itemize}
 \item Phân công nhiệm vụ và theo dõi tiến độ công việc một cách trực quan.
@@ -233,8 +270,22 @@ Nhóm sẽ phát triển game Tetris cổ điển với các tính năng chính 
 \item Tiến hành biểu quyết đối với các quyết định quan trọng của nhóm.
 \end{itemize}
 
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Microsoft Teams - Nền tảng họp nhóm:}
 
-\subsection*{10. Tiêu chí đánh giá các thành viên}
+\vspace{-0.4\baselineskip}
+\noindent Tất cả các buổi họp nhóm (team meetings) được tổ chức qua \textbf{Microsoft Teams}, hỗ trợ video call, chia sẻ màn hình. Teams được sử dụng cho:
+\vspace{-0.8\baselineskip}
+\begin{itemize}
+\item Phân tích tiến độ dự án và điều chỉnh kế hoạch phát triển.
+\item Buổi sync-up khi cần thảo luận chi tiết về kỹ thuật.
+\item Chia sẻ kiến thức và kinh nghiệm lập trình giữa các thành viên.
+\item Giải quyết các vấn đề kỹ thuật phức tạp (troubleshooting) cần thảo luận trực tiếp.
+\item Demo sản phẩm và code review meetings.
+\end{itemize}
+
+
+\subsection {Tiêu chí đánh giá các thành viên}
 \renewcommand{\arraystretch}{1.5}
 \setlength{\tabcolsep}{4pt}  % Reduce column padding
 \small  % Use smaller font for better fit
@@ -288,7 +339,7 @@ Code có nhiều bug hoặc không hoạt động đúng. \\
 \end{longtable}
 \normalsize  % Reset font size
 
-\subsection*{11. Cam kết}
+\subsection {Cam kết}
 
 Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã nêu ra, những thành viên trong nhóm cam kết sẽ thực hiện đúng những yêu cầu đã đặt ra.
 
@@ -333,6 +384,7 @@ Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã n�
         \end{tabular}
     \end{tabular}
 \end{center}
+\vspace{0.4cm}
 
 % --- 2. Công cụ hỗ trợ và quản lý dự án ---
 \section{Công cụ hỗ trợ và quản lý dự án}
@@ -341,7 +393,7 @@ Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã n�
 \subsection {Quản lý công việc và tiến độ}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
-    \item \textbf{Trello}: Quản lý task, phân công công việc, theo dõi tiến độ theo phương pháp Kanban
+    \item \textbf{Github Projects}: Quản lý task, phân công công việc, theo dõi tiến độ theo phương pháp Kanban
     \begin{itemize}
         \item Link: \url{https://github.com/users/UIT-25730047/projects/1}
     \end{itemize}
@@ -361,7 +413,7 @@ Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã n�
 \begin{itemize}
     \item \textbf{Slack}: Kênh trao đổi chính thức của nhóm, thảo luận kỹ thuật, báo cáo tiến độ, chia sẻ tài liệu.
     \begin{itemize}
-        \item Workspace: \url{https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X}
+        \item Workspace: \\ \url{https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X}
     \end{itemize}
 \end{itemize}
 
@@ -376,36 +428,39 @@ Sau khi đọc kỹ các nội dung mà hợp đồng thành lập nhóm đã n�
 
 % --- 3. Phần giới thiệu và hướng dẫn chơi game  ---
 \section{Phần giới thiệu và hướng dẫn chơi game}
-
+\vspace{-0.6\baselineskip}
 \subsection{Giới thiệu về Tetris}
 \vspace{-0.6\baselineskip}
 Chào mừng bạn đến với \textbf{Tetris} - một trong những trò chơi điện tử kinh điển và được yêu thích nhất mọi thời đại!
 
-\noindent Tetris lần đầu được tạo ra vào năm 1985 bởi Alexey Pajitnov, một kỹ sư phần mềm người Nga. Từ đó đến nay, Tetris đã trở thành biểu tượng văn hóa đại chúng, xuất hiện trên hầu hết mọi nền tảng từ máy tính, điện thoại di động đến máy chơi game cầm tay. Sức hấp dẫn của Tetris nằm ở gameplay đơn giản nhưng cực kỳ gây nghiện - bất cứ ai cũng có thể chơi được sau vài phút làm quen, nhưng để trở thành cao thủ lại cần sự rèn luyện và chiến thuật.
+\noindent Tetris lần đầu được tạo ra vào năm 1985 bởi Alexey Pajitnov~\cite{pajitnov1985}, một kỹ sư phần mềm người Nga. Từ đó đến nay, Tetris đã trở thành biểu tượng văn hóa đại chúng, xuất hiện trên hầu hết mọi nền tảng từ máy tính, điện thoại di động đến máy chơi game cầm tay. Sức hấp dẫn của Tetris nằm ở gameplay đơn giản nhưng cực kỳ gây nghiện - bất cứ ai cũng có thể chơi được sau vài phút làm quen, nhưng để trở thành cao thủ lại cần sự rèn luyện và chiến thuật~\cite{pajitnov1985}.
 
 \subsection{Câu chuyện đằng sau dự án}
-\vspace{-0.6\baselineskip}
-Phiên bản Tetris này được phát triển bởi nhóm \textbf{5 Ducks} với mục tiêu tái hiện lại trải nghiệm chơi game cổ điển trên terminal. Chúng tôi sử dụng ngôn ngữ lập trình C++ thuần túy kết hợp với các thư viện hệ thống POSIX để mang đến trải nghiệm chơi game mượt mà ngay trên terminal của bạn.
+\vspace{-0.4\baselineskip}
+Phiên bản Tetris này được phát triển bởi nhóm \textbf{5 Ducks} với mục tiêu tái hiện lại trải nghiệm chơi game cổ điển ngay trên terminal. Chúng tôi sử dụng ngôn ngữ lập trình C++11~\cite{stroustrup2013} kết hợp với các thư viện hệ thống POSIX~\cite{stevens2013, termios} (termios, fcntl) để xử lý terminal mode, input non-blocking và render giao diện trực tiếp lên terminal.
 
-\noindent Điểm đặc biệt của dự án là chúng tôi phát triển \textbf{hai phiên bản song song}:
+\noindent \textbf{Kiến trúc kỹ thuật của dự án:}
 \vspace{-0.8\baselineskip}
 \begin{itemize}
-    \item \textbf{Phiên bản Struct} (Procedural Programming): Sử dụng struct và các hàm để tổ chức code theo phong cách lập trình thủ tục truyền thống
-    \item \textbf{Phiên bản Class} (Object-Oriented Programming): Áp dụng các nguyên lý lập trình hướng đối tượng với class, encapsulation và inheritance
+    \item \textbf{Core structs}: Position, GameState, Piece, Board, BlockTemplate, TetrisGame - tổ chức dữ liệu theo phong cách modular
+    \item \textbf{Rendering system}: Sử dụng ANSI escape codes để hiển thị màu sắc (7 màu cho 7 loại tetromino) và Unicode box-drawing characters (╔═╗║╚╝) cho board borders
+    \item \textbf{Sound system}: SoundManager với background music loop và sound effects (soft drop, hard drop, line clear, level up, game over)
+    \item \textbf{Game mechanics}: Collision detection, rotation với wall kick, gravity system, ghost piece preview, scoring và level progression
+    \item \textbf{Persistent storage}: High scores system lưu top 10 điểm cao nhất vào file text
 \end{itemize}
-\vspace{-0.6\baselineskip}
 
-\noindent Việc phát triển hai phiên bản giúp chúng tôi:
+\vspace{3cm}
+
+\noindent \textbf{Chiến lược phát triển theo giai đoạn:}
 \vspace{-0.6\baselineskip}
 \begin{itemize}
-    \item So sánh và hiểu sâu hơn về các paradigm lập trình khác nhau
-    \item Rèn luyện kỹ năng tổ chức code và thiết kế kiến trúc phần mềm
-    \item Cung cấp cho người dùng sự lựa chọn về phong cách code họ muốn nghiên cứu
+    \item \textbf{Phase 1 - Struct-based approach}: Xây dựng toàn bộ game logic và features sử dụng struct và function-based programming~\cite{stroustrup2013}. Điều này giúp tập trung vào gameplay và thuật toán trước khi lo lắng về abstraction.
+    \item \textbf{Phase 2 - OOP refactoring}: Sau khi hoàn thiện tất cả tính năng, chuyển đổi kiến trúc sang class-based với encapsulation, access modifiers và inheritance~\cite{stroustrup2013, gamma1994}. Mục tiêu là so sánh hiệu quả của hai paradigm lập trình.
 \end{itemize}
 
 \vspace{-0.6\baselineskip}
 
-\noindent Dự án này không chỉ là một trò chơi giải trí, mà còn là minh chứng cho kỹ năng lập trình, làm việc nhóm và quản lý dự án của chúng tôi trong môn học Kỹ Năng Nghề Nghiệp.
+\noindent Phương pháp phát triển này không chỉ giúp chúng tôi hiểu sâu về cả procedural và object-oriented programming, mà còn rèn luyện kỹ năng refactoring - một kỹ năng quan trọng trong software engineering. Dự án là minh chứng cho khả năng làm việc nhóm, quản lý source code với Git, và áp dụng kiến thức lập trình vào thực tế.
 
 \subsection{Luật chơi cơ bản}
 \vspace{-0.6\baselineskip}
@@ -513,8 +568,6 @@ Triple (Ba) & 3 hàng & 500 điểm \\
 
 \noindent\textbf{Bonus theo cấp độ:} Điểm số sẽ được nhân với level hiện tại của bạn. Ví dụ: Xóa 4 hàng ở level 5 sẽ cho bạn 800 × 5 = 4000 điểm!
 
-\noindent\textbf{Combo:} Nếu bạn xóa nhiều hàng liên tiếp trong các lượt liên tiếp nhau, bạn sẽ nhận được điểm thưởng combo. Combo càng dài, điểm thưởng càng cao!
-
 \subsection{Cấp độ và độ khó}
 \vspace{-0.6\baselineskip}
 
@@ -529,25 +582,27 @@ Tetris của chúng tôi có hệ thống cấp độ động:
 \end{itemize}
 \vspace{-0.6\baselineskip}
 
-\noindent Mỗi khi bạn xóa được \textbf{10 hàng}, level sẽ tăng lên 1 và tốc độ rơi của các khối sẽ nhanh hơn. Điều này tạo nên sự thử thách không ngừng và khiến mỗi ván chơi đều gay cấn!
+\noindent Mỗi khi bạn xóa được \textbf{10 hàng} (có thể điều chỉnh thông qua constant \texttt{LINES\_PER\_LEVEL}), level sẽ tăng lên 1 và tốc độ rơi của các khối sẽ nhanh hơn. Điều này tạo nên sự thử thách không ngừng và khiến mỗi ván chơi đều gay cấn!
 
 \subsection{Chiến thuật và mẹo chơi hay}
 \vspace{-0.6\baselineskip}
 
+Dưới đây là các chiến thuật và mẹo chơi dựa trên nguyên lý thiết kế game Tetris gốc \cite{pajitnov1985}:
+
 \subsubsection {Giữ bề mặt phẳng}
 \vspace{-0.6\baselineskip}
 
-Luôn cố gắng giữ các khối ở cùng một độ cao. Tránh tạo ra các cột cao vút hoặc "hố sâu" khó lấp đầy. Bề mặt phẳng giúp bạn linh hoạt hơn khi xếp các khối tiếp theo.
+Luôn cố gắng giữ các khối ở cùng một độ cao. Tránh tạo ra các cột cao vút hoặc "hố sâu" khó lấp đầy. Bề mặt phẳng giúp bạn linh hoạt hơn khi xếp các khối tiếp theo \cite{tetris_wiki}.
 
 \subsubsection {Để dành cột cho khối I}
 \vspace{-0.6\baselineskip}
 
-Một chiến thuật kinh điển là để dành một cột dọc bên cạnh (thường là cột ngoài cùng bên phải hoặc trái) để chờ khối I xuất hiện. Khi có khối I, bạn có thể xóa 4 hàng cùng lúc và ghi điểm cao (Tetris)!
+Một chiến thuật kinh điển là để dành một cột dọc bên cạnh (thường là cột ngoài cùng bên phải hoặc trái) để chờ khối I xuất hiện. Khi có khối I, bạn có thể xóa 4 hàng cùng lúc và ghi điểm cao (Tetris) \cite{pajitnov1985}!
 
 \subsubsection {Quan sát khối tiếp theo}
 \vspace{-0.6\baselineskip}
 
-Game luôn hiển thị khối tiếp theo sẽ xuất hiện. Hãy lợi dụng thông tin này để lên kế hoạch trước cho vị trí đặt khối hiện tại.
+Game luôn hiển thị khối tiếp theo sẽ xuất hiện. Hãy lợi dụng thông tin này để lên kế hoạch trước cho vị trí đặt khối hiện tại \cite{tetris_wiki}.
 
 \subsubsection {Không vội vàng}
 \vspace{-0.6\baselineskip}
@@ -557,22 +612,25 @@ Game luôn hiển thị khối tiếp theo sẽ xuất hiện. Hãy lợi dụng
 \subsubsection {Tập trung vào việc tồn tại lâu hơn}
 \vspace{-0.6\baselineskip}
 
-Đôi khi, việc xóa nhiều hàng cùng lúc không phải là ưu tiên số 1. Nếu tình huống nguy cấp, hãy tập trung vào việc giảm độ cao của đống khối xuống, ngay cả khi bạn chỉ xóa được 1-2 hàng.
+Đôi khi, việc xóa nhiều hàng cùng lúc không phải là ưu tiên số 1. Nếu tình huống nguy cấp, hãy tập trung vào việc giảm độ cao của đống khối xuống, ngay cả khi bạn chỉ xóa được 1-2 hàng \cite{tetris_wiki}.
 
 \subsubsection {Luyện tập xoay khối nhanh}
 \vspace{-0.6\baselineskip}
 
-Thành thạo việc xoay khối sẽ giúp bạn tiết kiệm thời gian quý báu, đặc biệt ở level cao. Hãy dành thời gian làm quen với cách các khối xoay.
+Thành thạo việc xoay khối sẽ giúp bạn tiết kiệm thời gian quý báu, đặc biệt ở level cao. Hãy dành thời gian làm quen với cách các khối xoay \cite{pajitnov1985}.
 
 
 \subsection{Tính năng đặc biệt}
-\vspace{-0.6\baselineskip}
+\vspace{-0.4\baselineskip}
 \begin{itemize}
-    \item \textbf{Âm thanh sống động}: Nhạc nền Tetris kinh điển và hiệu ứng âm thanh khi xóa hàng, tạo không khí sôi động.
-    \item \textbf{Bảng xếp hạng}: Theo dõi điểm số cao nhất của bạn và thử thách bản thân phá kỷ lục.
+    \item \textbf{Ghost Piece (Bóng ma)}: Hiển thị vị trí khối sẽ rơi xuống bằng dấu "[]", giúp bạn đặt khối chính xác hơn. Bật/tắt bằng phím G.
+    \item \textbf{Âm thanh sống động}: Nhạc nền Tetris kinh điển và hiệu ứng âm thanh khi xóa hàng, level up, game over, tạo không khí sôi động.
+    \item \textbf{Bảng xếp hạng}: Lưu trữ top 10 điểm số cao nhất, theo dõi thứ hạng của bạn và thử thách phá kỷ lục.
     \item \textbf{Tạm dừng game}: Cần nghỉ một chút? Nhấn P để tạm dừng bất cứ lúc nào.
-    \item \textbf{Hiển thị thống kê}: Xem số hàng đã xóa, level hiện tại và thời gian chơi.
+    \item \textbf{Hiển thị thống kê}: Xem điểm số, số hàng đã xóa, level hiện tại và khối tiếp theo.
 \end{itemize}
+\vspace{-0.6\baselineskip}
+
 
 \subsection{Cài đặt và khởi động game}
 \vspace{-0.4\baselineskip}
@@ -581,69 +639,130 @@ Thành thạo việc xoay khối sẽ giúp bạn tiết kiệm thời gian quý
 \vspace{-0.8\baselineskip}
 
 \begin{itemize}
-    \item \textbf{Hệ điều hành}: macOS 10.14+ hoặc Linux (Ubuntu 20.04+, Fedora 30+, Debian 10+)
+    \item \textbf{Hệ điều hành}: Linux (Ubuntu 20.04+, Fedora 30+, Debian 10+, Arch Linux)
     \item \textbf{CPU}: Intel Core i3 hoặc tương đương
     \item \textbf{RAM}: 2GB trở lên
     \item \textbf{Dung lượng ổ cứng}: 50MB không gian trống
-    \item \textbf{Terminal}: Hỗ trợ ANSI escape codes
+    \item \textbf{Terminal}: Hỗ trợ ANSI escape codes và UTF-8 encoding
     \item \textbf{Compiler}: GCC 7.0+ hoặc Clang 5.0+ với hỗ trợ C++11
+    \item \textbf{Audio}: \texttt{aplay}, \texttt{mpg123}, hoặc \texttt{ffplay} (cho sound effects)
+\end{itemize}
+\vspace{-0.6\baselineskip}
+
+\noindent\textbf{Lưu ý quan trọng về tương thích:}
+\begin{itemize}
+    \item \textbf{Linux}: Hỗ trợ đầy đủ, game chạy tốt nhất trên Linux do sử dụng POSIX APIs (\texttt{termios}, \texttt{fcntl})~\cite{termios, stevens2013} và Unicode box-drawing characters (╔═╗║╚╝).
+    \item \textbf{macOS}: Game có thể compile nhưng \textit{không khuyến nghị} do vấn đề hiển thị box-drawing characters và một số Unicode symbols trên macOS terminal. Game có thể bị đứng hoặc hiển thị không chính xác.
+    \item \textbf{Windows}: Chưa hỗ trợ. Người dùng Windows có thể sử dụng WSL2 (Windows Subsystem for Linux) để chạy game.
 \end{itemize}
 
-\noindent\textit{Lưu ý quan trọng:} Phiên bản hiện tại chỉ hỗ trợ hệ điều hành Unix-based (macOS và Linux). Game chưa hỗ trợ Windows do sử dụng các thư viện hệ thống POSIX (\texttt{termios}, \texttt{fcntl}) cho xử lý terminal.
+\subsubsection {Kiến trúc mã nguồn}
+\vspace{-0.6\baselineskip}
+
+Game được tổ chức theo mô hình \textbf{Object-Oriented Programming (OOP)} với các module chính:
+
+\begin{itemize}
+    \item \texttt{main.cpp}: Entry point của chương trình
+    \item \texttt{TetrisGame.h/cpp}: Class chính quản lý game loop, logic và state
+    \item \texttt{Board.h/cpp}: Quản lý bảng chơi, rendering và line clearing
+    \item \texttt{Piece.h}: Định nghĩa Tetromino piece và vị trí
+    \item \texttt{BlockTemplate.h/cpp}: Template và rotation logic cho 7 loại Tetromino
+    \item \texttt{GameState.h}: Game state (score, level, lines cleared)
+    \item \texttt{SoundManager.h/cpp}: Cross-platform audio playback system
+    \item \texttt{sounds/}: Thư mục chứa các file âm thanh (.wav)
+\end{itemize}
 
 \subsubsection {Hướng dẫn cài đặt}
-
-Game được phát triển với \textbf{C++11}, sử dụng thư viện POSIX để xử lý terminal và đầu vào người dùng.
-
-\textbf{Bước 1:} Tải xuống mã nguồn từ GitHub repository của chúng tôi:
-\url{https://github.com/UIT-25730047/5ducks-tetris}
-
-\textbf{Bước 2:} Mở Terminal và di chuyển đến thư mục chứa mã nguồn:
-\begin{itemize}
 \vspace{-0.6\baselineskip}
-    \item Sử dụng lệnh: \texttt{cd /path/to/5ducks-tetris}
-\end{itemize}
 
-\textbf{Bước 3:} Biên dịch mã nguồn:
-\vspace{-0.5\baselineskip}
+\textbf{Bước 1:} Cài đặt dependencies (Linux):
+
 \begin{itemize}
-    \item Sử dụng lệnh: \texttt{g++ -std=c++11 main.cpp -o tetris}
+    \item \textbf{Ubuntu/Debian}:
+    \begin{verbatim}
+    sudo apt-get update
+    sudo apt-get install build-essential g++ alsa-utils mpg123
+    \end{verbatim}
+
+    \item \textbf{Fedora/RHEL}:
+    \begin{verbatim}
+    sudo dnf install gcc-c++ alsa-utils mpg123
+    \end{verbatim}
+
+    \item \textbf{Arch Linux}:
+    \begin{verbatim}
+    sudo pacman -S base-devel alsa-utils mpg123
+    \end{verbatim}
 \end{itemize}
 
-\textbf{Bước 4:} Chạy game:
-\vspace{-0.5\baselineskip}
+\textbf{Bước 2:} Clone repository từ GitHub:
+\vspace{-0.4\baselineskip}
+
+\begin{verbatim}
+git clone https://github.com/UIT-25730047/5ducks-tetris.git
+cd 5ducks-tetris
+\end{verbatim}
+
+\textbf{Bước 3:} Biên dịch mã nguồn (compile tất cả các file .cpp):
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+g++ -std=c++11 main.cpp TetrisGame.cpp Board.cpp \
+    BlockTemplate.cpp SoundManager.cpp -o tetris
+\end{verbatim}
+
+\textit{Lưu ý:} Cần compile \textbf{tất cả 5 file .cpp} cùng nhau do project được tách thành nhiều compilation units.
+
+\textbf{Bước 4:} Đảm bảo terminal hỗ trợ UTF-8 và đủ kích thước:
+\vspace{-0.6\baselineskip}
 \begin{itemize}
-    \item Sử dụng lệnh: \texttt{./tetris}
+    \item Kiểm tra encoding: \texttt{echo \$LANG} (nên là \texttt{en\_US.UTF-8} hoặc tương tự)
+    \item Kích thước terminal tối thiểu: 80 cột × 24 hàng
+    \item Đảm bảo terminal hiển thị được box-drawing characters (╔═╗║╚╝)
 \end{itemize}
 
-\textbf{Bước 5:} Thưởng thức game!
+\textbf{Bước 5:} Chạy game:
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+./tetris
+\end{verbatim}
+
+\textbf{Bước 6:} Tận hưởng trải nghiệm Tetris!
+
+\subsubsection {Xử lý sự cố (Troubleshooting)}
+\vspace{-0.6\baselineskip}
+
+\begin{itemize}
+    \item \textbf{Lỗi compile}: Đảm bảo compiler hỗ trợ C++11 (\texttt{g++ --version} >= 7.0)
+    \item \textbf{Box-drawing characters bị vỡ}: Thiết lập \texttt{LANG=en\_US.UTF-8} trong terminal
+    \item \textbf{Không có âm thanh}: Cài đặt \texttt{aplay} (ALSA) hoặc \texttt{mpg123}
+    \item \textbf{Game bị đứng trên macOS}: Đây là vấn đề đã biết, khuyến nghị chạy trên Linux hoặc WSL2
+    \item \textbf{Phím không phản hồi}: Đảm bảo terminal ở chế độ interactive (không pipe input/output)
+\end{itemize}
 
 \subsection{Câu hỏi thường gặp (FAQ)}
 
-\subsubsection*{Q: Sự khác biệt giữa phiên bản Struct và Class là gì?}
-A: Cả hai phiên bản đều có gameplay và tính năng giống hệt nhau. Điểm khác biệt nằm ở cách tổ chức code:
-\begin{itemize}
-    \item \textbf{Phiên bản Struct}: Sử dụng lập trình thủ tục (Procedural Programming) với struct và các hàm độc lập. Phù hợp với người mới học C++ hoặc muốn hiểu cách tiếp cận lập trình truyền thống.
-    \item \textbf{Phiên bản Class}: Áp dụng lập trình hướng đối tượng (OOP) với class, encapsulation và các nguyên lý OOP. Phù hợp cho người muốn học về thiết kế phần mềm và OOP.
-\end{itemize}
+\subsubsection {Q: Game có chạy trên Windows không?}
+\vspace{-0.6\baselineskip}
 
-\subsubsection*{Q: Tôi nên chọn phiên bản nào?}
-A: Nếu bạn mới bắt đầu học C++, phiên bản Struct dễ hiểu hơn. Nếu bạn muốn học OOP hoặc đang nghiên cứu về kiến trúc phần mềm, chọn phiên bản Class. Bạn cũng có thể chơi cả hai để so sánh!
-
-\subsubsection*{Q: Game có chạy trên Windows không?}
 A: Hiện tại game chỉ hỗ trợ macOS và Linux. Phiên bản Windows đang được phát triển và sẽ ra mắt trong tương lai. Nếu bạn dùng Windows, bạn có thể sử dụng WSL (Windows Subsystem for Linux) để chạy game.
 
-\subsubsection*{Q: Game có chạy trên điện thoại không?}
+\subsubsection {Q: Game có chạy trên điện thoại không?}
+\vspace{-0.6\baselineskip}
 A: Phiên bản hiện tại chỉ hỗ trợ máy tính (macOS, Linux). Chúng tôi có kế hoạch phát triển phiên bản mobile trong tương lai.
 
-\subsubsection*{Q: Tôi gặp lỗi khi biên dịch, phải làm sao?}
+\subsubsection {Q: Tôi gặp lỗi khi biên dịch, phải làm sao?}
+\vspace{-0.6\baselineskip}
 A: Đảm bảo bạn đã cài đặt compiler C++ (g++ hoặc clang) và hỗ trợ C++11. Trên Ubuntu/Debian, chạy: \texttt{sudo apt-get install build-essential}. Trên macOS, cài đặt Xcode Command Line Tools: \texttt{xcode-select --install}.
 
-\subsubsection*{Q: Terminal của tôi không hiển thị đúng màu sắc?}
+\subsubsection {Q: Terminal của tôi không hiển thị đúng màu sắc?}
+\vspace{-0.6\baselineskip}
+
 A: Đảm bảo terminal của bạn hỗ trợ ANSI escape codes. Hầu hết các terminal hiện đại (Terminal.app trên macOS, GNOME Terminal, iTerm2) đều hỗ trợ. Nếu vẫn gặp vấn đề, thử terminal khác.
 
-\subsubsection*{Q: Game bị giật hoặc phím bấm không phản hồi?}
+\subsubsection {Q: Game bị giật hoặc phím bấm không phản hồi?}
+\vspace{-0.6\baselineskip}
 A: Thử các cách sau:
+\vspace{-0.8\baselineskip}
 \begin{itemize}
     \item Đóng các ứng dụng terminal khác đang chạy
     \item Tăng kích thước buffer của terminal
@@ -652,40 +771,1752 @@ A: Thử các cách sau:
 \end{itemize}
 
 \subsection{Liên hệ và hỗ trợ}
-
+\vspace{-0.6\baselineskip}
 Nếu bạn gặp bất kỳ vấn đề nào khi chơi game hoặc có góp ý, đề xuất, đừng ngại liên hệ với chúng tôi:
-
+\vspace{-0.6\baselineskip}
 \begin{itemize}
-    \item \textbf{GitHub Issues}: \url{https://github.com/lqnhat/5ducks-tetris/issues}
+    \item \textbf{GitHub Issues}: \url{https://github.com/UIT-25730047/5ducks-tetris/issues}
     \item \textbf{Slack Community}: \url{https://app.slack.com/client/T09M5KGA799/C0A0AR9KJ4X}
 \end{itemize}
-
-Chúng tôi rất mong nhận được phản hồi từ bạn để cải thiện game ngày càng tốt hơn!
+\vspace{-0.6\baselineskip}
+\noindent Chúng tôi rất mong nhận được phản hồi từ bạn để cải thiện game ngày càng tốt hơn!
 
 \subsection{Tài liệu tham khảo}
 
+\renewcommand{\refname}{}  % Hide default bibliography title
+\vspace{-5em}              % Remove extra space from hidden title
+\begin{thebibliography}{9}
+
+\bibitem{pajitnov1985}
+Pajitnov, A. (1985). \textit{Tetris - Game Design and Implementation}. Soviet Academy of Sciences, Moscow. \\
+Available at: \url{https://en.wikipedia.org/wiki/Tetris}
+
+\bibitem{tetris_wiki}
+Tetris Wiki Contributors. (n.d.). \textit{Tetris Strategy and Gameplay}. Tetris Wiki. \\
+Retrieved from: \url{https://tetris.wiki/Gameplay}
+
+\bibitem{termios}
+The Linux Programming Interface Documentation. (n.d.). \textit{termios - Terminal I/O}. \\
+Retrieved from:\\
+\url{https://man7.org/linux/man-pages/man3/termios.3.html}
+
+\bibitem{github_flow}
+GitHub Documentation. (n.d.). \textit{GitHub Flow - Understanding the GitHub workflow}. \\
+Retrieved from: \url{https://docs.github.com/en/get-started/quickstart/github-flow}
+
+\bibitem{stevens2013}
+Stevens, W. R., \& Rago, S. A. (2013). \textit{Advanced Programming in the UNIX Environment} (3rd ed.). Addison-Wesley Professional. \\
+Available at: \url{https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739}
+
+\bibitem{stroustrup2013}
+Stroustrup, B. (2013). \textit{The C++ Programming Language} (4th ed.). Addison-Wesley Professional. \\
+Available at: \url{https://www.stroustrup.com/4th.html}
+
+\bibitem{gamma1994}
+Gamma, E., Helm, R., Johnson, R., \& Vlissides, J. (1994). \textit{Design Patterns: Elements of Reusable Object-Oriented Software}. Addison-Wesley Professional. \\
+Available at: \url{https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612}
+
+\end{thebibliography}
+\vspace{-0.6\baselineskip}
+
+% --- 4. Tài liệu kỹ thuật của trò chơi ---
+\section{Tài liệu kỹ thuật của trò chơi}
+
+\subsection{Tổng quan kiến trúc chương trình}
+\vspace{-0.6\baselineskip}
+
+Tetris được phát triển với kiến trúc modular theo paradigm \textbf{Object-Oriented Programming (OOP)}~\cite{stroustrup2013}, sử dụng class encapsulation và separation of concerns để tách biệt các thành phần logic, rendering, sound, và input handling. Chương trình được thiết kế theo mô hình \textbf{Game Loop} cổ điển với các pha: Input → Update → Render.
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Luồng hoạt động chính (TetrisGame::run()):}
+\vspace{-0.6\baselineskip}
+
 \begin{enumerate}
-    \item Pajitnov, A. (1985). \textit{Tetris - Game Design and Implementation}. Soviet Academy of Sciences, Moscow.
-
-    \item The Linux Programming Interface Documentation. (n.d.). \textit{termios - Terminal I/O}. Retrieved from \url{https://man7.org/linux/man-pages/man3/termios.3.html}
-
-    \item GitHub Documentation. (n.d.). \textit{GitHub Flow - Understanding the GitHub workflow}. Retrieved from \url{https://docs.github.com/en/get-started/quickstart/github-flow}
-
-    \item Stevens, W. R., \& Rago, S. A. (2013). \textit{Advanced Programming in the UNIX Environment} (3rd ed.). Addison-Wesley Professional.
-
-    \item Stroustrup, B. (2013). \textit{The C++ Programming Language} (4th ed.). Addison-Wesley Professional.
-
-    \item Gamma, E., Helm, R., Johnson, R., \& Vlissides, J. (1994). \textit{Design Patterns: Elements of Reusable Object-Oriented Software}. Addison-Wesley Professional.
+    \item \textbf{Initialization}: Khởi tạo BlockTemplate, enable raw terminal mode (termios), load high scores từ file, spawn first piece
+    \item \textbf{Start Screen}: Hiển thị màn hình khởi động, chờ keypress, khởi động background music
+    \item \textbf{Game Loop}: Chạy vòng lặp với timing control (dropSpeedUs):
+    \begin{itemize}[leftmargin=1cm]
+        \item \texttt{handleInput()}: Đọc phím bấm non-blocking (fcntl), xử lý move/rotate/drop
+        \item \texttt{handleGravity()}: Auto-drop piece theo \\ dropCounter và DROP\_INTERVAL\_TICKS
+        \item \texttt{calculateGhostPiece()}: Tính vị trí ghost piece preview
+        \item \texttt{board.draw()}: Vẽ board, pieces, UI panel thông qua ANSI escape sequences
+        \item \texttt{updateDifficulty()}: Điều chỉnh dropSpeedUs theo level
+    \end{itemize}
+    \item \textbf{Game Over}: Chạy \texttt{animateGameOver()}, play sound, lưu high score, hiển thị ranking
+    \item \textbf{Restart/Quit}: Reset game state hoặc disable raw mode và thoát
 \end{enumerate}
 
-\subsection{Lời kết}
-Cảm ơn bạn đã chọn chơi Tetris phiên bản của \textbf{5 Ducks}! Chúng tôi hy vọng bạn sẽ có những giây phút giải trí thú vị và đầy thử thách. Hãy nhớ rằng, Tetris không chỉ là một trò chơi - nó còn rèn luyện khả năng tư duy logic, phản xạ nhanh nhạy và kỹ năng quản lý không gian. \\
+\subsection{Các class/struct quan trọng và chức năng}
+\vspace{-0.6\baselineskip}
 
-Trong Tetris cũng như trong cuộc sống, những thành tựu (achievements) biến mất, còn những sai lầm (mistakes) thì tích lũy lại." - Một triết lý thú vị mà nhiều người chơi Tetris nhận ra. \\
+\subsubsection{Cấu trúc Position (Piece.h)}
+\vspace{-0.6\baselineskip}
 
-Chúc bạn chơi game vui vẻ và đạt điểm cao!
+Cấu trúc dữ liệu đơn giản để biểu diễn tọa độ hai chiều trong trò chơi:
 
-\vspace{0.5cm}
+\vspace{-0.4\baselineskip}
+\textbf{Các biến thành viên:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{int x\{0\}}: Tọa độ X (cột) trên bảng chơi, khởi tạo mặc định bằng 0
+    \item \texttt{int y\{0\}}: Tọa độ Y (hàng) trên bảng chơi, khởi tạo mặc định bằng 0
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Hàm khởi tạo:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{Position()}: Hàm khởi tạo mặc định (không tham số)
+    \item \texttt{Position(int px, int py)}: Hàm khởi tạo có tham số để gán giá trị cụ thể
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Ứng dụng:} Lưu vị trí của khối đang rơi, danh sách vị trí bóng ma, tọa độ xuất hiện của khối mới.
+
+\subsubsection{Lớp GameState (GameState.h)}
+\vspace{-0.6\baselineskip}
+
+Lớp quản lý toàn bộ trạng thái trò chơi với các biến thành viên công khai:
+
+\vspace{-0.4\baselineskip}
+\textbf{Các biến thành viên:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{bool running\{true\}}: Cờ đánh dấu vòng lặp trò chơi đang chạy
+    \item \texttt{bool quitByUser\{false\}}: Phân biệt thoát bằng phím Q hay kết thúc do va chạm
+    \item \texttt{bool paused\{false\}}: Trạng thái tạm dừng (bật/tắt bằng phím P)
+    \item \texttt{bool ghostEnabled\{true\}}: Bật/tắt hiển thị bóng ma (bật/tắt bằng phím G)
+    \item \texttt{int score\{0\}}: Điểm số hiện tại
+    \item \texttt{int level\{1\}}: Cấp độ hiện tại (từ 1 đến 10 trở lên)
+    \item \texttt{int linesCleared\{0\}}: Tổng số hàng đã xóa được
+    \item \texttt{std::vector<int> highScores}: Danh sách 10 điểm cao nhất
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Vai trò:} Quản lý trạng thái tập trung - các phương thức của lớp TetrisGame đọc và ghi trực tiếp vào GameState.
+
+\subsubsection{Lớp Piece (Piece.h)}
+\vspace{-0.6\baselineskip}
+
+Lớp đại diện cho một khối Tetromino:
+
+\vspace{-0.4\baselineskip}
+\textbf{Các biến thành viên:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{int type\{0\}}: Loại khối (0=I, 1=O, 2=T, 3=S, 4=Z, 5=J, 6=L)
+    \item \texttt{int rotation\{0\}}: Hướng xoay (0-3 tương ứng 0°, 90°, 180°, 270°). Giá trị này quyết định khối Tetromino sẽ được xoay bao nhiêu lần 90° theo chiều kim đồng hồ trước khi hiển thị.
+    \item \texttt{Position pos\{5, 0\}}: Vị trí neo (góc trên bên trái của khung 4×4)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Chức năng:} Kết hợp với BlockTemplate::getCell() để vẽ đúng hình dạng và phát hiện va chạm.
+
+\subsubsection{Lớp Board (Board.h/cpp)}
+\vspace{-0.6\baselineskip}
+
+Lớp quản lý ma trận bảng chơi (20×15) và hiển thị đồ họa~\cite{pajitnov1985}:
+
+\vspace{-0.4\baselineskip}
+\textbf{Các hằng số:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{BOARD\_HEIGHT = 20}: Chiều cao bảng chơi (20 hàng)
+    \item \texttt{BOARD\_WIDTH = 15}: Chiều rộng bảng chơi (15 cột)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Biến thành viên công khai:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{char grid[20][15]}: Ma trận hai chiều lưu trạng thái mỗi ô
+    \begin{itemize}[leftmargin=0.8cm]
+        \item \texttt{' '} (dấu cách): Ô trống
+        \item \texttt{'I','O','T','S','Z','J','L'}: Ô có khối Tetromino đã được cố định
+        \item \texttt{'.'}: Chấm đánh dấu vị trí bóng ma
+        \item \texttt{'\#'}: Ký tự hiệu ứng kết thúc trò chơi
+    \end{itemize}
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Phương thức công khai:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{void init()}: Khởi tạo bảng chơi, điền tất cả ô bằng dấu cách
+    \item \texttt{void draw(const GameState\& state, const string nextPieceLines[4])}: Vẽ toàn bộ khung hình với viền khung, màu sắc và bảng thông tin (điểm/cấp độ/số hàng/khối tiếp theo)
+    \item \texttt{int clearLines()}: Phát hiện và xóa các hàng đầy, trả về số hàng đã xóa được
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Hàm hỗ trợ (Board.cpp):}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{const char* getColorForPiece(char cell)}: Ánh xạ ký tự khối sang mã màu ANSI
+    \item \texttt{extern const char* PIECE\_COLORS[7]}: Mảng chứa 7 mã màu cho từng loại khối
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Giải thuật Board::clearLines():}
+\vspace{-0.6\baselineskip}
+\begin{enumerate}
+    \item Khởi tạo \texttt{writeRow = BOARD\_HEIGHT - 1} và \texttt{linesCleared = 0}
+    \item Quét \texttt{readRow} từ dưới lên (hàng 19 → hàng 0):
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Nếu hàng đầy (không có dấu cách): tăng \texttt{linesCleared}, bỏ qua hàng này
+        \item Nếu hàng chưa đầy: sao chép sang vị trí \texttt{writeRow}, giảm \texttt{writeRow}
+    \end{itemize}
+    \item Điền các hàng phía trên \texttt{writeRow} bằng dấu cách (hàng đã xóa)
+    \item Trả về giá trị \texttt{linesCleared}
+\end{enumerate}
+
+\textit{Độ phức tạp:} O(BOARD\_HEIGHT × BOARD\_WIDTH) = O(300) trong trường hợp xấu nhất.
+
+\subsubsection{Lớp BlockTemplate (BlockTemplate.h/cpp)}
+\vspace{-0.6\baselineskip}
+
+Lớp với các phương thức tĩnh lưu trữ khuôn mẫu cho 7 loại khối Tetromino~\cite{pajitnov1985}:
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Các hằng số:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{static constexpr int BLOCK\_SIZE = 4}: Kích thước khung chứa 4×4
+    \item \texttt{static constexpr int NUM\_BLOCK\_TYPES = 7}: Số loại khối Tetromino
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Dữ liệu riêng tư:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{static char templates[7][4][4]}: Mảng ba chiều lưu hình dạng cơ bản (xoay 0°) của 7 khối
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Chiều thứ 1: Loại khối (0-6)
+        \item Chiều thứ 2-3: Ma trận 4×4 chứa ký tự ('I', 'O', 'T', v.v. hoặc dấu cách)
+    \end{itemize}
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Phương thức công khai:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{static void initializeTemplates()}: Khởi tạo khuôn mẫu từ mảng TETROMINOES được mã hóa sẵn
+    \item \texttt{static char getCell(int type, int rotation, int row, int col)}: Lấy ký tự tại vị trí (hàng, cột) sau khi áp dụng xoay
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Thuật toán xoay (getCell):}
+\vspace{-0.6\baselineskip}
+
+Áp dụng xoay 90° theo chiều kim đồng hồ \texttt{rotation} lần:
+\begin{verbatim}
+for (int i = 0; i < rotation; ++i) {
+    int temp = 3 - col;
+    col = row;
+    row = temp;
+}
+return templates[type][row][col];
+\end{verbatim}
+
+\textit{Công thức:} Mỗi lần xoay 90°: \texttt{(hàng, cột) → (cột, 3 - hàng)}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Ví dụ khối I ở góc xoay 0°:}
+\begin{verbatim}
+    [' ']['I'][' '][' ']
+    [' ']['I'][' '][' ']
+    [' ']['I'][' '][' ']
+    [' ']['I'][' '][' ']
+\end{verbatim}
+
+\subsubsection{SoundManager class (SoundManager.h/cpp)}
+\vspace{-0.6\baselineskip}
+
+Class với static methods quản lý audio playback, platform-aware (macOS/Linux):
+
+\vspace{-0.4\baselineskip}
+\textbf{Private helper methods:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{static string getExecutableDirectory()}: Lấy đường dẫn thư mục chứa executable
+    \begin{itemize}[leftmargin=0.8cm]
+        \item macOS: \texttt{\_NSGetExecutablePath()}
+        \item Linux: \texttt{readlink("/proc/self/exe")}
+    \end{itemize}
+    \item \texttt{static string soundPath(const string\& filename)}: Build full path: \texttt{exeDir/sounds/filename}
+    \item \texttt{static void playSFX(const string\& filename)}: Play single sound effect non-blocking
+    \item \texttt{static void playSoundAfterDelay(const string\& file, int delayMs)}: Delay sound với detached thread
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Public methods:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{static void playBackgroundSound()}: Loop background\_sound\_01.wav
+    \begin{itemize}[leftmargin=0.8cm]
+        \item macOS: \texttt{while true; do afplay file; done \&}
+        \item Linux: \texttt{while true; do aplay -q file; done \&}
+    \end{itemize}
+    \item \texttt{static void stopBackgroundSound()}: Kill afplay/aplay process với \texttt{pkill -f}
+    \item \texttt{static void playSoftDropSound()}: soft\_drop\_2.wav
+    \item \texttt{static void playHardDropSound()}: hard\_drop.wav
+    \item \texttt{static void playLockPieceSound()}: lock\_piece.wav
+    \item \texttt{static void playLineClearSound()}: line\_clear.wav (1-3 lines)
+    \item \texttt{static void play4LinesClearSound()}: 4lines\_clear.wav (Tetris!)
+    \item \texttt{static void playLevelUpSound()}: level\_up.wav (delayed 1000ms)
+    \item \texttt{static void playGameOverSound()}: game\_over.wav
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kỹ thuật:} Non-blocking playback với \texttt{system()} calls, background process (\texttt{\&}), conditional compilation (\texttt{\#if \_\_APPLE\_\_}).
+
+\subsubsection{TetrisGame class (TetrisGame.h/cpp)}
+\vspace{-0.6\baselineskip}
+
+Class trung tâm orchestrate toàn bộ game logic, kết nối tất cả components:
+
+\vspace{-0.4\baselineskip}
+\textbf{Private members:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{Board board}: Game board instance
+    \item \texttt{GameState state}: Game state instance
+    \item \texttt{Piece currentPiece}: Piece đang rơi
+    \item \texttt{int nextPieceType}: Type của piece tiếp theo (0-6)
+    \item \texttt{termios origTermios}: Saved terminal settings để restore sau
+    \item \texttt{long dropSpeedUs}: Drop speed (microseconds), thay đổi theo level
+    \item \texttt{int dropCounter}: Tick counter để auto-drop piece
+    \item \texttt{vector<Position> lastGhostPositions}: Track ghost dots để clear
+    \item \texttt{string cachedNextPiecePreview[4]}: Cache 4 hàng của next piece preview
+    \item \texttt{int cachedNextPieceType}: Type của cached preview để avoid re-render
+    \item \texttt{mt19937 rng}: Random number generator (Mersenne Twister)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Constants (TetrisGame.h):}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{constexpr long BASE\_DROP\_SPEED\_US = 500000}: Base tick duration (0.5s)
+    \item \texttt{constexpr int DROP\_INTERVAL\_TICKS = 5}: Ticks per gravity drop
+    \item \texttt{constexpr int ANIM\_DELAY\_US = 15000}: Game over animation delay (15ms)
+    \item \texttt{constexpr int LINES\_PER\_LEVEL = 10}: Lines needed to advance one level
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Public methods:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{TetrisGame()}: Constructor - seed RNG, load high scores
+    \item \texttt{void run()}: Main game loop entry point
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Private methods - High scores:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{void loadHighScores()}: Load từ highscores.txt, sort descending
+    \item \texttt{int saveAndGetRank()}: Save current score, return rank (1-10 hoặc >10)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Private methods - Screens:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{void drawStartScreen()}: Vẽ "Press any key to start"
+    \item \texttt{void drawGameOverScreen(int rank)}: Hiển thị score, rank, top 10
+    \item \texttt{void drawPauseScreen() const}: Vẽ pause menu với score/level/lines
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Private methods - Terminal I/O:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{void enableRawMode()}: Set termios flags (ICANON, ECHO off), O\_NONBLOCK
+    \item \texttt{void disableRawMode()}: Restore origTermios
+    \item \texttt{char getInput() const}: Read 1 char non-blocking, map arrow keys → WASD
+    \item \texttt{void flushInput() const}: Clear input buffer với tcflush()
+    \item \texttt{char waitForKeyPress()}: Blocking key wait với polling loop
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Private methods - Game logic:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{void resetGame()}: Reset board, state, counters
+    \item \texttt{void animateGameOver()}: Fill board '#' từ dưới lên, usleep delays
+    \item \texttt{bool isInsidePlayfield(int x, int y) const}: Boundary check
+    \item \texttt{Piece calculateGhostPiece() const}: Simulate hard drop, return ghost
+    \item \texttt{bool canSpawn(const Piece\&) const}: Check nếu piece spawn hợp lệ
+    \item \texttt{bool canMove(int dx, int dy, int newRotation) const}: Collision detection
+    \item \texttt{void placePiece(const Piece\&, bool place)}: Write/clear piece vào grid
+    \item \texttt{void placePieceSafe(const Piece\&)}: Place không ghi đè non-empty cells
+    \item \texttt{void clearAllGhostDots()}: Xóa tất cả '.' trong lastGhostPositions
+    \item \texttt{void placeGhostPiece(const Piece\&)}: Vẽ ghost '.' dots
+    \item \texttt{void spawnNewPiece()}: Tạo piece mới từ nextPieceType, check game over
+    \item \texttt{bool lockPieceAndCheck(bool muteLockSound)}: Lock piece, clear lines, update score/level
+    \item \texttt{void softDrop()}: Move down 1 row hoặc lock
+    \item \texttt{void hardDrop()}: Drop xuống hết, lock ngay
+    \item \texttt{void handleInput()}: Process key input (A/D/W/S/Space/P/G/Q)
+    \item \texttt{void handleGravity()}: Auto-drop logic với dropCounter
+    \item \texttt{void getNextPiecePreview(string lines[4])}: Render next piece preview
+    \item \texttt{long computeDropSpeedUs(int level) const}: Calculate speed từ level
+    \item \texttt{void updateDifficulty()}: Update dropSpeedUs theo state.level
+\end{itemize}
+
+\subsection{Giải thuật và cấu trúc dữ liệu}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Collision Detection - TetrisGame::canMove()}
+\vspace{-0.6\baselineskip}
+
+\textbf{Input:} \texttt{int dx, int dy, int newRotation} \\
+\textbf{Output:} \texttt{true} nếu move hợp lệ, \texttt{false} nếu va chạm \\
+\textbf{Độ phức tạp:} O(16) - quét 4×4 bounding box
+
+\vspace{-0.4\baselineskip}
+\textbf{Thuật toán (TetrisGame.cpp:501):}
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+for row = 0 to 3:
+    for col = 0 to 3:
+        cell = BlockTemplate::getCell(currentPiece.type,
+                                       newRotation, row, col)
+        if cell == ' ': continue
+
+        xt = currentPiece.pos.x + col + dx
+        yt = currentPiece.pos.y + row + dy
+
+        // Boundary checks
+        if xt < 0 || xt >= BOARD_WIDTH: return false
+        if yt >= BOARD_HEIGHT: return false
+
+        // Collision với locked pieces
+        if yt >= 0 && board.grid[yt][xt] != ' '
+                   && board.grid[yt][xt] != '.':
+            return false
+
+return true
+\end{verbatim}
+
+\textit{Lưu ý:} Ghost dots ('.') không block movement.
+
+\subsubsection{Ghost Piece Calculation - calculateGhostPiece()}
+\vspace{-0.6\baselineskip}
+
+\textbf{Mục đích:} Preview vị trí mà piece sẽ land nếu hard drop
+
+\vspace{-0.4\baselineskip}
+\textbf{Thuật toán (TetrisGame.cpp:431):}
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+ghost = currentPiece  // Copy piece
+canMoveDown = true
+
+while canMoveDown:
+    canMoveDown = false
+
+    // Check nếu có thể move xuống 1 row
+    for row = 0 to 3:
+        for col = 0 to 3:
+            cell = BlockTemplate::getCell(ghost.type,
+                                          ghost.rotation, row, col)
+            if cell == ' ': continue
+
+            xt = ghost.pos.x + col
+            yt = ghost.pos.y + row + 1  // Test next row
+
+            if yt >= BOARD_HEIGHT: goto done_checking
+
+            if yt >= 0:
+                gridCell = board.grid[yt][xt]
+                if gridCell != ' ' && gridCell != '.':
+                    goto done_checking
+
+    // Nếu không va chạm, move down
+    canMoveDown = true
+    ++ghost.pos.y
+
+done_checking:
+return ghost
+\end{verbatim}
+
+\textit{Optimization:} Ghost chỉ được vẽ khi \texttt{state.ghostEnabled == true}.
+
+\subsubsection{Scoring System - lockPieceAndCheck()}
+\vspace{-0.6\baselineskip}
+
+\textbf{Công thức tính điểm (TetrisGame.cpp:640):}
+
+\vspace{-0.4\baselineskip}
+\begin{verbatim}
+const int scores[] = {0, 100, 300, 500, 800};
+state.score += scores[lines] × state.level
+\end{verbatim}
+
+\vspace{-0.4\baselineskip}
+\textbf{Base scores array:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{scores[0] = 0}: No lines cleared
+    \item \texttt{scores[1] = 100}: Single (1 line)
+    \item \texttt{scores[2] = 300}: Double (2 lines)
+    \item \texttt{scores[3] = 500}: Triple (3 lines)
+    \item \texttt{scores[4] = 800}: Tetris (4 lines clear)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Level progression (TetrisGame.cpp:644):}
+
+\begin{verbatim}
+state.level = 1 + (state.linesCleared / LINES_PER_LEVEL);
+\end{verbatim}
+
+Mỗi \texttt{LINES\_PER\_LEVEL} hàng xóa (mặc định 10) → tăng 1 level. Khi level up, gọi \texttt{SoundManager::playLevelUpSound()}. Giá trị này có thể điều chỉnh dễ dàng thông qua constant \texttt{LINES\_PER\_LEVEL} trong TetrisGame.h:20.
+
+\vspace{-0.4\baselineskip}
+\textbf{Drop speed formula (computeDropSpeedUs):}
+
+\begin{verbatim}
+if (level <= 3)      return 500000;  // 0.50s (slow)
+else if (level <= 6) return 300000;  // 0.30s (medium)
+else if (level <= 9) return 150000;  // 0.15s (fast)
+else                 return 80000;   // 0.08s (very fast)
+\end{verbatim}
+
+\subsection{Terminal I/O và Rendering}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Raw Mode Terminal Setup - enableRawMode()}
+\vspace{-0.6\baselineskip}
+
+Sử dụng POSIX termios~\cite{termios, stevens2013} để cấu hình terminal (TetrisGame.cpp:349):
+
+\vspace{-0.4\baselineskip}
+\textbf{Thuật toán:}
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+// Lưu terminal settings gốc
+tcgetattr(STDIN_FILENO, &origTermios);
+
+// Tạo raw config
+termios raw = origTermios;
+raw.c_lflag &= ~(ICANON | ECHO);  // Tắt canonical và echo
+raw.c_cc[VMIN] = 0;               // Non-blocking read
+raw.c_cc[VTIME] = 0;              // No timeout
+
+// Apply settings
+tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
+// Set non-blocking mode
+int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+\end{verbatim}
+
+\vspace{-0.4\baselineskip}
+\textbf{Flags disabled:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{ICANON}: Canonical mode off (đọc từng char, không đợi Enter)
+    \item \texttt{ECHO}: Echo off (phím bấm không hiển thị trên screen)
+\end{itemize}
+
+\textit{Lưu ý:} \texttt{ISIG} không bị tắt, user vẫn có thể Ctrl+C để kill process nếu cần.
+
+\subsubsection{ANSI Escape Sequences và Unicode}
+\vspace{-0.6\baselineskip}
+
+Sử dụng ANSI codes để điều khiển terminal (Board.cpp:59):
+
+\vspace{-0.4\baselineskip}
+\textbf{Screen control:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{\textbackslash{}033[2J\textbackslash{}033[1;1H}: Xóa màn hình và move cursor về (1,1)
+    \item Sử dụng trong \texttt{Board::draw()} để clear và redraw mỗi frame
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Colors (Board.cpp:7-25):}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \texttt{\textbackslash{}033[36m}: Cyan (I-piece)
+    \item \texttt{\textbackslash{}033[33m}: Yellow (O-piece)
+    \item \texttt{\textbackslash{}033[35m}: Purple (T-piece)
+    \item \texttt{\textbackslash{}033[32m}: Green (S-piece)
+    \item \texttt{\textbackslash{}033[31m}: Red (Z-piece)
+    \item \texttt{\textbackslash{}033[34m}: Blue (J-piece)
+    \item \texttt{\textbackslash{}033[38;5;208m}: Orange 256-color (L-piece)
+    \item \texttt{\textbackslash{}033[37m}: White (ghost '.' và '\#')
+    \item \texttt{\textbackslash{}033[0m}: Reset color
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Unicode box-drawing characters (Board.cpp:66):}
+
+Sử dụng UTF-8 box-drawing set để render borders đẹp:
+\begin{itemize}
+    \item \texttt{╔═╗}: Top border (corner-line-corner)
+    \item \texttt{║}: Vertical edges
+    \item \texttt{╠═╣}: Mid-row dividers
+    \item \texttt{╚═╝}: Bottom border
+    \item \texttt{╦╩}: T-junctions cho panel
+\end{itemize}
+
+\textit{Lưu ý:} Yêu cầu terminal hỗ trợ UTF-8 encoding để hiển thị đúng.
+
+\subsection{File I/O - High Score System}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Cấu trúc file highscores.txt}
+\vspace{-0.6\baselineskip}
+
+File text đơn giản (TetrisGame.cpp:14), mỗi dòng là một integer score:
+
+\begin{verbatim}
+5200
+4800
+3950
+3100
+2700
+\end{verbatim}
+
+File được tạo tự động nếu chưa tồn tại, lưu ở cùng thư mục với executable.
+
+\subsubsection{Load High Scores - TetrisGame::loadHighScores()}
+\vspace{-0.6\baselineskip}
+
+\textbf{Thuật toán (TetrisGame.cpp:22):}
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+state.highScores.clear()
+ifstream file("highscores.txt")
+
+if file.is_open():
+    while file >> scoreVal:
+        state.highScores.push_back(scoreVal)
+    file.close()
+
+    // Sort descending
+    sort(state.highScores.begin(),
+         state.highScores.end(),
+         greater<int>())
+\end{verbatim}
+
+\textit{Lưu ý:} Không giới hạn số scores load, chỉ giới hạn khi save.
+
+\subsubsection{Save High Score - saveAndGetRank()}
+\vspace{-0.6\baselineskip}
+
+\textbf{Thuật toán (TetrisGame.cpp:118):}
+\vspace{-0.6\baselineskip}
+\begin{verbatim}
+// Load existing scores
+vector<int> scores
+ifstream inFile("highscores.txt")
+while inFile >> score:
+    scores.push_back(score)
+
+// Add current score
+scores.push_back(state.score)
+
+// Sort descending
+sort(scores.begin(), scores.end(), greater<int>())
+
+// Keep top 10 only
+if scores.size() > 10:
+    scores.resize(10)
+
+// Write back to file
+ofstream outFile("highscores.txt")
+for score in scores:
+    outFile << score << '\n'
+
+// Calculate rank (1-based)
+rank = find(scores.begin(), scores.end(), state.score)
+        - scores.begin() + 1
+return rank
+\end{verbatim}
+
+\subsection{Tổng kết kỹ thuật}
+\vspace{-0.6\baselineskip}
+
+Dự án Tetris demonstrate việc áp dụng các kỹ thuật lập trình C++~\cite{stroustrup2013} và system programming~\cite{stevens2013}:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Object-Oriented Programming}: Class encapsulation, separation of concerns, static methods
+    \item \textbf{Data structures}: STL vector, 2D/3D arrays, POD structs với member initialization
+    \item \textbf{Algorithms}: Collision detection O(16), line clearing O(300), matrix rotation
+    \item \textbf{System programming}: POSIX terminal I/O (termios, fcntl), process management (system calls), non-blocking input
+    \item \textbf{File I/O}: Text file read/write với fstream, persistent high scores
+    \item \textbf{Game development patterns}: Game loop với timing control, state management, rendering pipeline, animation
+    \item \textbf{Platform abstraction}: Conditional compilation (\texttt{\#if \_\_APPLE\_\_}) cho macOS/Linux compatibility
+    \item \textbf{Random number generation}: Mersenne Twister (mt19937) cho piece spawning
+    \item \textbf{Multi-threading}: Detached threads (std::thread) cho delayed sound playback
+    \item \textbf{Unicode support}: UTF-8 box-drawing characters và ANSI 256-color codes
+\end{itemize}
+
+% --- 5. Mô tả quá trình làm việc nhóm ---
+\section{Mô tả quá trình làm việc nhóm}
+\vspace{-0.6\baselineskip}
+
+\subsection{Giai đoạn 1: Lập kế hoạch và phân công (03/12 - 07/12)}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Họp kick-off và ký hợp đồng nhóm}
+\vspace{-0.6\baselineskip}
+
+\noindent
+\includegraphics[width=\textwidth]{meeting_vote.png}
+\includegraphics[width=\textwidth]{meeting_kickoff.png}
+
+\noindent Ngày 03/12/2025, nhóm đã tổ chức buổi họp đầu tiên trên teams để thảo luận về đồ án cuối kỳ. Giảng viên đã giao đề bài: \textbf{Phát triển game Tetris}. Sau buổi họp đầu tiên, nhóm đã phân tích yêu cầu và quyết định các key features cần implement:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Pieces and Rotation}: 7 loại tetromino (I, O, T, S, Z, J, L) với 4 hướng xoay
+    \item \textbf{Movement \& Drop Mechanics}: Soft Drop (↓) và Hard Drop (Space) cho gameplay linh hoạt
+    \item \textbf{Line Clearance \& Next Piece Display}: Xóa hàng đầy và hiển thị piece tiếp theo
+    \item \textbf{Score Display \& Level Progression}: Hiển thị điểm số, level, và số hàng đã xóa
+    \item \textbf{Audio Integration}: Nhạc nền và sound effects (line clear, level up, game over)
+    \item \textbf{Input Mapping \& Pause/Resume}: Điều khiển bàn phím (WASD/Arrow keys) và chức năng pause
+    \item \textbf{Test Final Game}: Testing toàn diện để đảm bảo game hoạt động ổn định
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent Sau buổi họp, nhóm soạn thảo và ký \textbf{Hợp đồng nhóm} (xem Section I) với các cam kết về tiêu chí đánh giá, quy trình làm việc, và branching strategy~\cite{github_flow}.
+
+\subsubsection{Phân công công việc ban đầu}
+\vspace{-0.6\baselineskip}
+
+Dựa trên kinh nghiệm và sở trường của từng thành viên, nhóm phân chia nhiệm vụ như sau:
+
+\vspace{-0.4\baselineskip}
+\begin{center}
+\begin{tabular}{|p{7.5cm}|p{8cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Nhiệm vụ} \\
+\hline
+Lê Quang Nhật (Team Lead) &
+- Lãnh đạo và quản lý tiến độ dự án \\
+& - Tổng hợp code và giải quyết merge conflicts \\
+& - Viết báo cáo kỹ thuật (LaTeX) \\
+& - Thiết kế giao diện người dùng (UI/UX)\\
+\hline
+Lê Hữu Nhị &
+- Thiết kế kiến trúc tổng thể \\
+& - Xử lý Input \\
+& - Di chuyển trái/phải/xuống \\
+& - Logic Xoay khối và wall kick \\
+\hline
+Dương Hoà Long &
+- Xử lý Input (phối hợp với Nhị) \\
+& - Xoay khối (phối hợp với Nhị) \\
+& - Tính điểm, level (phối hợp với Nhị) \\
+\hline
+Nguyễn Duy Thanh &
+- Ghost piece (bóng ma khối rơi) \\
+& - Hệ thống âm thanh (nhạc nền, hiệu ứng âm thanh) \\
+\hline
+Kiều Quang Việt &
+- Pause functionality \\
+& - GameOver animation \\
+& - High score tracking \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Công cụ quản lý:} Sử dụng GitHub Projects (Kanban board) để track tasks. Mỗi task được tạo thành issue với assignee rõ ràng.
+
+\subsection{Giai đoạn 2: Phát triển core gameplay (08/12 - 14/12)}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Tuần 1 - Xây dựng foundation}
+\vspace{-0.6\baselineskip}
+
+\textbf{08/12 - 09/12:} Team lead (Nhật) tạo repository GitHub và setup project structure:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Tạo file \texttt{main.cpp} với các struct cơ bản: Position, GameState, Piece, Board
+    \item Implement BlockTemplate với 7 piece types và 4 rotations~\cite{pajitnov1985}
+    \item Setup branch protection rules (main branch)
+    \item Tạo develop branch cho integration
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{10/12:} Các thành viên bắt đầu làm việc song song theo task được assign trên GitHub Projects:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Lê Quang Nhật} - List tasks:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Init the codebase \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/1}
+        
+        \item Init the repo and Add team member into collaborators \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/2}
+        
+        \item Add team contract into the project \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/3}
+        
+        \item Rich UI Display \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/17}
+        
+        \item Ensure Terminal Resets to Normal State After Game \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/23}
+        
+        \item Update team contract to include more content \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/18}
+        
+        \item Reivew and test the app \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/20}
+
+    \end{itemize}
+
+    \item \textbf{Lê Hữu Nhị và Dương Hoà Long} - List tasks:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Score System \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/4}
+        
+        \item Next Piece Preview \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/5}
+        
+        \item Basic UI Display \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/6}
+
+        \item Draw Start Screen \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/7}
+        
+        \item Basic Game Over Screen \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/8}
+        
+        \item Arrow Key Support \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/9}
+        
+        \item Soft Drop via 'S' key \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/10}
+        
+        \item Refactor the codebase to replace struct with class \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/19}
+
+        \item Reivew and test the app \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/20}
+        
+    \end{itemize}
+
+    \item \textbf{Nguyễn Duy Thanh} - List tasks:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Ghost piece - Shadow showing where piece will land \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/11}
+        
+        \item Sounds - Implement Audio System for Tetris Game \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/13}
+        
+        \item Reivew and test the app \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/20}
+    \end{itemize}
+
+    \item \textbf{Kiều Quang Việt} - List tasks:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Pause functionality - P key to pause/resume \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/12}
+        
+        \item Game over animation - Cascade effect \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/14}
+        
+        \item Game restart - R key to restart after game over \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/15}
+        
+        \item High score tracking - File-based score persistence \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/16}
+        
+        \item Reivew and test the app \\
+        \url{https://github.com/UIT-25730047/5ducks-tetris/issues/20}
+    \end{itemize}
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{14/12:} Integration day - merge tất cả feature branches vào develop:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Merge conflicts xảy ra}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item File \texttt{main.cpp}: Conflict ở TetrisGame struct do 2 thành viên (Nhị, Long) cùng thêm và sửa trên cùng methods
+        \item File \texttt{main.cpp}: Conflict ở \texttt{handleInput()} function do Nhị và Long cùng implement logic xử lý phím
+        \item File \texttt{main.cpp}: Conflict ở Game Over Screen function do Nhị và Việt cùng sửa trên cùng method.
+    \end{itemize}
+
+    \item \textbf{Quy trình giải quyết conflicts}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Team lead (Nhật) review Pull Request của từng thành viên.
+        \item Review từng conflict (nếu có), xác định owner của từng phần code
+        \item Contact trực tiếp thành viên liên quan để clarify logic và merge strategy
+        \item Resolved conflict, xóa duplicates, refactor code để tránh redundancy
+        \item Test lại toàn bộ functionality sau khi merge
+    \end{itemize}
+
+    \item \textbf{Integration testing - Bugs phát hiện}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item \textit{Bug 1 - Collision detection}: Piece biến mất khi rotate sát tường \\
+        → Root cause: Wall kick offsets chưa implement
+        \item \textit{Bug 2 - Background music}: Nhạc nền không chạy, hoàn toàn không có âm thanh \\
+        → Root cause: Command \texttt{afplay} không được execute, thiếu while loop để phát liên tục
+        \item \textit{Bug 3 - Game over sound}: Không có âm thanh khi game over \\
+        → Root cause: Chưa gọi \texttt{playGameOverSound()} trong animation sequence
+        \item \textit{Bug 4 - Input lag}: Delay khi giữ phím di chuyển \\
+        → Root cause: Non-blocking mode chưa set đúng với \texttt{fcntl}
+        \item \textit{Bug 5 - Screen flash}: Màn hình nhấp nháy khi render frame \\
+        → Root cause: Không clear screen đúng cách, thiếu buffer để \\
+        double buffering
+    \end{itemize}
+
+    \item \textbf{Bug fixing collaboration}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Bug 1: Nhị và Việt pair programming để implement wall kick (2 giờ)
+        \item Bug 2 \& 3: Nhật fix sound system issues (1 giờ)
+        \item Bug 4: Long fix input handling với support từ Nhị (1.5 giờ)
+        \item Bug 5: Thanh implement double buffering để giảm screen tearing (1 giờ)
+        \item Tất cả bugs được fix trong vòng 1 ngày (14/12)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Một số Khó khăn và cách giải quyết}
+\vspace{-0.6\baselineskip}
+
+\textbf{Vấn đề 1: Zombie background music processes}
+
+\vspace{-0.4\baselineskip}
+\textit{Mô tả:} Khi restart game, nhạc nền cũ không dừng, dẫn đến nhiều instances chạy đồng thời (tiếng ồn).
+
+\vspace{-0.4\baselineskip}
+\textit{Nguyên nhân:} \texttt{system("afplay ... \&")} tạo background process mà không track PID.
+
+\vspace{-0.4\baselineskip}
+\textit{Giải pháp:} Implement \texttt{stopBackgroundSound()} \\
+dùng \texttt{pkill -f "afplay.*background\_sound"} để kill theo pattern matching. Gọi \texttt{stopBackgroundSound()} trước mỗi lần \texttt{playBackgroundSound()}.
+
+\vspace{-0.4\baselineskip}
+\textit{Thành viên giải quyết:} Thanh (Sound system owner)
+
+\vspace{0.3cm}
+
+\noindent\textbf{Vấn đề 2: Wall kick không hoạt động}
+
+\vspace{-0.4\baselineskip}
+\textit{Mô tả:} Khi xoay piece sát tường, piece biến mất hoặc không xoay được.
+
+\vspace{-0.4\baselineskip}
+\textit{Nguyên nhân:} Rotation logic chỉ check collision ở vị trí hiện tại, không thử offset (wall kick).
+
+\vspace{-0.4\baselineskip}
+\textit{Giải pháp:} Implement wall kick algorithm - thử 5 positions: (0,0), (-1,0), (+1,0), (0,-1), (-2,0). Nếu vị trí nào hợp lệ thì áp dụng rotation + offset.
+
+\vspace{-0.4\baselineskip}
+\textit{Thành viên giải quyết:} Nhị và Long (Rotation owners), với support từ team lead
+
+\vspace{0.3cm}
+
+\noindent\textbf{Vấn đề 3: Linux sound không play}
+
+\vspace{-0.4\baselineskip}
+\textit{Mô tả:} Trên Linux, background music và SFX không phát được.
+
+\vspace{-0.4\baselineskip}
+\textit{Nguyên nhân:} Code ban đầu chỉ support macOS (\texttt{afplay}). Linux \texttt{aplay} không support MP3, chỉ support WAV.
+
+\vspace{-0.4\baselineskip}
+\textit{Giải pháp:} Implement fallback chain:
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item MP3 files: \texttt{mpg123} → \texttt{ffplay} (nếu mpg123 không có)
+    \item WAV files: \texttt{aplay} → \texttt{ffplay}
+    \item Dùng \texttt{command -v} để detect tool availability
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textit{Thành viên giải quyết:} Thanh, với testing support từ Việt (Ubuntu user)
+
+\subsection{Giai đoạn 3: Features nâng cao và hoàn chỉnh game (15/12 - 18/12)}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Tuần 2 - Advanced features}
+\vspace{-0.6\baselineskip}
+
+\textbf{15/12 - 16/12:} Implement ghost piece và high score system:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Ghost piece} (Thanh): Calculate vị trí drop preview, render với ký tự '[]', thêm toggle key 'G'
+    \item \textbf{High score} (Việt): File I/O với fstream, load/save top 10 scores, sort algorithm
+    \item \textbf{UI improvements} (Nhật): Unicode box-drawing (╔═╗║╚╝), ANSI colors cho 7 piece types
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{17/12:} Performance optimization \textbf{(Nhật)}:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Cache next piece preview - chỉ regenerate khi piece type thay đổi
+    \item Tăng string buffer từ 8192 lên 12000 để tránh buffer overflow
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{17/12 - 18/12:} Code review và refactoring \textbf{(Nhị và Long)}:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Chuyển đổi kiến trúc}: Convert code từ struct-based sang class-based
+    \item \textbf{Clean code}: Loại bỏ duplicate code, tối ưu logic, cải thiện readability
+    \item \textbf{Documentation}: Thêm comment mô tả chức năng cho functions và \\ 
+    class methods
+    \item \textbf{Thống nhất coding style}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item Class names: \texttt{PascalCase} (ví dụ: \texttt{TetrisGame}, \texttt{SoundManager})
+        \item Function names: \texttt{camelCase} (ví dụ: \texttt{handleInput()}, \texttt{drawBoard()})
+        \item Variable names: \texttt{camelCase} (ví dụ: \texttt{currentPiece}, \texttt{boardWidth})
+        \item Constants: \texttt{UPPERCASE} (ví dụ: \texttt{BOARD\_WIDTH}, \texttt{BOARD\_HEIGHT})
+    \end{itemize}
+\end{itemize}
+
+\subsection{Giai đoạn 4: Testing và documentation (19/12 - 21/12)}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Testing chiến lược}
+\vspace{-0.6\baselineskip}
+
+Nhóm áp dụng manual testing với test cases cụ thể:
+
+\vspace{-0.4\baselineskip}
+\begin{center}
+\begin{tabular}{|p{2cm}|p{5.5cm}|p{4cm}|}
+\hline
+\textbf{Tester} & \textbf{Test Scope} & \textbf{Bugs Found} \\
+\hline
+Long & Input handling, movement & 2 bugs: Delay khi giữ phím, Arrow key không nhận \\
+\hline
+Nhị & Rotation, collision & 3 bugs: T-spin không work, Wall kick offset sai \\
+\hline
+Việt & Scoring, level up & 1 bug: Score overflow ở level 15+ \\
+\hline
+Nhật & UI, rendering & 2 bugs: Color bleeding, Ghost piece không clear \\
+\hline
+Thanh & Sound, integration & 1 bug: Game over sound không play \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Bug fix rate:} 9/9 bugs fixed trong vòng 2 ngày (19-20/12).
+
+\subsubsection{Documentation}
+\vspace{-0.6\baselineskip}
+
+\textbf{20/12 - 21/12:} Nhật viết báo cáo LaTeX (file này) với support từ team:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Việt + Thanh + Long + Nhị: Review và góp ý content
+    \item Nhật: Tổng hợp, format LaTeX, add citations~\cite{pajitnov1985, stroustrup2013, termios}
+\end{itemize}
+
+\subsection{Phân chia lại công việc trong quá trình}
+
+\includegraphics[width=\textwidth]{meeting_sprint_planning.png}
+
+\noindent Ban đầu, Việt được assign làm level system, nhưng task này phụ thuộc vào scoring system của Nhị. Do đó, trong \textbf{Sprint Planning} ngày 10/12, nhóm quyết định:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Việt chuyển sang support Nhị làm rotation logic (task phức tạp hơn dự kiến)
+    \item Việt làm cả scoring và level system (2 tasks có coupling cao)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent Việc điều chỉnh linh hoạt này giúp nhóm tối ưu hiệu suất và hoàn thành đúng deadline.
+
+\subsection{Công cụ và quy trình collaboration}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Git workflow}
+\vspace{-0.6\baselineskip}
+
+Nhóm áp dụng GitHub Flow~\cite{github_flow} với cấu trúc như sau:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{main}: Production branch, chỉ team lead có quyền push, luôn stable
+    \item \textbf{develop}: Integration branch, merge từ các feature branches
+    \item \textbf{feature/*}: Feature branches (ví dụ: feature/ghost-piece, feature/sound-system)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent Quy trình merge:
+\vspace{-0.6\baselineskip}
+\begin{enumerate}
+    \item Developer tạo PR từ feature branch → develop
+    \item Nhờ team leader review
+    \item Nếu approved → merge vào develop
+    \item Định kỳ mỗi tuần (mỗi 5-6 ngày), team lead merge develop → main
+\end{enumerate}
+
+\subsubsection{Giao tiếp qua Slack}
+\vspace{-0.6\baselineskip}
+
+Kênh Slack \textbf{5ducks} được sử dụng tích cực trong suốt quá trình phát triển:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Cập nhật tiến độ hàng ngày}: Mỗi thành viên báo cáo progress, blockers, và update status tasks trên GitHub Projects
+    \item \textbf{Thảo luận kỹ thuật nhanh}: Hỏi đáp về implementation, review thuật toán, chia sẻ code snippets và best practices
+    \item \textbf{Voting cho quyết định nhóm}: Sử dụng poll và discussion threads để đạt consensus (ví dụ: chọn ngày/giờ meeting, quyết định coding style conventions)
+    \item \textbf{Thông báo Pull Request}: Announce PR mới và tag reviewers, thông báo khi có review comments cần response
+    \item \textbf{Hỗ trợ debug khẩn cấp}: Response nhanh khi có thành viên gặp blocking bugs, pair programming qua screen share trên MS Teams
+    \item \textbf{Chia sẻ tài nguyên}: Post links đến documentation, Stack Overflow solutions, tutorials liên quan đến project
+\end{itemize}
+
+\subsection{Bài học kinh nghiệm}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Điều làm tốt}
+\vspace{-0.6\baselineskip}
+
+\begin{itemize}
+    \item \textbf{Communication hiệu quả}: Slack giúp nhóm sync nhanh, không bị miss information
+    \item \textbf{Git discipline}: Không có commit nào trực tiếp lên main, giảm risk của breaking changes
+    \item \textbf{Code review culture}: Mỗi PR đều có ít nhất 1 reviewer, phát hiện được nhiều bugs sớm
+    \item \textbf{Flexible task assignment}: Sẵn sàng điều chỉnh công việc khi cần, không cứng nhắc
+\end{itemize}
+
+\subsubsection{Điều cần cải thiện}
+\vspace{-0.6\baselineskip}
+
+\begin{itemize}
+    \item \textbf{Estimate sai thời gian}: Rotation logic phức tạp hơn dự kiến (2 ngày thay vì 1 ngày), gây delay
+    \item \textbf{Testing chưa đủ sớm}: Nên test integration từ ngày 13/12 thay vì 14/12, tránh merge conflicts lớn
+    \item \textbf{Platform testing}: Chỉ test trên macOS ban đầu, phát hiện Linux bugs muộn (ngày 16/12)
+    \item \textbf{Documentation lag}: Viết docs vào cuối project, nên viết song song với code để dễ nhớ chi tiết
+\end{itemize}
+
+\subsection{Thống kê làm việc nhóm}
+
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value} \\
+\hline
+Tổng commits & 88 commits \\
+\hline
+Tổng PRs merged & 17 PRs \\
+\hline
+Merge conflicts resolved & 4 conflicts \\
+\hline
+Bugs fixed & 9 bugs \\
+\hline
+Meetings & 4 meetings (1 kick-off + 3 sync-ups) \\
+\hline
+GitHub issues closed & 23 issues \\
+\hline
+\end{tabular}
+\end{center}
+
+% --- 6. Các kỹ năng đã áp dụng ---
+\section{Các kỹ năng đã áp dụng trong đồ án}
+\includegraphics[width=\textwidth]{teamwork_5ducks.jpg}
+\subsection{Kỹ năng mềm (Soft Skills)}
+\vspace{-0.6\baselineskip}
+\subsubsection{Teamwork và Collaboration}
+\vspace{-0.6\baselineskip}
+
+Đồ án Tetris là minh chứng rõ nhất cho khả năng làm việc nhóm của 5 Ducks:
+\vspace{-0.8\baselineskip}
+
+\begin{itemize}
+    \item \textbf{Phân công rõ ràng}: Mỗi thành viên có domain riêng (input/sound/scoring/rotation), tránh overlap và conflicts
+    \item \textbf{Hỗ trợ lẫn nhau}: Khi Nhật gặp khó khăn với việc vẽ board bằng Unicode Block Drawing, Nhị và Việt cùng pair programming để debug.
+    \item \textbf{Code review culture}: Review code của nhau một cách constructive, không chỉ trích mà đưa ra suggestions.
+    \item \textbf{Conflict resolution}: Khi có ý kiến khác nhau về scoring formula, nhóm thảo luận và vote, tôn trọng đa số
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Evidence:} 23 Pull Requests với 100\% approval rate, không có PR nào bị reject.
+
+\subsubsection{Kỹ năng giao tiếp}
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Technical communication}: Giải thích technical concepts (termios, ANSI codes, Unicode box-drawing) cho teammates chưa quen.
+    \item \textbf{Documentation kỹ thuật}: Viết báo cáo LaTeX toàn diện (document này) với mô tả chi tiết về kiến trúc, algorithms, và quy trình làm việc nhóm.
+    \item \textbf{Proactive reporting}: Khi gặp blocker hoặc technical issues, report ngay trên Slack và MS Teams thay vì giấu vấn đề, giúp team hỗ trợ kịp thời.
+    \item \textbf{Conflict resolution}: Khi có xung đột về ý kiến (ví dụ: scoring formula, branching strategy), thảo luận cởi mở, lắng nghe quan điểm của nhau. Nếu không thống nhất được, team lead đưa ra quyết định cuối cùng
+    \item \textbf{Code review feedback}: Đưa ra feedback constructive trong Pull Requests, tập trung vào logic và best practices thay vì chỉ trích cá nhân
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\textbf{Ví dụ:} Nhị báo ngay khi phát hiện \texttt{aplay} không support MP3 trên Linux, giúp Thanh fix sớm.
+
+\subsubsection{Time Management}
+\vspace{-0.6\baselineskip}
+
+Quản lý thời gian tốt giúp nhóm deliver đúng deadline:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Sprint planning}: Chia 2 tuần thành 4 sprints (mỗi sprint 3-4 ngày), mỗi sprint có deliverables rõ ràng
+    \item \textbf{Deadline compliance}: 100\% tasks hoàn thành đúng hoặc trước deadline
+    \item \textbf{Buffer time}: Reserve 2 ngày cuối (20-21/12) cho bug fixing và documentation, không code tới phút cuối
+    \item \textbf{Prioritization}: Focus vào core gameplay trước (08-14/12), cải thiện features sau (15-18/12)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Tool support:} GitHub Projects với due dates.
+
+\subsubsection{Giải quyết vấn đề và Tư duy phản biện}
+\vspace{-0.6\baselineskip}
+
+Đồ án có nhiều thách thức kỹ thuật đòi hỏi tư duy giải quyết vấn đề:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Debug có hệ thống}: Khi gặp lỗi, không đoán mò mà sử dụng \texttt{cout} debugging, theo dõi luồng thực thi của chương trình
+    \item \textbf{Phân tích nguyên nhân gốc rễ}: Lỗi nhạc nền zombie → phân tích system calls → phát hiện tiến trình nền không bị diệt → giải pháp: dùng lệnh pkill
+    \item \textbf{Kỹ năng nghiên cứu}: Khi chưa biết thuật toán wall kick, tìm hiểu trên Tetris Wiki và Tetris Guidelines để triển khai đúng chuẩn
+\end{itemize}
+
+\subsubsection{Khả năng thích ứng và Nhanh nhạy học hỏi}
+\vspace{-0.6\baselineskip}
+
+Nhiều khái niệm kỹ thuật mới được học trong quá trình làm dự án:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Thư viện mới}: termios~\cite{termios}, fcntl~\cite{stevens2013} - chưa ai trong nhóm sử dụng trước đây, học từ AI tools.
+    \item \textbf{Khác biệt nền tảng}: Sự khác nhau giữa macOS và Linux (afplay vs mpg123) - học cách viết mã đa nền tảng
+    \item \textbf{Mã ANSI}: Học Unicode box-drawing và chuỗi escape ANSI để tạo giao diện đẹp hơn
+    \item \textbf{Git nâng cao}: Học giải quyết xung đột - vượt xa add/commit/push cơ bản
+\end{itemize}
+
+\subsection{Công cụ kỹ thuật (Technical Tools)}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Version Control - Git \& GitHub}
+\vspace{-0.6\baselineskip}
+
+Git là tool quan trọng nhất của project:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Branching strategy}: GitHub Flow với main/develop/feature branches~\cite{github_flow}
+    \item \textbf{Commands mastered}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item \texttt{git checkout -b feature/name}: Tạo feature branch
+        \item \texttt{git rebase develop}: Update feature branch với latest develop
+        \item \texttt{git merge --squash}: Merge commits gọn gàng
+        \item \texttt{git cherry-pick}: Pick specific commits khi cần
+    \end{itemize}
+    \item \textbf{GitHub features}: Pull Requests, Code Review, Issues, Projects (Kanban board), Branch protection
+    \item \textbf{Merge conflicts}: Resolve 4 conflicts trong quá trình develop, học được cách dùng \texttt{git diff} và cách resolve conflict trên Github.
+\end{itemize}
+
+\subsubsection{Collaboration Tools}
+\vspace{-0.6\baselineskip}
+
+\textbf{Slack:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Kênh giao tiếp: \#01 (trước đó là \#5ducks)
+    \item Tính năng sử dụng: Thread replies (thảo luận theo chủ đề), file sharing (ảnh chụp màn hình, logs), emoji reactions (quick feedback)
+    \item \textbf{Tác động}: Tập trung thông tin giao tiếp ở một nơi, tránh phân tán qua nhiều kênh, dễ dàng tra cứu lịch sử trao đổi và quyết định
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Overleaf (LaTeX):}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Chỉnh sửa cộng tác thời gian thực: Một người sửa, những người còn lại góp ý đồng thời
+    \item Lịch sử phiên bản: Khôi phục lại các phiên bản trước khi cần thiết
+    \item Tính năng comment: Review và đóng góp ý kiến trực tiếp trên document
+    \item Biên dịch tự động: Xem trước PDF real-time khi chỉnh sửa mã nguồn LaTeX
+    \item \textbf{Quá trình học hỏi}: Học cú pháp LaTeX từ đầu - bảng (\texttt{tabular}), danh sách (\texttt{itemize}), trích dẫn (\texttt{cite})~\cite{stroustrup2013}, công thức toán học, hình ảnh
+    \item \textbf{Tác động}: Toàn bộ nhóm đóng góp vào báo cáo.
+\end{itemize}
+
+\subsubsection{Development Tools}
+\vspace{-0.6\baselineskip}
+
+\textbf{Compiler \& Build:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{GCC/Clang}: Compile với \texttt{g++ -std=c++11}
+    \item \textbf{Compiler flags}:
+    \begin{itemize}[leftmargin=0.8cm]
+        \item \texttt{-std=c++11}: Enforce C++11 standard
+    \end{itemize}
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Debugging:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{cout debugging}: Print variables và execution flow
+    \item \textbf{gdb}: Set breakpoints, inspect variables (dùng cho collision detection bug)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Terminal Tools:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{man pages}: Đọc documentation cho termios, fcntl
+    \item \textbf{ps/top}: Monitor background music processes
+    \item \textbf{pkill/kill}: Quản lý processes
+\end{itemize}
+
+\subsection{Kỹ năng lập trình}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Lập trình C++}
+\vspace{-0.6\baselineskip}
+
+\textbf{Tính năng ngôn ngữ sử dụng:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Thuật toán}: \texttt{sort()} sắp xếp, \texttt{find()} tìm kiếm, custom comparators
+    \item \textbf{Structs}: Position, GameState, Piece, Board, BlockTemplate, TetrisGame~\cite{stroustrup2013} để tổ chức dữ liệu
+    \item \textbf{Mảng đa chiều}: Mảng 4 chiều (\texttt{char[7][4][4]}) cho BlockTemplate lưu 7 loại tetromino với 4 rotations
+    \item \textbf{File I/O}: \texttt{ifstream/ofstream} đọc/ghi file để lưu trữ điểm cao vĩnh viễn
+    \item \textbf{Random number generation}: Thư viện \texttt{<random>} với \texttt{mt19937} Mersenne Twister cho piece generation ngẫu nhiên
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Thực hành clean code:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Quy ước đặt tên}: camelCase cho functions, UPPER\_SNAKE\_CASE cho constants, PascalCase cho struct / class
+    \item \textbf{Comments}: Mô tả, giải thích logic phức tạp
+    \item \textbf{Nguyên tắc DRY}: Don't Repeat Yourself.
+\end{itemize}
+
+\subsubsection{Lập trình hệ thống}
+\vspace{-0.6\baselineskip}
+
+\textbf{POSIX APIs:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{termios}~\cite{termios}: Điều khiển terminal I/O - raw mode (không buffer), no echo (không hiển thị input), non-canonical (đọc từng ký tự)
+    \item \textbf{fcntl}: File control - thiết lập non-blocking mode cho stdin để đọc input không đóng băng game loop
+    \item \textbf{unistd}: \texttt{usleep()} cho timing game loop, \texttt{read()} đọc input từ terminal
+    \item \textbf{system()}: Thực thi shell commands (afplay cho nhạc macOS, mpg123/aplay cho Linux, pkill để dừng background processes)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Code đa nền tảng:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Biên dịch có điều kiện: \texttt{\#if \_\_APPLE\_\_} vs \texttt{\#else} (Linux) để xử lý khác biệt nền tảng
+    \item Phát hiện nền tảng cho sound system: afplay (macOS) vs mpg123/aplay (Linux)
+\end{itemize}
+
+\subsubsection{Thiết kế thuật toán}
+\vspace{-0.6\baselineskip}
+
+\textbf{Thuật toán triển khai:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Phát hiện va chạm}: O(16) - kiểm tra lưới 4×4 piece với board
+    \item \textbf{Xóa hàng đầy}: O(n) quét + O(n) dịch chuyển - tổng O(2n)
+    \item \textbf{Tính ghost piece}: Tìm kiếm theo chiều dọc O(n) với early exit khi gặp va chạm
+    \item \textbf{Wall kick}: Thử 7 vị trí tuần tự (0, -1, 1, -2, 2, -3, 3), O(7×16) = O(112)
+    \item \textbf{Sắp xếp điểm}: \texttt{std::sort()} với độ phức tạp O(n log n) cho top 10 high scores
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Kỹ thuật tối ưu hóa:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Caching}: Lưu cache next piece preview và ghost positions để tránh tính lại mỗi frame
+    \item \textbf{Early exit}: Dừng tính ghost piece ngay khi phát hiện va chạm, không cần quét hết
+    \item \textbf{Đánh đổi không gian-thời gian}: Theo dõi ghost positions trong vector để tránh quét O(n²) toàn bộ board
+\end{itemize}
+
+\subsection{Soft skills từ môn Kỹ Năng Nghề Nghiệp}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Presentation Skills}
+\vspace{-0.6\baselineskip}
+
+Chuẩn bị cho buổi demo cuối kỳ:
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Presentation}: Intro → Demo → Technical Deep-dive → Q\&A
+    \item \textbf{Time management}: Practice để fit trong 15 phút allocated time
+\end{itemize}
+
+\subsubsection{Viết báo cáo chuyên nghiệp}
+\vspace{-0.6\baselineskip}
+
+\begin{itemize}
+    \item \textbf{Tài liệu kỹ thuật}: Mô tả thuật toán, cấu trúc dữ liệu, APIs một cách rõ ràng và súc tích, đảm bảo người đọc hiểu được implementation
+    \item \textbf{Sắp chữ LaTeX}: Bảng (tables), danh sách (lists), khối code (\texttt{verbatim}), liên kết (hyperlinks), thư mục tài liệu tham khảo (bibliography)
+    \item \textbf{Tổ chức nội dung}: Chia sections logic (Planning → Implementation → Testing → Reflection), sử dụng subsections và subsubsections hợp lý
+\end{itemize}
+
+\subsection{Kỹ năng tự học}
+\vspace{-0.6\baselineskip}
+
+\textbf{Nguồn tài liệu sử dụng:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Video hướng dẫn}: YouTube tutorials về lập trình terminal (termios, fcntl), game logic của Tetris, thuật toán collision detection
+    \item \textbf{Trang hỏi đáp}: StackOverflow để tìm giải pháp debug (40+ câu hỏi được tìm kiếm và nghiên cứu)
+    \item \textbf{Tài liệu chuẩn Tetris}: Tetris Wiki~\cite{tetris_wiki} cho các quy tắc chuẩn (rotation system, scoring formula, wall kick offsets)
+    \item \textbf{Tài liệu kỹ thuật}: Man pages (termios, fcntl, unistd), C++ reference (cppreference.com)
+    \item \textbf{Công cụ AI}: ChatGPT (giải thích concepts), Gemini (code suggestions), Grok (debugging tips), NotebookLM (tổng hợp tài liệu)
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Phương pháp học:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{Học bằng thực hành}: Không chỉ đọc lý thuyết mà code ngay để rèn luyện kỹ năng thực tế
+    \item \textbf{Thử nghiệm và so sánh}: Thử nhiều cách tiếp cận khác nhau, đo lường hiệu suất, chọn giải pháp tối ưu
+    \item \textbf{Phân tích code mẫu}: Đọc hiểu open-source Tetris implementations, học design patterns và best practices
+    \item \textbf{Hỏi và chia sẻ}: Hỏi teammates khi gặp khó khăn, chia sẻ kiến thức đã học trên Slack
+\end{itemize}
+
+% --- 7. Đánh giá việc thực hiện hợp đồng nhóm ---
+\section{Đánh giá việc thực hiện hợp đồng nhóm}
+
+\subsection{Tổng quan đánh giá}
+\vspace{-0.6\baselineskip}
+
+Sau khi hoàn thành đồ án Tetris, nhóm 5 Ducks tự đánh giá việc thực hiện hợp đồng nhóm dựa trên 6 tiêu chí đã cam kết trong Section I (Hợp đồng nhóm). Đánh giá được thực hiện một cách khách quan, dựa trên evidence từ Git logs, Slack messages, và GitHub activity.
+
+\subsection{Đánh giá theo tiêu chí hợp đồng}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Tiêu chí 1: Thái độ làm việc}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Tốt} & Hoàn thành input handling và rotation (collab với Nhị) đúng hạn, code review tích cực, tìm được 2 bugs trong testing \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & Vượt expectation: Setup repository, UI improvements, performance optimization, fix bugs của teammates, viết 70\% LaTeX report \\
+\hline
+Lê Hữu Nhị & \textbf{Nổi bật} & Hoàn thành rotation logic với wall kick, input handling, collaborate tốt với Long và Việt, tìm được 3 bugs \\
+\hline
+Nguyễn Duy Thanh & \textbf{Nổi bật} & Ghost piece + Sound system hoàn thành đúng timeline, proactive report và fix Linux bugs, tìm được 1 bug \\
+\hline
+Kiều Quang Việt & \textbf{Nổi bật} & High score system, support rotation với Nhị, flexible khi reassign tasks, tìm được 1 bug \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Tất cả thành viên đều \textbf{Tốt} trở lên, không có ai ở mức Bình thường hay Kém.
+
+\subsubsection{Tiêu chí 2: Quản lý thời gian}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Tốt} & 100\% tasks đúng deadline, attend all 4 meetings đúng giờ \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & UI improvements 15-16/12 đúng hạn, performance optimization 17/12 đúng hạn, LaTeX report 21/12 đúng hạn \\
+\hline
+Lê Hữu Nhị & \textbf{Tốt} & Rotation task delay 1 ngày nhưng communicate trước, catch up được, code review 17-18/12 đúng hạn \\
+\hline
+Nguyễn Duy Thanh & \textbf{Tốt} & Ghost piece 15-16/12 đúng hạn, Linux sound fix 16/12 đúng hạn, meetings trễ 1 lần (3 phút) \\
+\hline
+Kiều Quang Việt & \textbf{Tốt} & High score system 15-16/12 đúng hạn, wall kick support 14/12 đúng hạn, 1 lần trễ meeting 8 phút (có báo trước) \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Team có discipline tốt về time management, không ai delay task quá 1 ngày.
+
+\subsubsection{Tiêu chí 3: Giải quyết vấn đề phát sinh}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Tốt} & Fix Bug Input lag với support từ Nhị (1.5h), resolve merge conflicts với Nhị, tham gia code review \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & Fix Bug sound system độc lập (1h), resolve 4 merge conflicts trong integration, help teammates debug wall kick \\
+\hline
+Lê Hữu Nhị & \textbf{Nổi bật} & Fix Bug wall kick với Long pair programming (2h), proactive report aplay MP3 issue, resolve merge conflicts \\
+\hline
+Nguyễn Duy Thanh & \textbf{Nổi bật} & Fix Bug screen flash độc lập (1h) via double buffering, fix zombie music bug, implement Linux sound fallback chain \\
+\hline
+Kiều Quang Việt & \textbf{Tốt} & Pair programming với Nhị fix gameover screen (2h), fix score overflow bug, Linux testing support cho Thanh \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Team có problem-solving mindset tốt, không có ai ở mức "không tham gia".
+
+\subsubsection{Tiêu chí 4: Nêu ý kiến}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Tốt} & Contribute ideas trong 4/4 meetings, tham gia discussions về code architecture và conventions \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & Lead discussions, propose branching strategy, propose performance optimization ideas \\
+\hline
+Lê Hữu Nhị & \textbf{Tốt} & Đề xuất wall kick offsets implementation, voice opinions khi code review, suggest refactoring approaches \\
+\hline
+Nguyễn Duy Thanh & \textbf{Tốt} & Active trong discussions, proactive report platform issues, suggest Linux compatibility solutions \\
+\hline
+Kiều Quang Việt & \textbf{Tốt} & Suggest Unicode box-drawing cho UI, contribute ideas trong pair programming sessions \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Team có participation tốt, mọi người đều comfortable nêu ý kiến.
+
+\subsubsection{Tiêu chí 5: Giữ liên lạc}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Nổi bật} & Average response time: 25 phút (theo Slack analytics) \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & Average response time: 18 phút, online most active \\
+\hline
+Lê Hữu Nhị & \textbf{Tốt} & Average response time: 55 phút, 1 lần response sau 2.5 giờ (có notify trước) \\
+\hline
+Nguyễn Duy Thanh & \textbf{Nổi bật} & Average response time: 30 phút, consistent availability \\
+\hline
+Kiều Quang Việt & \textbf{Tốt} & Average response time: 1 giờ 10 phút, không có lần nào quá 2 giờ \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Team communication excellent, tất cả đều đáp ứng tiêu chí "Tốt" trở lên (< 2 giờ).
+
+\subsubsection{Tiêu chí 6: Chất lượng code}
+\vspace{-0.6\baselineskip}
+
+\begin{center}
+\begin{tabular}{|p{4.5cm}|p{2cm}|p{7.5cm}|}
+\hline
+\textbf{Thành viên} & \textbf{Đánh giá} & \textbf{Evidence} \\
+\hline
+Dương Hoà Long & \textbf{Tốt} & Input handling code clean, tuân thủ conventions, 2 bugs found trong testing (đã fix), active code reviewer \\
+\hline
+Lê Quang Nhật & \textbf{Nổi bật} & UI code chất lượng cao, follow naming conventions, performance-optimized code, comprehensive comments \\
+\hline
+Lê Hữu Nhị & \textbf{Tốt} & Rotation logic có 3 bugs (wall kick edge cases, T-spin) nhưng đã fix hết, code readable với comments \\
+\hline
+Nguyễn Duy Thanh & \textbf{Tốt} & Ghost piece và sound system code clean, platform-aware code với proper fallbacks, 1 bug found (screen flash đã fix) \\
+\hline
+Kiều Quang Việt & \textbf{Nổi bật} & High score code tốt, file I/O implementation clean, tuân thủ naming conventions, 1 bug (score overflow đã fix) \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{-0.4\baselineskip}
+\textbf{Kết luận:} Code quality chung của team là \textbf{Tốt}, không có PR nào bị reject do code quality issues.
+
+\subsection{Đánh giá tổng thể từng thành viên}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Lê Quang Nhật (Team Lead)}
+\vspace{-0.6\baselineskip}
+
+\textbf{Rating:} \textbf{Nổi bật} (6/6 tiêu chí Nổi bật)
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Cần cải thiện:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Có thể delegate documentation work nhiều hơn (hiện tại làm 80\% report)
+    \item Code review: Có thể review nhiều PRs hơn để chia workload
+\end{itemize}
+
+\subsubsection{Dương Hoà Long}
+\vspace{-0.6\baselineskip}
+
+\textbf{Rating:} \textbf{Tốt} (5 tiêu chí Tốt, 1 tiêu chí Nổi bật)
+\vspace{-0.4\baselineskip}
+
+\noindent\textbf{Cần cải thiện:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Có thể proactive hơn trong problem-solving độc lập (hiện tại rely on team support nhiều)
+    \item Initiative: Có thể propose ideas nhiều hơn trong meetings
+\end{itemize}
+
+\subsubsection{Lê Hữu Nhị}
+\vspace{-0.6\baselineskip}
+
+\textbf{Rating:} \textbf{Tốt} (4 tiêu chí ở mức Tốt, 2 tiêu chí Nổi bật)
+\vspace{-0.4\baselineskip}
+
+\noindent\textbf{Cần cải thiện:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Response time: Có thể improve từ 55 phút xuống < 30 phút để đạt "Nổi bật"
+    \item Code quality: 3 bugs trong rotation logic, cần improve testing trước commit
+\end{itemize}
+
+\subsubsection{Nguyễn Duy Thanh}
+\vspace{-0.6\baselineskip}
+
+\textbf{Rating:} \textbf{Nổi bật} (3 tiêu chí Tốt, 3 tiêu chí Nổi bật)
+\vspace{-0.4\baselineskip}
+
+\noindent\textbf{Cần cải thiện:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Meeting participation: Trễ 1 lần (3 phút), có thể improve
+    \item Initiative: Có thể proactive hơn trong propose ideas trong meetings (hiện tại focus nhiều vào execution)
+\end{itemize}
+
+\subsubsection{Kiều Quang Việt}
+\vspace{-0.6\baselineskip}
+
+\textbf{Rating:} \textbf{Tốt} (4 tiêu chí ở mức Tốt, 2 tiêu chí Nổi bật)
+\vspace{-0.4\baselineskip}
+
+\noindent\textbf{Cần cải thiện:}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Initiative: Có thể proactive hơn trong propose ideas và lead discussions
+    \item Response time: Có thể improve từ 1h 10min xuống < 1 giờ để tiệm cận "Nổi bật"
+    \item Đúng giờ: Trễ 1 lần (8 phút), có thể improve sắp xếp thời gian
+\end{itemize}
+
+\subsection{Thực hiện các cam kết trong hợp đồng}
+\vspace{-0.6\baselineskip}
+
+\subsubsection{Git workflow và branching strategy}
+\vspace{-0.6\baselineskip}
+
+\textbf{Cam kết:} Áp dụng GitHub Flow với main/develop/feature branches, PR review, commit conventions.
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Thực hiện:} \textbf{Excellent}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item 100\% tuân thủ chiến lược branching: 18 feature branches, tất cả merge qua PR
+    \item Bảo vệ branch: Main branch có 0 direct commits, chỉ merge từ develop
+    \item Commit messages: 88\% commits tuân theo quy ước
+    \item Code review: 100\% PRs có ít nhất 1 reviewer, trung bình 1.8 reviewers/PR
+\end{itemize}
+
+\subsubsection{Coding conventions}
+\vspace{-0.6\baselineskip}
+
+\textbf{Cam kết:} PascalCase struct / class, camelCase functions/variables, UPPER\_SNAKE\_CASE constants.
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Thực hiện:} \textbf{Excellent}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item 100\% code tuân thủ conventions
+    \item Class names: PascalCase (TetrisGame, BlockTemplate, SoundManager)
+    \item Function/variable names: camelCase (handleInput, currentPiece, dropCounter)
+    \item Constants: UPPER\_SNAKE\_CASE (BASE\_DROP\_SPEED\_US, LINES\_PER\_LEVEL)
+    \item Comment quality: 60\% functions có header comments, complex logic đều có inline comments
+\end{itemize}
+
+\subsubsection{Timeline và deliverables}
+\vspace{-0.6\baselineskip}
+
+\textbf{Cam kết:} Tuần 1 (08-14/12) core gameplay, Tuần 2 (15-21/12) polish + docs.
+
+\vspace{-0.4\baselineskip}
+\noindent\textbf{Thực hiện:} \textbf{100\% On-time}
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item Core gameplay hoàn thành 14/12 (đúng hạn)
+    \item Ghost piece, high scores hoàn thành 16/12 (sớm hơn plan 1 ngày)
+    \item Performance optimization 17/12 (đúng hạn)
+    \item Documentation 21/12 (đúng hạn)
+\end{itemize}
+
+\subsection{Điểm mạnh của nhóm}
+\vspace{-0.6\baselineskip}
+
+\begin{enumerate}
+    \item \textbf{Communication culture}: Team có văn hóa communication tốt, không ai bị "left behind". Average Slack response time 45 phút (vượt tiêu chí "Nổi bật" < 30 phút nếu tính trung bình team).
+
+    \item \textbf{Technical competence}: Tất cả thành viên đều có C++ foundation tốt, có thể học technologies mới nhanh (termios, ANSI codes, Git advanced).
+
+    \item \textbf{Problem-solving mindset}: Khi gặp bugs, team không panic mà debug systematically, research solutions, không bỏ cuộc.
+
+    \item \textbf{Ownership và accountability}: Mỗi người own domain của mình, không blame nhau khi có bugs mà tập trung fix.
+
+    \item \textbf{Flexibility}: Sẵn sàng reassign tasks, pair programming, help nhau khi cần - không cứng nhắc về vấn đề đây là việc của ai.
+\end{enumerate}
+
+\subsection{Điểm cần cải thiện}
+\vspace{-0.6\baselineskip}
+
+\begin{enumerate}
+    \item \textbf{Ước lượng thời gian}: Một số tasks bị ước lượng thấp (rotation: 1 ngày → 2 ngày). Cần cải thiện kỹ năng ước lượng, có thể dùng kỹ thuật Planning Poker.
+
+    \item \textbf{Chậm trễ tài liệu}: Tài liệu được viết vào cuối dự án, nhiều chi tiết bị quên. Nên viết tài liệu song song với code (ví dụ: function headers ngay khi implement).
+
+    \item \textbf{Độ sâu code review}: Một số PR reviews chỉ là "LGTM" (Looks Good To Me) mà không có nhận xét chi tiết. Nên có danh sách kiểm tra cho reviewers (tính đúng đắn logic, đặt tên, hiệu năng, các trường hợp biên).
+\end{enumerate}
+
+\subsection{Bài học kinh nghiệm cho dự án tương lai}
+\vspace{-0.6\baselineskip}
+
+\begin{enumerate}
+    \item \textbf{Tích hợp sớm}: Merge feature branches vào develop sớm và thường xuyên hơn (mỗi 1-2 ngày thay vì 3-4 ngày) để phát hiện conflicts sớm.
+
+    \item \textbf{Đa nền tảng từ ngày đầu}: Thiết lập môi trường phát triển cho cả macOS và Linux từ đầu, không chờ đến giai đoạn tích hợp mới test Linux.
+
+    \item \textbf{Phân chia task tốt hơn}: Chia tasks thành các subtasks nhỏ hơn (< 1 ngày làm việc), dễ ước lượng và theo dõi tiến độ hơn.
+
+    \item \textbf{Tiếp cận tài liệu trước}: Viết tài liệu thiết kế cấp cao trước khi code, giúp team thống nhất về kiến trúc và giảm việc làm lại.
+
+\end{enumerate}
+
+\subsection{Kết luận đánh giá}
+\vspace{-0.6\baselineskip}
+
+Nhóm 5 Ducks đã thực hiện \textbf{xuất sắc} các cam kết trong hợp đồng nhóm:
+
+\vspace{-0.6\baselineskip}
+\begin{itemize}
+    \item \textbf{100\% sản phẩm bàn giao} hoàn thành đúng hoặc sớm hơn timeline
+    \item \textbf{95\%+ tuân thủ} coding conventions và Git workflow
+    \item \textbf{6/6 tiêu chí} đánh giá thành viên đạt mức Tốt trở lên, không có ai ở mức Kém/Bình thường
+    \item \textbf{Không có xung đột} nào không giải quyết được, sự gắn kết nhóm tốt suốt dự án
+    \item \textbf{Chất lượng đầu ra cao}: Game hoạt động ổn định, code dễ bảo trì, tài liệu toàn diện
+\end{itemize}
+
+\vspace{-0.4\baselineskip}
+\noindent Dự án Tetris không chỉ là một bài tập cuối kỳ mà còn là trải nghiệm quý giá về làm việc nhóm, quản lý dự án, và software engineering practices. Những kỹ năng và bài học từ đồ án này sẽ là nền tảng vững chắc cho các dự án lớn hơn trong tương lai.
+
+\vspace{3cm}
+
+\noindent\includegraphics[width=\textwidth]{teamwork_5ducks.jpg}
 
 \begin{center}
 \textit{--- Đội ngũ phát triển 5 Ducks ---}\\

@@ -641,7 +641,7 @@ bool TetrisGame::lockPieceAndCheck(bool muteLockSound) {
         int oldLevel = state.level;
 
         // +1 level per 10 lines
-        state.level = 1 + (state.linesCleared / 10);
+        state.level = 1 + (state.linesCleared / LINES_PER_LEVEL);
 
         if (state.level > oldLevel) {
             SoundManager::playLevelUpSound();

@@ -57,7 +57,7 @@ void Board::draw(
     frame.reserve(12000); // Enough capacity for ANSI colors and full frame.
 
     // Clear screen and move cursor to top\-left (ANSI escapes).
-    frame += "\033[2J\033[1;1H";
+    frame += "\033[1;1H";
 
     const string title = "TETRIS GAME";
     int boardVisualWidth = BOARD_WIDTH * 2; // Each cell is drawn 2 chars wide.

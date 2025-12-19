@@ -16,6 +16,9 @@ constexpr long BASE_DROP_SPEED_US  = 500000; // Base tick group duration.
 constexpr int  DROP_INTERVAL_TICKS = 5;      // Logic steps per drop.
 constexpr int  ANIM_DELAY_US       = 15000;  // Game-over animation delay.
 
+// Level progression constant.
+constexpr int  LINES_PER_LEVEL     = 10;     // Lines needed to advance one level.
+
 
 class TetrisGame {
 private:
